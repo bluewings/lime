@@ -1,0 +1,179 @@
+.wrap.on .header {
+  top: 0; }
+.wrap.on .cover {
+  top: 47px; }
+.wrap.on .content {
+  margin-top: 247px; }
+.wrap .header {
+  position: fixed;
+  top: -47px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  -webkit-transition: top 0.3s; }
+  .wrap .header .quick_menu {
+    position: relative;
+    height: 47px;
+    background-color: #eee;
+    text-align: center;
+    padding: 8px 12px; }
+    .wrap .header .quick_menu .btn {
+      font-weight: bold; }
+  .wrap .header .nav_bar {
+    position: relative;
+    height: 47px;
+    border: 0;
+    padding: 0 20px; }
+    .wrap .header .nav_bar .title {
+      overflow: hidden;
+      height: 47px;
+      /*text-align: center;*/
+      color: #fff;
+      font-family: AppleSDGothicNeo-SemiBold;
+      font-size: 1.214em;
+      line-height: 49px; }
+      .wrap .header .nav_bar .title span {
+        display: -webkit-box;
+        overflow: hidden;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        height: 47px; }
+    .wrap .header .nav_bar .sim {
+      display: inline-block;
+      overflow: hidden;
+      background: url(http://static.naver.net/blog/m/sp_im8.png) no-repeat;
+      background-size: 320px 220px;
+      -webkit-background-size: 320px 220px;
+      color: transparent;
+      width: 19px;
+      height: 14px;
+      vertical-align: top; }
+    .wrap .header .nav_bar .btn_old_toggle {
+      overflow: hidden;
+      position: absolute;
+      left: 5px;
+      top: 1px;
+      width: 19px;
+      height: 14px;
+      padding: 15px;
+      vertical-align: top; }
+      .wrap .header .nav_bar .btn_old_toggle .sim {
+        background-position: -20px 0; }
+    .wrap .header .nav_bar .btn_toggle .sim {
+      width: 17px;
+      height: 17px;
+      margin: 1px -10px 0 0;
+      background-position: -20px 0; }
+    .wrap .header .nav_bar .btn_group {
+      position: absolute;
+      right: 20px;
+      top: 4px; }
+      .wrap .header .nav_bar .btn_group a {
+        float: left;
+        padding: 10px; }
+  .wrap .header .nav_cover {
+    margin-top: -47px;
+    height: 47px;
+    overflow: hidden; }
+    .wrap .header .nav_cover .cover {
+      position: static;
+      top: 0 !important; }
+  .wrap .header a {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer; }
+  .wrap .header h1, .wrap .header h2, .wrap .header h3, .wrap .header h4, .wrap .header h5, .wrap .header h6, .wrap .header ul, .wrap .header ol, .wrap .header li {
+    margin: 0;
+    padding: 0; }
+.wrap .cover {
+  -webkit-transition: top 0.3s;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: -1;
+  height: 200px;
+  background-color: #fff;
+  background-image: url("http://blogimgs.naver.net/mobile/mobile_title04_l.jpg");
+  background-position: top;
+  background-size: cover;
+  -webkit-background-size: cover; }
+  .wrap .cover:before {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    height: 94px;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0.35)), to(transparent));
+    content: '';
+    pointer-events: none; }
+.wrap .content {
+  -webkit-transition: margin-top 0.3s;
+  margin-top: 200px;
+  min-height: 700px;
+  background-color: #e8e8e8;
+  position: relative;
+  z-index: 10; }
+
+.note-list {
+  padding: 0;
+  margin: 5px -5px; }
+  .note-list .note {
+    padding: 5px;
+    width: 240px;
+    width: 50%;
+    display: inline-block;
+    box-sizing: border-box; }
+    .note-list .note .inner {
+      border-radius: 5px;
+      border: 1px solid silver;
+      min-height: 140px;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box; }
+      .note-list .note .inner .txt-title {
+        padding: 5px 10px;
+        /*background-color: yellow;*/
+        font-weight: bold; }
+      .note-list .note .inner .txt-note {
+        white-space: pre-line;
+        display: block;
+        padding: 5px 10px;
+        /*background-color: lightYellow;*/ }
+      .note-list .note .inner .link {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 21px;
+        height: 22px;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.6); }
+        .note-list .note .inner .link a {
+          color: #000;
+          font-size: 16px;
+          padding: 2px 2px;
+          display: inline-block;
+          cursor: pointer; }
+      .note-list .note .inner .mask {
+        opacity: 0;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.4);
+        bottom: -33px;
+        width: 100%;
+        padding-left: 8px;
+        -webkit-transition: all 0.2s linear; }
+        .note-list .note .inner .mask .btn {
+          background-color: transparent;
+          border: none;
+          color: #fff;
+          padding: 6px;
+          margin: 0;
+          text-align: center; }
+          .note-list .note .inner .mask .btn .glyphicon {
+            margin: 0; }
+      .note-list .note .inner:hover .mask {
+        bottom: 0;
+        opacity: 1; }
+
+/*# sourceMappingURL=lime.css.map */

@@ -1,0 +1,151 @@
+$quick-menu-height: 47px;
+$nav-bar-height: 47px;
+$cover-height: 200px;
+$cover-image: "http://blogimgs.naver.net/mobile/mobile_title04_l.jpg";
+
+.wrap {
+    &.on {
+        .header {
+            top: 0;
+        }
+        .cover {
+            top: $quick-menu-height;
+        }
+        .content {
+            margin-top: $cover-height + $quick-menu-height;
+        }
+    }
+    .header {
+        position: fixed;
+        top: $quick-menu-height * -1;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        -webkit-transition: top 0.3s;
+        .quick_menu {
+            position: relative;
+            height: $quick-menu-height;
+            background-color: #eee;
+            text-align: center;
+            padding:8px 12px;
+            .btn {
+            font-weight:bold;
+            
+            }
+            
+        }
+        .nav_bar {
+            position: relative;
+            height: $nav-bar-height;
+            border: 0;
+            padding: 0 20px;
+            .title {
+                overflow: hidden;
+                height: 47px;
+                /*text-align: center;*/
+                color: #fff;
+                font-family: AppleSDGothicNeo-SemiBold;
+                font-size: 1.214em;
+                line-height: 49px;
+                span {
+                    display: -webkit-box;
+                    overflow: hidden;
+                    word-break: break-all;
+                    text-overflow: ellipsis;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                    height: 47px;
+                }
+            }
+            .sim {
+                display: inline-block;
+                overflow: hidden;
+                background: url(http://static.naver.net/blog/m/sp_im8.png) no-repeat;
+                background-size: 320px 220px;
+                -webkit-background-size: 320px 220px;
+                color: transparent;
+                width: 19px;
+                height: 14px;
+                vertical-align: top;
+            }
+            .btn_old_toggle {
+                overflow: hidden;
+                position: absolute;
+                left: 5px;
+                top: 1px;
+                width: 19px;
+                height: 14px;
+                padding: 15px;
+                vertical-align: top;
+                .sim {
+                    background-position: -20px 0;
+                }
+            }
+            .btn_toggle {
+                .sim {
+                    width: 17px;
+                    height: 17px;
+                    margin: 1px -10px 0 0;
+                    background-position: -20px 0;
+                }
+            }
+            .btn_group {
+                position: absolute;
+                right: 20px;
+                top: 4px;
+                a {
+                    float: left;
+                    padding: 10px;
+                }
+            }
+        }
+        .nav_cover {
+            margin-top: $nav-bar-height * -1;
+            height: $nav-bar-height;
+            overflow: hidden;
+            .cover {
+                position: static;
+                top: 0 !important;
+            }
+        }
+        a {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        h1, h2, h3, h4, h5, h6, ul, ol, li {
+            margin: 0;
+            padding: 0;
+        }
+    }
+    .cover {
+        -webkit-transition: top 0.3s;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: -1;
+        height: $cover-height;
+        background-color: #fff;
+        background-image: url($cover-image);
+        background-position: top;
+        background-size: cover;
+        -webkit-background-size: cover;
+        &:before {
+            display: block;
+            overflow: hidden;
+            width: 100%;
+            height: $nav-bar-height * 2;
+            background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0.35)), to(transparent));
+            content: '';
+            pointer-events: none;
+        }
+    }
+    .content {
+        -webkit-transition: margin-top 0.3s;
+        margin-top: $cover-height;
+        min-height: 700px;
+        background-color: #e8e8e8;
+        position: relative;
+        z-index: 10;
+    }
+}

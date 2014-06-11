@@ -10,11 +10,14 @@ function render(req, res) {
 
 	res.render('index', {
 		title: 'Express',
-		stylesheets: ['/stylesheets/keep.css'],
+		stylesheets: [
+		//'/stylesheets/keep.css',
+		'/stylesheets/lime.css'],
 		javascripts: [
 			'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
 
 			'/javascripts/keep.util.js', '/javascripts/keep.js'
+			, '/javascripts/lime.header.js'
 		]
 	});
 }

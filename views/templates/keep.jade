@@ -1,4 +1,4 @@
-.container(style='padding-top:16px')
+.container
 
 
 
@@ -15,7 +15,7 @@
 
 		br
 		br
-	div(style='width:100%')
+	//div(style='width:100%')
 		div(style='padding-bottom:15px;margin-bottom:15px;border-bottom:1px dotted #aaa')
 			.btn-group
 				a.btn.btn-default.btn-sm(ng-click='filterType = "inbox"',
@@ -42,7 +42,7 @@
 							| Share
 
 	
-	form.note-form(ng-submit='add()',
+	//form.note-form(ng-submit='add()',
 		ng-class='status.onedit ? "active" : ""', style='margin-left:auto;margin-right:auto')
 		input.form-control.input-sm.onedit(ng-model='new.title',
 			ng-focus='focus()',

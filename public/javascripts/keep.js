@@ -2,7 +2,7 @@
 
 	console.log('app js');
 
-	var app = angular.module('keep', ['ngRoute', 'ngSanitize', 'ngAnimate', 'ui.bootstrap', 'keep.util']);
+	var app = angular.module('limeNote', ['ngRoute', 'ngSanitize', 'ngAnimate', 'ui.bootstrap', 'keep.util', 'lime.header']);
 
 	var CONFIG = {};
 
@@ -14,11 +14,6 @@
 			.replace(/\&quot;/g, '"')
 			.replace(/\&#039;/g, "'")
 			.replace(/\&amp;/g, '&');
-		/*return str.replace(/&/g, "&amp;")
-                   .replace(/</g, "&lt;")
-                   .replace(/>/g, "&gt;")
-                   .replace(/"/g, "&quot;")
-                   .replace(/'/g, "&#039;");*/
 	};
 
 	app.config(function ($routeProvider, $locationProvider) {
@@ -39,6 +34,8 @@
 				redirectTo: '/home'
 			});
 	});
+
+
 
 	app.directive('masonry', function () {
 		var NGREPEAT_SOURCE_RE = '<!-- ngRepeat: ((.*) in ((.*?)( track by (.*))?)) -->';
