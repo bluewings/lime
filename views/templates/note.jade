@@ -1,0 +1,45 @@
+.inner(class='shared-{{note.shared}}')
+	div(ng-click='editNote(note)')
+		img(ng-show='note.image', ng-src='{{note.image}}', width='100%')
+
+		.txt-title(ng-show='note.title')
+			| {{note.title}}
+		.txt-note(ng-show='note.note')
+			| {{note.note}}
+
+	//div
+		input(type='text', ng-model='note.title')
+		input(type='text', ng-model='note.note')
+
+	
+
+
+	
+
+
+
+	div.link(ng-show='note.url')
+		a(ng-href='{{note.url}}', target='_blank')
+			span.glyphicon.glyphicon-link
+	div.mask(ng-hide='shared')
+		
+		button.btn(ng-click='share()')
+			span.glyphicon.glyphicon-share-alt
+		
+		button.btn(ng-click='archive(note)')
+			span.glyphicon(ng-class='"glyphicon-" + (note.archived == 0 ? "inbox" : "repeat")')
+		
+		button.btn(ng-click='remove(note)')
+			span.glyphicon.glyphicon-trash
+
+
+
+	div(ng-show='shared')
+
+		button.btn.btn-xs.btn-primary.btn-block(ng-click='keep(note)'
+			, ng-if='!note._already')
+			span.glyphicon.glyphicon-ok
+			| KEEP !
+		button.btn.btn-xs.btn-success.btn-block(disabled
+			, ng-if='note._already')
+			| Already registered.
