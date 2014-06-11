@@ -1,58 +1,55 @@
-.wrap(ng-class='status.open ? "on" : ""')
+
 	
 
-	.header
-		.quick_menu
-			div(ng-hide='status.select', style='float:left')
-				button.btn.btn-default.btn-sm
-					span.glyphicon.glyphicon-plus
-				
+.header
+	.quick_menu
+		div(ng-hide='status.selectable', style='float:left')
+			button.btn.btn-default.btn-sm
+				span.glyphicon.glyphicon-plus
+			
 
-			div(ng-show='status.select', style='float:left')
-				button.btn.btn-default.btn-sm
-					span.glyphicon.glyphicon-share-alt
-				button.btn.btn-default.btn-sm
-					span.glyphicon.glyphicon-trash
-				
-
-
+		div(ng-show='status.selectable', style='float:left')
+			button.btn.btn-default.btn-sm
+				span.glyphicon.glyphicon-share-alt
+			button.btn.btn-default.btn-sm
+				span.glyphicon.glyphicon-trash
+			
 
 
-			.pull-right
-				button.btn.btn-default.btn-sm(ng-click='status.select = status.select ? false : true')
-					| {{status.select ? '취소' : '선택'}}
-		.nav_bar
-			//a.btn_toggle(ng-click="func.toggle()")
 
+
+		.pull-right
+			button.btn.btn-default.btn-sm(ng-click='func.toggleSelectMode()')
+				| {{status.selectable ? '취소' : '선택'}}
+	.nav_bar
+		//a.btn_toggle(ng-click="func.toggleHeader()")
+
+			span.sim
+				| 퀵메뉴 열고 닫기
+		h2.title
+			span
+				| description
+		.btn_group
+			a.btn_toggle(ng-click="func.toggleHeader()")
 				span.sim
 					| 퀵메뉴 열고 닫기
-			h2.title
-				span
-					| description
-			.btn_group
-				a.btn_toggle(ng-click="func.toggle()")
-					span.sim
-						| 퀵메뉴 열고 닫기
-		.nav_cover
-			.cover
-	.cover
-		h2
-			| description
+	.nav_cover
+		.cover
+.cover
+	h2
+		| description
 
-		button.btn.btn-default.btn-sm
-			| bookmark
-		button.btn.btn-default.btn-sm
-			| archived
-		button.btn.btn-default.btn-sm
-			| create			
+	button.btn.btn-default.btn-sm
+		| bookmark
+	button.btn.btn-default.btn-sm
+		| archived
+	button.btn.btn-default.btn-sm
+		| create			
 
-		button.btn_toggle(ng-click="func.toggle()")
-			| add to homescreen
+	button.btn_toggle(ng-click="func.toggle()")
+		| add to homescreen
 
-	.content
-		
 
-		ng-view
 
 
 //.top(ng-class='status.open ? "on" : ""')

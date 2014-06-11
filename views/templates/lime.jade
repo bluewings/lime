@@ -1,0 +1,9 @@
+.container
+    h2 hi
+    //input(type="text")
+    a(href='/about')
+        | hi click me
+    button(ng-click='func.add()')
+        | add
+    pre
+        | {{data.notes | json}}

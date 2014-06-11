@@ -10,37 +10,21 @@
             restrict: 'E',
             replace: false,
             templateUrl: '/templates/header',
+            scope: true,
             controller: function ($scope, $attrs, $timeout) {
 
-                $scope.status = {
-                    open: false
-
-                };
-
-
-
                 $scope.func = {
-                    toggle: function() {
-                        
-                        //alert('www');
+                    toggleHeader: function() {
 
-                        $scope.status.open = $scope.status.open ? false : true;
-                        $(document.body).toggleClass('header_open');
+                        $scope.status.headerOpen = $scope.status.headerOpen ? false : true;
+                    },
+                    toggleSelectMode: function() {
 
+                        $scope.status.selectable = $scope.status.selectable ? false : true
                     }
-
                 };
-
-                //console.log('each note');
-                //console.log($scope);
-                //console.log($attrs);
-
-
             }
-
-
         };
-
     });
 
 })();

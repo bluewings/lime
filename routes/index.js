@@ -16,8 +16,10 @@ function render(req, res) {
 		javascripts: [
 			'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
 
-			'/javascripts/keep.util.js', '/javascripts/keep.js'
-			, '/javascripts/lime.header.js'
+			//'/javascripts/keep.util.js',
+			//'/javascripts/keep.js'
+			'/javascripts/lime.js',
+			'/javascripts/lime.header.js'
 		]
 	});
 }
