@@ -1,5 +1,5 @@
 .inner(class='shared-{{note.shared}}')
-	div(ng-click='editNote(note)')
+	div(ng-click='modal.note(note)')
 		img(ng-show='note.image', ng-src='{{note.image}}', width='100%')
 
 		.txt-title(ng-show='note.title')

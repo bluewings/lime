@@ -24,6 +24,10 @@
 			rows='5')
 
 		img(ng-show='note.image', ng-src='{{note.image}}', height='150')			
+		
+		input.form-control.input-sm(ng-model='note.image',
+			placeholder='img src',
+			style='font-weight:bold')		
 
 	.modal-footer
 		.tm(style='float:left')

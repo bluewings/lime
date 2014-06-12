@@ -35,14 +35,33 @@
 
                     return modalInstance;
                 },
-                note: function () {
+                note: function (note) {
 
                     var modalInstance;
+                    
+                    
+                    
+              
+
+           
 
                     modalInstance = $modal.open({
                         templateUrl: '/templates/modal-note',
                         size: 'sm',
-                        controller: 'lime.modal.note'
+                        //scope: $scope,
+
+                        controller: 'lime.modal.note',
+                        resolve: {
+                            note: function () {
+                                
+                                if (note) {
+                                    //note = angular.copy(note);
+                                    return note = angular.copy(note);
+                                }                                
+                            return;
+                              
+                            }
+                          }                        
                     });
 
                     modalInstance.result.then(function (result) {
@@ -58,9 +77,10 @@
         }
     ]);
 
-    app.controller('lime.modal.note', function ($scope, $modalInstance, $http) {
+    app.controller('lime.modal.note', function ($scope, $modalInstance, $http, note) {
 
-        $scope.note = {};
+        
+        $scope.note = note || {};
 
         $scope.func = {
             update: function () {
@@ -95,6 +115,8 @@
     app.controller('lime.modal.share', function ($scope, $rootScope, $modalInstance, $http) {
 
         $scope.note = {};
+        
+        
 
         $scope.func = {
             share: function () {

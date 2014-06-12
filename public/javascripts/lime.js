@@ -134,12 +134,12 @@
             },
             addNote: function () {
 
-                this.editNote();
+                this.note();
 
             },
-            editNote: function () {
+            note: function (note) {
 
-                limeModal.note();
+                limeModal.note(note);
             }
         };
 
@@ -281,12 +281,12 @@
                         updated: null,
                         color: '#fff'
                     };
-                    /*if ($scope.new.image) {
-                        obj.image = $scope.new.image;
+                    if (data.image) {
+                        obj.image = data.image;
                     }
-                    if ($scope.new.url) {
-                        obj.url = $scope.new.url;
-                    }*/
+                    if (data.url) {
+                        obj.url = data.url;
+                    }
                     $rootScope.data.notes.push(obj);
                     /*$scope.new.title = '';
                     $scope.new.note = '';
