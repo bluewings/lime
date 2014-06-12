@@ -92,36 +92,52 @@
         };
     });
 
-    app.controller('lime.modal.share', function ($scope, $modalInstance, $http) {
+    app.controller('lime.modal.share', function ($scope, $rootScope, $modalInstance, $http) {
 
         $scope.note = {};
 
         $scope.func = {
-            update: function () {
+            share: function () {
 
-                $modalInstance.close({
+                //var notes;
+
+                var notes = $rootScope.note.getSelected();
+
+                console.log(notes);
+
+                $http.post('/share/notes', {
+                    owner: $rootScope.status.myId,
+                    title: 'oaoaoa',
+                    notes: notes
+                }).success(function (data) {
+                    if (data.code === 200) {
+                        $scope.refId = data.result.id;
+                        alert('공유된듯?');
+                    }
+                });
+
+
+
+                //alert('공유하자');
+/*
+                    $http.post('/share/notes/' + $rootScope.status.myId, {
+                        notes: $rootScope.data.notes
+                    }).success(function (data) {
+
+                        if (data.code === 200) {
+                            alert('저장된듯?');
+                        }
+                    });            
+                    */    
+
+                /*$modalInstance.close({
                     method: 'update',
                     data: $scope.note
-                });
+                });*/
             },
             cancel: function () {
 
                 $modalInstance.dismiss('cancel');
-            },
-            inspectURL: function () {
-
-                $http.get('/link/' + encodeURIComponent($scope.note.url)).success(function (data) {
-
-                    if (data.code === 200) {
-
-                        $scope.note = {
-                            url: data.result.url,
-                            title: unescapeHTML(unescapeHTML(data.result.title)),
-                            note: unescapeHTML(unescapeHTML(data.result.note)),
-                            image: data.result.image
-                        };
-                    }
-                });
             }
         };
     });    

@@ -1,50 +1,93 @@
-
-	
-
 .header
+
+
+
+	//- 1. 퀵메뉴
 	.quick_menu
+
+		//- 퀵메뉴(기본모드) - 추가
 		div(ng-hide='status.selectMode', style='float:left')
 			button.btn.btn-default.btn-sm(ng-click='modal.addNote()')
 				span.glyphicon.glyphicon-plus
-			
 
+		//- 퀵메뉴(선택모드) - 공유, 삭제
 		div(ng-show='status.selectMode', style='float:left')
+
 			span(ng-hide='status.selectedCount > 0')
-
 				| 항목선택
-			span(ng-show='status.selectedCount > 0')
 
+			span(ng-show='status.selectedCount > 0')
 				button.btn.btn-default.btn-sm(ng-click='modal.share()')
 					span.glyphicon.glyphicon-share-alt
-
 				button.btn.btn-default.btn-sm(ng-click='func.removeSelected()')
 					span.glyphicon.glyphicon-trash
 
 				| {{status.selectedCount}} 개가 선택됨
 
-			
-
-
-
-
+		//- 퀵메뉴 모드 선택
 		.pull-right
 			button.btn.btn-default.btn-sm(ng-click='func.toggleSelectMode()')
 				| {{status.selectMode ? '취소' : '선택'}}
-	.nav_bar
-		//a.btn_toggle(ng-click="func.toggleHeader()")
 
-			span.sim
-				| 퀵메뉴 열고 닫기
+	//- 2. 상단고정바
+	.nav_bar
+		
+		//- 상단고정바 > 타이틀
 		h2.title
 			span
 				| description
+
+		//- 상단고정바 > 토글 버튼
 		.btn_group
 			a.btn_toggle(ng-click="func.toggleHeader()")
 				span.sim
 					| 퀵메뉴 열고 닫기
+
+	//- 3. 상단고정바 배경의 커버 이미지
 	.nav_cover
 		.cover
+
+//- 4. 커버 영역 
 .cover
+
+	//- 네비게이션 flicker
+	jindo-flick(flick='')
+
+	#mflick
+		.flick-container(style='height: 100%;')
+			.flick-ct(ng-repeat='tag in info.tags', sstyle='background-color:rgba(0,0,0,0.5)')
+				div(style='padding:10px 15px')
+					p(style='font-size:24px;')
+						span.glyphicon.glyphicon-file(style='font-size:24px')
+						|desc-{{tag.tag}}
+
+					em
+						{{tag.count}}
+					.thumb-list
+						.thumbnail(ng-repeat='note in tag.notes | filterByImage | limitTo : 4')
+							.inner(style='background-image:url({{note.image}})')
+
+
+
+
+	//- div(style='height: 55px;background-color:yellow;position:relative;')
+		carousel
+			slide(ng-repeat='slide in tags')
+				//img(ng-src='{{slide.image}}', style='margin: auto;')
+				.carousel-caption
+					h4 Slide {{$index}}
+					p aaa {{slide}}				
+
+
+	//select(ng-model='status.filterTag')
+		option(ng-repeat='tag in tags', value='{{tag}}')
+			| {{tag}}
+
+
+
+
+
+
 	h2
 		| description
 
@@ -60,35 +103,3 @@
 
 
 
-
-//.top(ng-class='status.open ? "on" : ""')
-	.header
-		.quick_menu
-			button
-				| Notes
-			button
-				| Archived
-
-
-
-
-		.title_bar
-			button.btn(ng-click="func.toggle()")
-				| toggle
-		
-		.cover
-
-
-	#cover
-
-
-
-//.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
-	.container
-		.navbar-header
-			button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-				span.sr-only Toggle navigation
-				span.icon-bar
-				span.icon-bar
-				span.icon-bar
-			a.navbar-brand(href='/home') QuickNote

@@ -17,6 +17,12 @@ function render(req, res) {
 		],
 		javascripts: [
 			'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
+			//'/javascripts/modules/jindo.desktop.min.js',
+			//'/javascripts/modules/jindo.mobile.component.min.js',
+
+			'/javascripts/modules/jindo.mobile.min.js',
+			'/javascripts/modules/jindo.mobile.component.js',
+
 			'/javascripts/globalStorage.js',
 			'/javascripts/lime.js',
 			'/javascripts/lime-header.js',
@@ -109,7 +115,7 @@ router.get('/link/:url', function (req, res) {
 });
 
 
-router.get('/share/notes/:id', function (req, res) {
+router.get('/_share/notes/:id', function (req, res) {
 
 	var fs = require("fs"),
 		path = require('path'),
@@ -133,7 +139,7 @@ router.get('/share/notes/:id', function (req, res) {
 	});
 });
 
-router.post('/share/notes', function (req, res) {
+router.post('/_share/notes', function (req, res) {
 
 	var fs = require("fs"),
 		path = require('path'),
@@ -168,5 +174,8 @@ router.post('/share/notes', function (req, res) {
 		});
 	}
 });
+
+
+
 
 module.exports = router;

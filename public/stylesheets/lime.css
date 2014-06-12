@@ -1,9 +1,6 @@
 html {
   overflow-y: scroll; }
 
-html, body {
-  height: 100%; }
-
 .wrap .header {
   position: fixed;
   top: -47px;
@@ -93,7 +90,7 @@ html, body {
   top: 0;
   width: 100%;
   z-index: -1;
-  height: 200px;
+  height: 220px;
   background-color: #fff;
   background-image: url("http://blogimgs.naver.net/mobile/mobile_title04_l.jpg");
   background-position: top;
@@ -107,13 +104,60 @@ html, body {
     background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0.35)), to(transparent));
     content: '';
     pointer-events: none; }
+  .wrap .cover #mflick {
+    height: 173px;
+    margin-top: -47px;
+    visibility: hidden; }
+    .wrap .cover #mflick.active {
+      visibility: visible; }
+  .wrap .cover .thumb-list {
+    position: absolute;
+    bottom: 10px;
+    right: 15px; }
+    .wrap .cover .thumb-list .thumbnail {
+      width: 70px;
+      height: 60px;
+      float: left;
+      padding: 2px;
+      -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+      margin-left: 8px;
+      margin-bottom: 0; }
+      .wrap .cover .thumb-list .thumbnail .inner {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: 50% 50%; }
 .wrap .content {
   -webkit-transition: margin-top 0.3s;
-  margin-top: 200px;
-  min-height: 700px;
+  margin-top: 220px;
+  min-height: 220px;
   background-color: #e8e8e8;
   position: relative;
   z-index: 10; }
+
+.cover-bg-1 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title04_l.jpg) !important; }
+
+.cover-bg-2 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title05_l.jpg) !important; }
+
+.cover-bg-3 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title06_l.jpg) !important; }
+
+.cover-bg-4 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title07_l.jpg) !important; }
+
+.cover-bg-5 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title08_l.jpg) !important; }
+
+.cover-bg-6 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title09_l.jpg) !important; }
+
+.cover-bg-7 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title010_l.jpg) !important; }
+
+.cover-bg-8 .cover {
+  background-image: url(http://blogimgs.naver.net/mobile/mobile_title011_l.jpg) !important; }
 
 .note-list {
   padding: 0;
@@ -232,7 +276,7 @@ html, body {
 .wrap.header-open .cover {
   top: 47px; }
 .wrap.header-open .content {
-  margin-top: 247px; }
+  margin-top: 267px; }
 .wrap.select-mode .note-list .note .select-mask {
   display: block; }
   .wrap.select-mode .note-list .note .select-mask.selected {

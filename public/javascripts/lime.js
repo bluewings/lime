@@ -52,7 +52,7 @@
             .replace(/\&amp;/g, '&');
     };*/
 
-    app.config(function ($routeProvider, $locationProvider) {
+    app.config(function ($routeProvider, $locationProvider, $compileProvider) {
 
         $locationProvider.html5Mode(true);
         $routeProvider
@@ -64,64 +64,334 @@
                 templateUrl: '/templates/about',
                 controller: 'lime.content.view'
             })
-            .when('/share/:id', {
+            .when('/share/:shareId', {
                 templateUrl: '/templates/content-notes',
                 controller: 'lime.content.notes'
             })
             .otherwise({
                 redirectTo: '/home'
             });
+
+        //$compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|intent):/);
+
     });
 
     app.run(function ($rootScope, $location, $http, $interval, $timeout, limeModal, globalStorage) {
 
         var urlPath = $location.path(),
-            urlSearch = $location.search();
+            urlSearch = $location.search(),
+            matches;
 
         $rootScope.status = {
             myId: null,
-            headerOpen: true,
-            selectMode: true,
+            headerOpen: false,
+            selectMode: false,
             hasChanges: false,
             syncFromRemote: false,
-            notesHashCode: ''
+            notesHashCode: '',
+            filterTag: ''
         };
 
+        
+        // sync 되는 대상
         $rootScope.data = {
             notes: []
         };
 
-            $rootScope.func = {
-                shareSelected: function () {
-                    alert('share selected');
-                },    
-                removeSelected: function () {
-                    alert('remove selected');
-                },                
-                rootTest: function() {
-                    alert('roottest');
-                }
-            };
+        $rootScope.info = {
+            tagMap: {}
+        };
 
+        $rootScope.tags = [];
+
+
+
+        $rootScope.func = {
+            intentURL: function() {
+
+                //http%3A%2F%2F182.162.196.40%2Fhome
+
+                return 'Intent://addshortcut?url=' + encodeURIComponent('http://10.64.51.102:4321/home/' + $rootScope.status.myId) + '&icon=http://icdn.pro/images/en/b/o/bookmark-icone-7792-128.png&title=%ED%80%B5%EB%85%B8%ED%8A%B8&serviceCode=weather&version=7#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end';
+            },
+            shareSelected: function () {
+                alert('share selected');
+            },
+            removeSelected: function () {
+                alert('remove selected');
+            },
+            rootTest: function () {
+                alert('roottest');
+            }
+        };
+
+
+
+        $rootScope.modal = {
+            share: function () {
+
+                limeModal.share();
+            },
+            addNote: function () {
+
+                this.editNote();
+
+            },
+            editNote: function () {
+
+                limeModal.note();
+            }
+        };
+
+        $rootScope.note = {
+
+            getSelected: function () {
+
+                var notes = [];
+
+                if ($rootScope.selected) {
+
+                    angular.forEach($rootScope.data.notes, function (item) {
+
+                        if ($rootScope.selected[item._id]) {
+                            item = angular.copy(item);
+                            delete item.$$hashKey;
+                            notes.push(item);
+                        }
+                        //notesMap[item._id] = item;
+                    });
+
+                };
+                return notes;
+
+
+
+            },
+
+            selected: function (note) {
+
+                return !$rootScope.selected || !$rootScope.selected[note._id] ? false : true;
+
+            },
+
+
+            toggle: function (note) {
+
+                if ($rootScope.status.selectMode === false) {
+
+                    return;
+
+                }
+
+                if (!$rootScope.selected) {
+                    $rootScope.selected = {};
+                }
+
+                if ($rootScope.selected[note._id]) {
+                    delete $rootScope.selected[note._id];
+                } else {
+                    $rootScope.selected[note._id] = true;
+                }
+
+
+
+            },
+
+            merge: function (notes, tag) {
+
+                var notesMap = {},
+                    newNotes = [],
+                    key;
+
+                function equals(item1, item2) {
+
+                    item1 = angular.copy(item1);
+                    item2 = angular.copy(item2);
+                    delete item1.$$hasyKey;
+                    delete item2.$$hasyKey;
+
+                    return JSON.stringify(item1) == JSON.stringify(item2) ? true : false;
+                }
+
+                angular.forEach($rootScope.data.notes, function (item) {
+                    notesMap[item._id] = item;
+                });
+
+                angular.forEach(notes, function (item) {
+
+                    if (tag) {
+                        if (!item.tags) {
+                            item.tags = {};
+                        }
+                        item.tags[tag] = true;
+                    }
+
+                    // 완전 신규건...
+                    if (!notesMap[item._id]) {
+
+                        console.log('new');
+
+                        notesMap[item._id] = item;
+                        //console.log('added');
+                        ////newNotes.push(item);
+                        //$rootScope.data.notes.push(item);
+
+                    // 내용이 바뀐거...
+                    } else if (!equals(item, notesMap[item._id])) {
+
+                        console.log('changed');
+
+                        notesMap[item._id] = item;
+
+                    } else {
+
+                        console.log('skip');
+                    }
+                });
+
+                for (key in notesMap) {
+                    if (notesMap.hasOwnProperty(key)) {
+                        newNotes.push(notesMap[key]);
+                    }
+                }
+
+                $rootScope.data.notes = newNotes;
+
+                //console.log(notesMap);
+
+
+
+                //$rootScope.data.notes = notes;
+
+                console.log(notes);
+
+            },
+
+            add: function (data) {
+
+                var obj;
+
+                if (data.title || data.note) {
+                    obj = {
+                        _id: uid(),
+                        title: data.title,
+                        note: data.note,
+                        created: (new Date()).toISOString(),
+                        archived: 0,
+                        updated: null,
+                        color: '#fff'
+                    };
+                    /*if ($scope.new.image) {
+                        obj.image = $scope.new.image;
+                    }
+                    if ($scope.new.url) {
+                        obj.url = $scope.new.url;
+                    }*/
+                    $rootScope.data.notes.push(obj);
+                    /*$scope.new.title = '';
+                    $scope.new.note = '';
+                    $scope.new.image = '';
+                    $scope.new.url = '';*/
+                }
+
+            }
+        };
+
+
+
+        $rootScope.$watch('status.headerOpen', function (newValue, oldValue) {
+
+            if (newValue === false) {
+                $rootScope.status.selectMode = false;
+            }
+        });
+
+        $rootScope.$watch('status.selectMode', function (newValue, oldValue) {
+
+            if (newValue === false) {
+                $rootScope.selected = {};
+            }
+        });
+
+        $rootScope.$watchCollection('selected', function (newValue, oldValue) {
+
+            var key, selectedCount = 0;
+
+            if (newValue) {
+
+                for (key in newValue) {
+
+                    if (newValue.hasOwnProperty(key)) {
+                        selectedCount++;
+                    }
+
+                }
+
+            }
+            $rootScope.status.selectedCount = selectedCount;
+        });
+
+
+
+        $rootScope.$watchCollection('data.notes', function (newValue, oldValue) {
+
+            var key, selectedCount = 0;
+
+            var tags = [''], _tags = [''], tagMap = {};
+
+            if (newValue) {
+
+                angular.forEach(newValue, function(item) {
+
+                    if (item.tags) {
+                        for (key in item.tags) {
+                            if (item.tags.hasOwnProperty(key)) {
+                                if (!tagMap[key]) {
+                                    tagMap[key] = {
+                                        tag: key,
+                                        count: 0,
+                                        notes: []
+                                    };
+                                }
+                                tagMap[key].count++;
+                                tagMap[key].notes.push(item);
+                            }
+
+                        }
+                    }
+                });
+
+                for (key in tagMap) {
+                    if (tagMap.hasOwnProperty(key)) {
+                        _tags.push(key);
+                        tags.push(tagMap[key]);
+                    }
+                }
+
+
+           
+
+                $rootScope.tags = _tags;
+
+
+                $rootScope.info.tagMap = tagMap;
+                $rootScope.info.tags = tags;
+
+            }
+            //$rootScope.status.selectedCount = selectedCount;
+        });
 
         globalStorage.get(CONFIG.ARCHIVE_MY_ID_KEY).then(function (myId) {
 
             var matches;
 
             // 갇제 설정
-            
-
             if (urlSearch && urlSearch.reset) {
-
-       
                 matches = urlPath.match(/^\/home\/([0-9a-zA-Z]{5})$/);
-
-
                 if (matches && matches.length === 2) {
                     myId = matches[1];
                     globalStorage.set(CONFIG.ARCHIVE_MY_ID_KEY, myId);
                 }
-
             }
             // //갇제 설정
 
@@ -142,24 +412,61 @@
 
             $rootScope.status.myId = myId;
 
+
+            // 공유받은 항목여부 판별
+            matches = urlPath.match(/\/share\/(.*)$/);
+            if (matches && matches.length === 2) {
+
+                $rootScope.status.filterTag = matches[1];
+
+                $http.get('/share/notes/' + matches[1]).success(function (data) {
+
+                    if (data.code === 200) {
+
+
+
+                        
+
+                        bootstrap(function() {
+                            $rootScope.note.merge(data.result.notes, matches[1]);
+                        });
+
+
+
+                        //alert(matches[1]);
+
+                    }
+
+                    
+
+                });
+
+            } else {
+                bootstrap();
+            }
+
+        });
+
+
+
+        function bootstrap(callback) {
+
+
             // 아이디를 알았으면 서버에서 싱크한번 해오자
 
-            $http.get('/sync/notes/' + myId).success(function (data) {
+            $http.get('/sync/notes/' + $rootScope.status.myId).success(function (data) {
 
                 if (data.code === 200 && data.result.notes) {
-
-                    //$timeout(function() {
-
-
-
-
 
                     $rootScope.note.merge(data.result.notes);
 
                     $timeout(function () {
                         $rootScope.status.syncFromRemote = true;
                         $rootScope.status.hasChanges = false;
-
+                        if (callback) {
+                            callback();    
+                        }
+                        
                     });
 
                     //}, 5000);
@@ -189,7 +496,7 @@
 
             $interval(function () {
 
-                $http.get('/sync/notes/' + myId).success(function (data) {
+                $http.get('/sync/notes/' + $rootScope.status.myId).success(function (data) {
 
                     if (data.code === 200 && data.result.notes) {
 
@@ -215,7 +522,7 @@
                     }).success(function (data) {
 
                         if (data.code === 200) {
-                            alert('저장된듯?');
+                            //alert('저장된듯?');
                         }
                     });
 
@@ -272,171 +579,8 @@
 
 
 
-            $rootScope.modal = {
-                share: function() {
+            //$rootScope.selected
 
-                    limeModal.share();
-                },
-                addNote: function () {
-
-                    this.editNote();
-
-                },
-                editNote: function () {
-
-                    limeModal.note();
-
-
-                    /*$modal
-
-                var modalInstance;
-
-                modalInstance = $modal.open({
-                    templateUrl: '/templates/modalDetail',
-                    size: 'sm',
-                    controller: 'lime.modal.editNote'
-
-                    function ($scope, $modalInstance, $http) {
-
-                        $scope.func = {
-                        }
-                    }
-                });
-                modalInstance.result.then(function (info) {
-                });*/
-                }
-            };
-
-            $rootScope.note = {
-
-                selected: function(note) {
-
-                    return !$rootScope.selected || !$rootScope.selected[note._id] ? false : true;
-
-                }, 
-
-
-                toggle: function(note) {
-
-                    if ($rootScope.status.selectMode === false) {
-
-                        return;
-
-                    }
-
-                    if (!$rootScope.selected) {
-                        $rootScope.selected = {};
-                    }
-
-                    if($rootScope.selected[note._id]) {
-                        delete $rootScope.selected[note._id];
-                    } else {
-                        $rootScope.selected[note._id] = true;
-                    }
-
-
-
-
-
-                },
-
-                merge: function (notes) {
-
-                    var notesMap = {};
-
-                    angular.forEach($rootScope.data.notes, function (item) {
-                        notesMap[item._id] = item;
-                    });
-
-                    angular.forEach(notes, function (item) {
-                        if (!notesMap[item._id]) {
-                            console.log('added');
-                            $rootScope.data.notes.push(item);
-
-                        } else {
-                            console.log('skip');
-                        }
-                    });
-
-                    console.log(notesMap);
-
-
-
-                    //$rootScope.data.notes = notes;
-
-                    console.log(notes);
-
-                },
-
-                add: function (data) {
-
-                    var obj;
-
-                    if (data.title || data.note) {
-                        obj = {
-                            _id: uid(),
-                            title: data.title,
-                            note: data.note,
-                            created: (new Date()).toISOString(),
-                            archived: 0,
-                            updated: null,
-                            color: '#fff'
-                        };
-                        /*if ($scope.new.image) {
-                        obj.image = $scope.new.image;
-                    }
-                    if ($scope.new.url) {
-                        obj.url = $scope.new.url;
-                    }*/
-                        $rootScope.data.notes.push(obj);
-                        /*$scope.new.title = '';
-                    $scope.new.note = '';
-                    $scope.new.image = '';
-                    $scope.new.url = '';*/
-                    }
-
-                }
-            };
-
-            $rootScope.$watch('status.headerOpen', function (newValue, oldValue) {
-
-                if (newValue === false) {
-                    $rootScope.status.selectMode = false;
-                }
-            });
-
-            $rootScope.$watch('status.selectMode', function (newValue, oldValue) {
-
-                if (newValue === false) {
-                    $rootScope.selected = {};
-                }
-            });
-
-
-
-
-            $rootScope.$watchCollection('selected', function (newValue, oldValue) {
-
-                var key, selectedCount = 0;
-
-                if (newValue) {
-
-                    for (key in newValue) {
-
-                        if (newValue.hasOwnProperty(key)) {
-                            selectedCount++;
-                        }
-
-                    }
-
-                } 
-                    $rootScope.status.selectedCount = selectedCount;                    
-                
-
-
-            });
-//$rootScope.selected
-            
 
             $rootScope.$watchCollection('data.notes', function (newValue, oldValue) {
 
@@ -476,7 +620,9 @@
                 }
             });
 
-        });
+
+
+        }
     });
 
 
@@ -547,5 +693,88 @@
     });
 
 
+    app.filter('reverse', function () {
+
+        return function (items) {
+
+            var newItems = [];
+            angular.forEach(items, function (item) {
+                newItems.unshift(item);
+            });
+            return newItems;
+        };
+    });
+
+    app.filter('filterByTag', function () {
+
+        return function (items, tag) {
+
+            var newItems = [];
+
+            if (!tag) {
+
+                return items;
+
+            }
+
+            angular.forEach(items, function (item) {
+
+                if (item && item.tags && item.tags[tag]) {
+                    newItems.push(item);
+                }
+            });
+
+            return newItems;
+
+        };    
+    });
+
+    app.filter('filterByImage', function () {
+
+        return function (items) {
+
+            var newItems = [];
+
+            angular.forEach(items, function (item) {
+
+                if (item && item.image) {
+                    newItems.push(item);
+                }
+            });
+
+            return newItems;
+
+        };    
+    });    
+
+    app.filter('filterByType', function () {
+
+        return function (items, type) {
+
+            var newItems = [];
+
+            type = type || 'inbox';
+
+
+
+            angular.forEach(items, function (item) {
+
+                if (type === 'archived' && item.archived === 1) {
+                    newItems.push(item);
+                } else if (type === 'inbox' && item.archived === 0) {
+                    newItems.push(item);
+                } else if (type === 'bookmark' && item.archived === 0 && item.url) {
+                    newItems.push(item);
+                } else if (type === 'image' && item.archived === 0 && item.image) {
+                    newItems.push(item);
+                }
+
+            });
+
+            return newItems;
+
+        };
+
+    });
 
 })();

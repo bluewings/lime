@@ -4,8 +4,9 @@ block content
 
 	.wrap(ng-app='limeNote', ng-class='(status.headerOpen ? "header-open " : "") + (status.selectMode ? "select-mode " : "")')
 
+
 		
-		lime-header
+		lime-header(class='cover-bg-{{info.tagIndex + 1}}')
 
 		
 
