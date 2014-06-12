@@ -1,6 +1,0 @@
-{
-"version": 3,
-"mappings": "AAAA,EAAG;EACH,SAAS,EAAC,IAAI",
-"sources": ["lime.header.scss"],
-"file": "lime.header.css"
-}
