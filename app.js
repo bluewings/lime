@@ -11,6 +11,7 @@ var routes = require('./routes/index');
 var templates = require('./routes/templates');
 var users = require('./routes/users');
 var upload = require('./routes/upload');
+var sync = require('./routes/sync');
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use('/', routes);
 app.use('/templates', templates);
 app.use('/users', users);
 app.use('/upload', upload);
+app.use('/sync', sync);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

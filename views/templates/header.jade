@@ -3,16 +3,25 @@
 
 .header
 	.quick_menu
-		div(ng-hide='status.selectable', style='float:left')
-			button.btn.btn-default.btn-sm
+		div(ng-hide='status.selectMode', style='float:left')
+			button.btn.btn-default.btn-sm(ng-click='modal.addNote()')
 				span.glyphicon.glyphicon-plus
 			
 
-		div(ng-show='status.selectable', style='float:left')
-			button.btn.btn-default.btn-sm
-				span.glyphicon.glyphicon-share-alt
-			button.btn.btn-default.btn-sm
-				span.glyphicon.glyphicon-trash
+		div(ng-show='status.selectMode', style='float:left')
+			span(ng-hide='status.selectedCount > 0')
+
+				| 항목선택
+			span(ng-show='status.selectedCount > 0')
+
+				button.btn.btn-default.btn-sm(ng-click='modal.share()')
+					span.glyphicon.glyphicon-share-alt
+
+				button.btn.btn-default.btn-sm(ng-click='func.removeSelected()')
+					span.glyphicon.glyphicon-trash
+
+				| {{status.selectedCount}} 개가 선택됨
+
 			
 
 
@@ -20,7 +29,7 @@
 
 		.pull-right
 			button.btn.btn-default.btn-sm(ng-click='func.toggleSelectMode()')
-				| {{status.selectable ? '취소' : '선택'}}
+				| {{status.selectMode ? '취소' : '선택'}}
 	.nav_bar
 		//a.btn_toggle(ng-click="func.toggleHeader()")
 

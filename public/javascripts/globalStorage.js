@@ -6,25 +6,18 @@
 
     var $ = jQuery;
 
-    var app = angular.module('keep.util', []);
+    var app = angular.module('globalStorage', []);
 
-    app.service('GlobalStorage', ['$q',
+    app.service('globalStorage', ['$q',
         function ($q) {
 
             var DEFAULT_URL = 'http://bluewings.github.io/globalStorage.html',
                 DEFAULT_ORIGIN = 'http://bluewings.github.io';
 
-
-
             var iframe, callback = {},
                 resolves = [],
                 listener = {},
                 myId = parseInt(Math.random() * 1000000, 10);
-
-
-            var ignoreChanges = {
-
-            };
 
             function bootstrap() {
 
@@ -60,10 +53,12 @@
 
                 try {
                     data = JSON.parse(event.originalEvent.data);
-                    data.value = JSON.parse(data.value);
-                    if (data.value && data.value._owner) {
-                        owner = data.value && data.value._owner;
-                        delete data.value._owner;
+                    if (data && data.value) {
+                        data.value = JSON.parse(data.value);
+                        if (data.value && data.value._owner) {
+                            owner = data.value && data.value._owner;
+                            delete data.value._owner;
+                        }    
                     }
                 } catch (ignore) {
                     // noop
@@ -166,8 +161,6 @@
 
                     that.get(archiveKey).then(function (data) {
 
-
-
                         setData(scope, localVar, data);
                         deferred.resolve(data);
                     });
@@ -210,6 +203,5 @@
             };
         }
     ]);
-
 
 }());

@@ -21,6 +21,12 @@
 	div.link(ng-show='note.url')
 		a(ng-href='{{note.url}}', target='_blank')
 			span.glyphicon.glyphicon-link
+
+	.select-mask(ng-click='func.toggleNote(note)',
+		ng-class='selected(note) ? "selected" : ""')
+		.glyphicon.glyphicon-ok-sign(ng-show='selected(note)')
+
+
 	div.mask(ng-hide='shared')
 		
 		button.btn(ng-click='share()')

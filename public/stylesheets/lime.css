@@ -1,9 +1,9 @@
-.wrap.on .header {
-  top: 0; }
-.wrap.on .cover {
-  top: 47px; }
-.wrap.on .content {
-  margin-top: 247px; }
+html {
+  overflow-y: scroll; }
+
+html, body {
+  height: 100%; }
+
 .wrap .header {
   position: fixed;
   top: -47px;
@@ -155,6 +155,24 @@
           padding: 2px 2px;
           display: inline-block;
           cursor: pointer; }
+      .note-list .note .inner .select-mask {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        left: 0;
+        right: 0;
+        background-color: rgba(255, 255, 255, 0);
+        z-index: 100;
+        display: none; }
+        .note-list .note .inner .select-mask .glyphicon {
+          position: absolute;
+          display: block;
+          color: blue;
+          font-size: 24px;
+          top: 5px;
+          left: 5px;
+          height: 24px;
+          width: 24px; }
       .note-list .note .inner .mask {
         opacity: 0;
         position: absolute;
@@ -175,5 +193,51 @@
       .note-list .note .inner:hover .mask {
         bottom: 0;
         opacity: 1; }
+
+.modal {
+  overflow-y: hidden !important; }
+  .modal .modal-dialog {
+    outline: none; }
+    .modal .modal-dialog .modal-header {
+      padding: 10px 15px; }
+      .modal .modal-dialog .modal-header .modal-title {
+        font-family: Play;
+        font-size: 14px; }
+        .modal .modal-dialog .modal-header .modal-title .glyphicon {
+          vertical-align: middle;
+          margin-right: 8px;
+          top: -1px; }
+    .modal .modal-dialog .modal-body {
+      padding: 15px; }
+    .modal .modal-dialog .modal-footer {
+      padding: 15px;
+      margin-top: 0; }
+      .modal .modal-dialog .modal-footer .btn .glyphicon {
+        margin: 0 6px 0 -1px;
+        top: -1px;
+        vertical-align: middle; }
+  .modal .modal-note {
+    /*input, textarea{
+        border:none;
+        box-shadow:none;
+        font-size:14px;
+    } */ }
+    .modal .modal-note .input-group-sm, .modal .modal-note input.input-sm {
+      margin-bottom: 10px; }
+    .modal .modal-note .tm {
+      font-family: Play; }
+
+.wrap.header-open .header {
+  top: 0; }
+.wrap.header-open .cover {
+  top: 47px; }
+.wrap.header-open .content {
+  margin-top: 247px; }
+.wrap.select-mode .note-list .note .select-mask {
+  display: block; }
+  .wrap.select-mode .note-list .note .select-mask.selected {
+    background-color: rgba(255, 255, 255, 0.5); }
+.wrap.select-mode .note-list .note .mask {
+  display: none; }
 
 /*# sourceMappingURL=lime.css.map */

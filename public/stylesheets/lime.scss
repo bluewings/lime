@@ -1,3 +1,41 @@
-@import 'lime.header';
-@import 'lime.note';
+html {
+    overflow-y: scroll;
+}
 
+html, body {
+    height: 100%;
+}
+
+@import "lime-header";
+@import "lime-content";
+@import "lime-modal";
+@import "lime-responsive";
+
+.wrap {
+    &.header-open {
+        .header {
+            top: 0;
+        }
+        .cover {
+            top: $quick-menu-height;
+        }
+        .content {
+            margin-top: $cover-height + $quick-menu-height;
+        }
+    }
+    &.select-mode {
+        .note-list {
+            .note {
+                .select-mask {
+                	display:block;
+                	&.selected {
+                		background-color: rgba(255, 255, 255, 0.5);
+                	}
+                }
+                .mask {
+                	display:none;
+                }
+            }
+        }
+    }
+}

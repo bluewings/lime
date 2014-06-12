@@ -1,0 +1,43 @@
+.modal-note
+
+	.modal-header
+		h4.modal-title
+			span.glyphicon.glyphicon-file
+			| 노트 작성
+
+	.modal-body
+		
+		.input-group.input-group-sm
+			input.form-control(ng-model='note.url',
+				placeholder='http://')
+			span.input-group-btn
+				button.btn.btn-default(type='button',
+					ng-click='func.inspectURL()')
+					span.glyphicon.glyphicon-globe
+
+		input.form-control.input-sm(ng-model='note.title',
+			placeholder='Title',
+			style='font-weight:bold')
+
+		textarea.form-control.input-sm(ng-model='note.note',
+			placeholder='Note',
+			rows='5')
+
+		img(ng-show='note.image', ng-src='{{note.image}}', height='150')			
+
+	.modal-footer
+		.tm(style='float:left')
+			| {{note.created | date}}
+		.pull-right
+			button.btn.btn-sm.btn-primary(ng-click='func.update()')
+				span.glyphicon.glyphicon-ok
+				| 수정
+			button.btn.btn-sm.btn-default(ng-click='func.cancel()')
+				| 취소
+
+//.modal-footer
+	button.btn.btn-sm.btn-primary(ng-click='func.bookmark()', ng-disabled='form.$invalid', disabled='disabled')
+		span.glyphicon.glyphicon-ok
+		| Bookmark
+	button.btn.btn-sm.btn-default(ng-click='func.cancel()')
+		| Cancel				

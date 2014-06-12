@@ -1,0 +1,21 @@
+.container
+	h2 hi h2
+
+	a(ng-href='/home/{{status.myId}}', target='_blank')
+		| 홈화면 추가 혹은 다른 브라우저에서 동작하도록
+
+	
+	button.btn(ng-click='modal.addNote()') new note
+
+	ul.note-list(masonry='true')
+
+		li.note(lime-note, ng-repeat='note in data.notes | filter : data.query | orderBy : ["shared", "created"] : [true, true]', ng-attr-shared='{{note.shared}}')
+	pre
+		| {{status | json}}
+
+	//pre
+		| {{selected | json}}
+
+	pre
+		| {{data.notes | json}}
+

@@ -2,10 +2,10 @@ extends layout
 
 block content
 
-	.wrap(ng-app='limeNote', ng-class='status.headerOpen ? "on" : ""')
+	.wrap(ng-app='limeNote', ng-class='(status.headerOpen ? "header-open " : "") + (status.selectMode ? "select-mode " : "")')
 
 		
-		header
+		lime-header
 
 		
 

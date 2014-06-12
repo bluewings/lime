@@ -1,0 +1,54 @@
+$header-font: Play;
+$button-font: Play;
+
+$note-width: 230px;
+$note-min-height: 140px;
+$note-margin: 8px;
+
+$border-radius: 5px;
+
+.modal {
+    overflow-y: hidden !important;
+    .modal-dialog {
+        outline: none;
+        .modal-header {
+            padding: 10px 15px;
+            .modal-title {
+                .glyphicon {
+                    vertical-align: middle;
+                    margin-right: 8px;
+                    top: -1px;
+                }
+                font-family: $header-font;
+                font-size: 14px;
+            }
+        }
+        .modal-body {
+            padding: 15px;
+        }
+        .modal-footer {
+            padding: 15px;
+            margin-top: 0;
+            .btn {
+                .glyphicon {
+                    margin: 0 6px 0 -1px;
+                    top: -1px;
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+    .modal-note {
+        .input-group-sm, input.input-sm {
+            margin-bottom: 10px;
+        }
+.tm {
+    font-family:$header-font;
+}        
+        /*input, textarea{
+            border:none;
+            box-shadow:none;
+            font-size:14px;
+        } */
+    }
+}
