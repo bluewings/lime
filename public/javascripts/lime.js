@@ -471,6 +471,8 @@
 
                     //}, 5000);
 
+                } else {
+                    $rootScope.status.syncFromRemote = true;
                 }
 
 

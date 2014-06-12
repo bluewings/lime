@@ -20,11 +20,16 @@ router.get('/notes/:myId', function (req, res) {
                 message: err
             });
         } else {
+            try {
+                data = JSON.parse(data);
+            } catch (err) {
+                data = [];
+            }
             res.jsonp({
                 code: SUCCESS,
                 message: 'ok',
                 result: {
-                    notes: JSON.parse(data)
+                    notes: data
                 }
             });
         }
