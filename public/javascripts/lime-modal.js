@@ -65,8 +65,16 @@
                     });
 
                     modalInstance.result.then(function (result) {
+                        
+                        //alert(result.data._id);
+                        
+                        if (result.data._id) {
+                          $rootScope.note.modify(result.data._id, result.data);
+                        } else {
+                          $rootScope.note.add(result.data);  
+                        }
 
-                        $rootScope.note.add(result.data);
+                        //$rootScope.note.add(result.data);
                     });
 
 

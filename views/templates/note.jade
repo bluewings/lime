@@ -4,8 +4,7 @@
 
 		.txt-title(ng-show='note.title')
 			| {{note.title}}
-		.txt-note(ng-show='note.note')
-			| {{note.note}}
+		.txt-note(ng-show='note.note', ng-bind-html='note.note | autoLink')
 
 	//div
 		input(type='text', ng-model='note.title')

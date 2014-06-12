@@ -266,6 +266,34 @@
                 console.log(notes);
 
             },
+            modify: function(id, data) {
+                
+                angular.forEach($rootScope.data.notes, function(item) {
+                    
+                    if (id === item._id) {
+                        item.title = data.title;
+                        item.note = data.note;
+                        item.updated = (new Date()).toISOString();
+                        
+
+                        if (data.image) {
+                            item.image = data.image;
+                        } else {
+                            delete item.image;
+                        }
+                        if (data.url) {
+                            item.url = data.url;
+                        } else {
+                            delete item.url;
+                        }
+                    
+                    
+                    }
+                });
+                
+                
+                
+            },
 
             add: function (data) {
 
@@ -778,5 +806,25 @@
         };
 
     });
+    
+  app.filter('autoLink', function () {
+
+        return function (text) {
+            
+            // 전화번호 패턴 변경
+            
+            text = text.replace(/([0-9]{2,4})\-([0-9]{3,4})-([0-9]{4})/g,
+            
+            
+            //'<a onclick="location.href=\'tel:$1$2$3\';return false;"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+            '<a onclick="alert(\'111\');"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+
+            
+
+            return text;
+
+        };
+
+    });    
 
 })();
