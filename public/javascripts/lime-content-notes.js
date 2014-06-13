@@ -1,8 +1,23 @@
 (function () {
 
     'use strict';
+    
+    var $ = jQuery;
 
     var app = angular.module('lime.content.notes', ['ui.bootstrap']);
+    
+    var CONFIG = {};
+    
+    CONFIG = {
+        ARCHIVE_MY_ID_KEY: 'lime-my-id',
+        ARCHIVE_NOTES_KEY: 'lime-notes',
+        SYNC_INTERVAL: 3000,
+        STYLE: {
+            COVER_HEIGHT: 220,
+            NAV_BAR_HEIGHT: 47
+            
+        }
+    };    
 
     app.directive('limeContentNotes', function ($http) {
 
@@ -151,7 +166,6 @@
 
     app.controller('lime.content.notes', function ($scope, $rootScope, $routeParams, $http, $filter, $timeout, $modal) {
 
-
     
 
         console.log($scope.data.notes);
@@ -172,6 +186,11 @@
                 //console.log(note);
             }
         };
+        
+
+$timeout(function() {
+        $(window).scrollTop(CONFIG.STYLE.COVER_HEIGHT -CONFIG.STYLE.NAV_BAR_HEIGHT);    
+    }, 100);         
     });     
 
 })();

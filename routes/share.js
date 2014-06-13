@@ -19,14 +19,17 @@ router.get('/notes/:shareId', function (req, res) {
         filepath = path.join(__dirname, '..', 'data', 'share', 'share-' + req.params.shareId + '.json');
 
     fs.readFile(filepath, 'utf8', function (err, data) {
-
-        data = JSON.parse(data);
         if (err) {
             res.jsonp({
                 code: ERROR,
                 message: err
             });
         } else {
+            try {
+                data = JSON.parse(data);
+            } catch (err) {
+                data = [];
+            }            
             res.jsonp({
                 code: SUCCESS,
                 message: 'ok',

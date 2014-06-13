@@ -21,6 +21,8 @@
 
         return (parseInt(Math.random() * 900000000 + 100000000, 10)).toString(36).substr(0, 5);
     }
+    
+    var $ = jQuery;
 
     var app = angular.module('limeNote', [
         'ngRoute', 'ngSanitize', 'ngAnimate',
@@ -33,10 +35,30 @@
     ]);
 
     var CONFIG = {};
+    
+    CONFIG = {
+        ARCHIVE_MY_ID_KEY: 'lime-my-id',
+        ARCHIVE_NOTES_KEY: 'lime-notes',
+        SYNC_INTERVAL: 3000,
+        STYLE: {
+            COVER_HEIGHT: 220,
+            NAV_BAR_HEIGHT: 47
+            
+        }
+    };
 
-    CONFIG.ARCHIVE_MY_ID_KEY = 'lime-my-id';
-    CONFIG.ARCHIVE_NOTES_KEY = 'lime-notes';
-    CONFIG.SYNC_INTERVAL = 3000;
+//    $nav-bar-height: 47px;
+//$cover-height: 220px;
+    
+    var style = document.createElement('style');
+    style.innerText = '.content {min-height:' + ($(window).height() -CONFIG.STYLE.NAV_BAR_HEIGHT) + 'px !important}';
+    
+    document.body.appendChild(style);
+
+    
+    
+    //alert(document.documentElement.clientHeight);
+    //alert($(window).height());
 
 
 
@@ -82,6 +104,8 @@
         var urlPath = $location.path(),
             urlSearch = $location.search(),
             matches;
+
+    
 
         $rootScope.status = {
             myId: null,
@@ -810,6 +834,7 @@
   app.filter('autoLink', function () {
 
         return function (text) {
+            if (typeof text === 'string') {
             
             // 전화번호 패턴 변경
             
@@ -818,7 +843,10 @@
             
             //'<a onclick="location.href=\'tel:$1$2$3\';return false;"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
             '<a onclick="alert(\'111\');"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
-
+    
+            }
+            
+            
             
 
             return text;
