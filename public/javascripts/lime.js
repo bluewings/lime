@@ -136,7 +136,7 @@
 
                 //http%3A%2F%2F182.162.196.40%2Fhome
 
-                return 'Intent://addshortcut?url=' + encodeURIComponent('http://10.64.51.102:4321/home/' + $rootScope.status.myId) + '&icon=http://icdn.pro/images/en/b/o/bookmark-icone-7792-128.png&title=%ED%80%B5%EB%85%B8%ED%8A%B8&serviceCode=weather&version=7#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end';
+                return 'Intent://addshortcut?url=' + encodeURIComponent('http://182.162.196.40/home/' + $rootScope.status.myId) + '&icon=http://icdn.pro/images/en/b/o/bookmark-icone-7792-128.png&title=%ED%80%B5%EB%85%B8%ED%8A%B8&serviceCode=weather&version=7#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end';
             },
             shareSelected: function () {
                 alert('share selected');
