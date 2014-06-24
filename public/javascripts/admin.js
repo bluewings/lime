@@ -27,9 +27,21 @@
         console.log(limeModal);
 
         $scope.modal = {
-            note: function (user, note) {
+            note: function (note) {
 
-                limeModal.note(user, note).result.then(function () {
+                if (!note && !$scope.data.selected) {
+                    return;
+                }
+                if (!note) {
+                    note = {};
+                    if ($scope.data.selected.userId) {
+                        note.userId = $scope.data.selected.userId;
+                    } else if ($scope.data.selected.userId) {
+                        note.shareId = $scope.data.selected.shareId;
+                    }
+                }
+
+                limeModal.note(note).result.then(function () {
                     $scope.func.refresh();
                 });
             },
@@ -64,7 +76,7 @@
                     event.stopPropagation();    
                 }
             },
-            removeUserNote: function (user, note) {
+            /*removeUserNote: function (user, note) {
 
                 UserNote.remove({
                     userId: user.userId,
@@ -72,6 +84,26 @@
                 }, function (data) {
                     $scope.func.refresh();
                 });
+            },*/
+            removeNote: function (note) {
+
+                if (note.userId) {
+                    UserNote.remove({
+                        userId: note.userId,
+                        _id: note._id
+                    }, function (data) {
+                        $scope.func.refresh();
+                    });
+                } else if (note.shareId) {
+                    ShareNote.remove({
+                        shareId: note.shareId,
+                        _id: note._id
+                    }, function (data) {
+                        $scope.func.refresh();
+                    });
+                }
+
+                
             },
             refresh: function () {
 

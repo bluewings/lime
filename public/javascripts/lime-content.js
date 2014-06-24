@@ -4,7 +4,7 @@
 
     'use strict';
 
-    var app = angular.module('lime.constant', []);
+    var app = angular.module('lime.content', []);
 
     app.constant('CONFIG', {
         NAME: 'Design Guide Helper',

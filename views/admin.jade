@@ -38,7 +38,7 @@ block content
 
 			.col-sm-9
 				div(ng-show='data.selected')
-					button.btn.btn-default(ng-click='modal.note(data.selected)')
+					button.btn.btn-default(ng-click='modal.note()')
 						| 노트추가
 
 					button.btn.btn-default(ng-click='modal.share(data.selected)')
@@ -56,10 +56,10 @@ block content
 							.panel.panel-default
 								.panel-heading
 									input(type='checkbox', ng-model='note.checked')
-									button.btn.btn-default(ng-click='func.removeUserNote(data.selected, note)')
+									button.btn.btn-default(ng-click='func.removeNote(note)')
 										| 삭제
-									button.btn.btn-default(ng-click='modal.note(data.selected, note)',
-										bgng-click='User.editNote(data.selected, note)')
+									button.btn.btn-default(ng-click='modal.note(note)',
+										bgng-click='User.editNote(note)')
 										| 수정
 									button.btn.btn-default(ng-click='modal.json(note)')
 										| JSON

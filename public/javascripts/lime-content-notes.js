@@ -77,18 +77,10 @@
             templateUrl: '/templates/note',
             controller: function ($scope, $attrs, $timeout, limeModal) {
 
-                var owner = {};
-
-                if ($attrs.ownerType === 'user') {
-                    owner.userId = $attrs.ownerId;
-                } else {
-                    owner.shareId = $attrs.ownerId;
-                }
-
                 $scope.modal = {
                     note: function (note) {
 
-                        limeModal.note(owner, note).result.then(function () {
+                        limeModal.note(note).result.then(function () {
                             $scope.func.refresh();
                         });
                     }

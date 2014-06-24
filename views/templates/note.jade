@@ -30,5 +30,5 @@
 		//button.btn(ng-click='archive(note)')
 			span.glyphicon(ng-class='"glyphicon-" + (note.archived == 0 ? "inbox" : "repeat")')
 		
-		button.btn(ng-click='remove(note)')
+		button.btn(ng-click='func.removeNote(note)')
 			span.glyphicon.glyphicon-trash

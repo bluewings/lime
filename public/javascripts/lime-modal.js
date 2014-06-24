@@ -39,7 +39,7 @@
 
                     return $modalInstance;
                 },
-                note: function (user, note) {
+                note: function (note) {
 
                     var $modalInstance;
 
@@ -48,9 +48,11 @@
                         size: 'sm',
                         resolve: {
                             data: function () {
-                                return $.extend({
+                                return angular.copy(note || {});
+
+                                /*return $.extend({
                                     userId: user.userId
-                                }, note || {});
+                                }, note || {});*/
                             }
                         },
                         controller: 'lime.modal.note'
@@ -81,6 +83,8 @@
     app.controller('lime.modal.note', function ($scope, $modalInstance, $upload, data, UserNote, $q) {
 
         $scope.data = data;
+
+        console.log($scope.data);
 
         $scope.func = {
             create: function () {

@@ -433,6 +433,8 @@
             //$rootScope.status.selectedCount = selectedCount;
         });
 
+        
+
         globalStorage.get(CONFIG.ARCHIVE_MY_ID_KEY).then(function (myId) {
 
             var matches;
