@@ -1,19 +1,15 @@
 .inner(class='shared-{{note.shared}}')
 	div(ng-click='modal.note(note)')
+
 		img(ng-show='note.image', ng-src='{{note.image}}', width='100%')
+
+		img(ng-show='note.attachment.length > 0', ng-src='{{note.attachment[0].path}}', width='100%')
 
 		.txt-title(ng-show='note.title')
 			| {{note.title}}
 		.txt-note(ng-show='note.note', ng-bind-html='note.note | autoLink')
 
-	//div
-		input(type='text', ng-model='note.title')
-		input(type='text', ng-model='note.note')
 
-	
-
-
-	
 
 
 
@@ -31,20 +27,8 @@
 		button.btn(ng-click='share()')
 			span.glyphicon.glyphicon-share-alt
 		
-		button.btn(ng-click='archive(note)')
+		//button.btn(ng-click='archive(note)')
 			span.glyphicon(ng-class='"glyphicon-" + (note.archived == 0 ? "inbox" : "repeat")')
 		
 		button.btn(ng-click='remove(note)')
 			span.glyphicon.glyphicon-trash
-
-
-
-	div(ng-show='shared')
-
-		button.btn.btn-xs.btn-primary.btn-block(ng-click='keep(note)'
-			, ng-if='!note._already')
-			span.glyphicon.glyphicon-ok
-			| KEEP !
-		button.btn.btn-xs.btn-success.btn-block(disabled
-			, ng-if='note._already')
-			| Already registered.

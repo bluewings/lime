@@ -4,7 +4,6 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-//var methodOverride = require('method-override');
 var multer  = require('multer');
 
 var routes = require('./routes/index');
@@ -24,21 +23,19 @@ app.locals.pretty = true;
 
 app.use(favicon());
 app.use(logger('dev'));
-
-  
-//console.log(express.methodOverride);
-//app.use(methodOverride());
-app.use(multer({ dest: './uploads/'}));
-
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/components', express.static(__dirname + '/bower_components'));
+app.use(multer({ dest: './uploads/'}));
 
 app.use('/', routes);
 app.use('/templates', templates);
+app.use('/admin', require('./routes/admin'));
+app.use('/user', require('./routes/user'));
+
+
 app.use('/users', users);
 app.use('/upload', upload);
 app.use('/sync', sync);

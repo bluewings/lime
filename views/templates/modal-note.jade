@@ -8,32 +8,41 @@
 	.modal-body
 		
 		.input-group.input-group-sm
-			input.form-control(ng-model='note.url',
+			input.form-control(ng-model='data.url',
 				placeholder='http://')
 			span.input-group-btn
 				button.btn.btn-default(type='button',
 					ng-click='func.inspectURL()')
 					span.glyphicon.glyphicon-globe
 
-		input.form-control.input-sm(ng-model='note.title',
+		input.form-control.input-sm(ng-model='data.title',
 			placeholder='Title',
 			style='font-weight:bold')
 
-		textarea.form-control.input-sm(ng-model='note.note',
+		textarea.form-control.input-sm(ng-model='data.note',
 			placeholder='Note',
 			rows='5')
 
-		img(ng-show='note.image', ng-src='{{note.image}}', height='150')			
+		input(type='file', ng-file-select="func.uploadFile($files)")
+		div(ng-repeat='attached in data.attachment')
+			button.btn.btn-sm.btn-default(ng-click='func.removeFile(attached)')
+				| delete img
+			img(ng-src='{{attached.path}}', width='100px')			
+
+		img(ng-show='data.image', ng-src='{{data.image}}', height='150')			
 		
-		input.form-control.input-sm(ng-model='note.image',
+		input.form-control.input-sm(ng-model='data.image',
 			placeholder='img src',
 			style='font-weight:bold')		
 
 	.modal-footer
 		.tm(style='float:left')
-			| {{note.created | date}}
+			| {{data.created | date}}
 		.pull-right
-			button.btn.btn-sm.btn-primary(ng-click='func.update()')
+			button.btn.btn-sm.btn-primary(ng-if='!data._id', ng-click='func.create()')
+				span.glyphicon.glyphicon-ok
+				| 추가
+			button.btn.btn-sm.btn-primary(ng-if='data._id', ng-click='func.modify()')
 				span.glyphicon.glyphicon-ok
 				| 수정
 			button.btn.btn-sm.btn-default(ng-click='func.cancel()')

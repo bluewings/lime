@@ -11,86 +11,137 @@
             .replace(/\&amp;/g, '&');
     };
 
-    var app = angular.module('lime.modal', ['ui.bootstrap']);
+    var app = angular.module('lime.modal', [
+        'ui.bootstrap',
+        'angularFileUpload',
+        'lime.resource'
+    ]);
 
     app.service('limeModal', ['$modal', '$rootScope',
         function ($modal, $rootScope) {
 
             return {
-                share: function() {
-                    var modalInstance;
+                share: function () {
+                    var $modalInstance;
 
-                    modalInstance = $modal.open({
+                    $modalInstance = $modal.open({
                         templateUrl: '/templates/modal-share',
                         size: 'sm',
                         controller: 'lime.modal.share'
                     });
 
-                    modalInstance.result.then(function (result) {
+                    $modalInstance.result.then(function (result) {
 
                         //$rootScope.note.add(result.data);
                     });
 
 
 
-                    return modalInstance;
+                    return $modalInstance;
                 },
-                note: function (note) {
+                note: function (user, note) {
 
-                    var modalInstance;
-                    
-                    
-                    
-              
+                    var $modalInstance;
 
-           
-
-                    modalInstance = $modal.open({
+                    $modalInstance = $modal.open({
                         templateUrl: '/templates/modal-note',
                         size: 'sm',
-                        //scope: $scope,
-
-                        controller: 'lime.modal.note',
                         resolve: {
-                            note: function () {
-                                
-                                if (note) {
-                                    //note = angular.copy(note);
-                                    return note = angular.copy(note);
-                                }                                
-                            return;
-                              
+                            data: function () {
+                                return $.extend({
+                                    userId: user.userId
+                                }, note || {});
                             }
-                          }                        
+                        },
+                        controller: 'lime.modal.note'
                     });
+                    return $modalInstance;
+                },
+                json: function (jsonData) {
 
-                    modalInstance.result.then(function (result) {
-                        
-                        //alert(result.data._id);
-                        
-                        if (result.data._id) {
-                          $rootScope.note.modify(result.data._id, result.data);
-                        } else {
-                          $rootScope.note.add(result.data);  
+                    return $modal.open({
+                        templateUrl: '/templates/modal-json',
+                        size: 'sm',
+                        controller: function ($scope, $modalInstance) {
+
+                            $scope.json = jsonData;
+
+                            $scope.func = {
+                                close: function () {
+                                    $modalInstance.dismiss();
+                                }
+                            };
                         }
-
-                        //$rootScope.note.add(result.data);
                     });
-
-
-
-                    return modalInstance;
                 }
             };
         }
     ]);
 
-    app.controller('lime.modal.note', function ($scope, $modalInstance, $http, note) {
+    app.controller('lime.modal.note', function ($scope, $modalInstance, $upload, data, UserNote, $q) {
 
-        
-        $scope.note = note || {};
+        $scope.data = data;
 
         $scope.func = {
+            create: function () {
+
+                UserNote.save({
+                    userId: $scope.data.userId
+                }, $scope.data, function (data) {
+                    $modalInstance.close();
+                });
+            },
+            modify: function () {
+
+                UserNote.update({
+                    userId: $scope.data.userId,
+                    _id: $scope.data._id
+                }, $scope.data, function (data) {
+                    $modalInstance.close();
+                });
+            },
+            uploadFile: function ($files) {
+
+                var inx;
+
+                for (inx = 0; inx < $files.length; inx++) {
+
+                    $upload.upload({
+                        url: '/user/' + $scope.data.userId + '/upload',
+                        method: 'POST',
+                        file: $files[inx]
+                    }).success(function (result) {
+                        if (result.status === 'success') {
+
+                            if (!$scope.data.attachment) {
+                                $scope.data.attachment = [];
+                            }
+                            $scope.data.attachment.push({
+                                path: result.data.path,
+                                mimetype: result.data.mimetype,
+                                size: result.data.size,
+                                width: result.data.width,
+                                height: result.data.height
+                            });
+                        }
+                    });
+                }
+            },
+            removeFile: function (attached) {
+
+                var newAttachment;
+
+                if ($scope.data.attachment) {
+                    newAttachment = [];
+                    angular.forEach($scope.data.attachment, function (item) {
+                        if (attached !== item) {
+                            newAttachment.push(item);
+                        }
+                    });
+                    $scope.data.attachment = newAttachment;
+                }
+            },
+
             update: function () {
 
                 $modalInstance.close({
@@ -123,8 +174,8 @@
     app.controller('lime.modal.share', function ($scope, $rootScope, $modalInstance, $http) {
 
         $scope.note = {};
-        
-        
+
+
 
         $scope.func = {
             share: function () {
@@ -149,7 +200,7 @@
 
 
                 //alert('공유하자');
-/*
+                /*
                     $http.post('/share/notes/' + $rootScope.status.myId, {
                         notes: $rootScope.data.notes
                     }).success(function (data) {
@@ -158,7 +209,7 @@
                             alert('저장된듯?');
                         }
                     });            
-                    */    
+                    */
 
                 /*$modalInstance.close({
                     method: 'update',
@@ -170,6 +221,6 @@
                 $modalInstance.dismiss('cancel');
             }
         };
-    });    
+    });
 
-})();
+}());

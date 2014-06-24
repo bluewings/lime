@@ -1,0 +1,75 @@
+extends layout
+
+block content
+
+	.wrap(ng-app='limeAdmin')
+
+
+		
+		
+
+		
+
+		.content(ng-controller='main')
+
+
+
+			.col-sm-3
+
+				button.btn.btn-default(ng-click='func.createUser()')
+					| create user
+				.list-group
+					a.list-group-item(ng-repeat='user in data.users | orderBy : "created" : true',
+						ng-class='data.selected === user ? "active" : ""',
+						ng-click='func.select(user)')
+						span.glyphicon.glyphicon-user
+						| {{user.userId}}
+
+						span.badge.pull-right(ng-show='user.notes.length > 0')
+							| {{user.notes.length}}
+						br
+						| {{user.created | date : 'yyyy.MM.dd HH:mm:ss'}}
+						button.btn.btn-default(ng-click='func.removeUser(user, $event)')
+							| 삭제
+						button.btn.btn-default(ng-click='modal.json(user, $event)')
+							| JSON
+			
+
+
+			.col-sm-9
+				div(ng-show='data.selected')
+					button.btn.btn-default(ng-click='modal.note(data.selected)')
+						| 노트추가
+
+					button.btn.btn-default(ng-click='modal.share(data.selected)')
+						| 공유하기
+					.row
+
+						ul.note-list(masonry='true')
+
+							li.note(lime-note,
+								ng-repeat='note in data.selected.notes | orderBy : "created" : true',
+								ng-attr-owner-type='{{data.selected.userId ? "user" : "share"}}',
+								ng-attr-owner-id='{{data.selected.userId || data.selected.shareId}}')				
+
+						.col-sm-4(ng-repeat='note in data.selected.notes | orderBy : "created" : true')
+							.panel.panel-default
+								.panel-heading
+									input(type='checkbox', ng-model='note.checked')
+									button.btn.btn-default(ng-click='func.removeUserNote(data.selected, note)')
+										| 삭제
+									button.btn.btn-default(ng-click='modal.note(data.selected, note)',
+										bgng-click='User.editNote(data.selected, note)')
+										| 수정
+									button.btn.btn-default(ng-click='modal.json(note)')
+										| JSON
+								.panel-body
+									h3
+										| {{note.title}}
+									div
+										| {{note.note}}
+									div(ng-repeat='attached in note.attachment')
+										img(ng-src='{{attached.path}}' width='200px')
+									span
+										| {{note.created | date : 'yyyy.MM.dd HH:mm:ss'}}
+

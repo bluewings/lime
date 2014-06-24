@@ -4,7 +4,10 @@
     
     var $ = jQuery;
 
-    var app = angular.module('lime.content.notes', ['ui.bootstrap']);
+    var app = angular.module('lime.content.notes', [
+        'ngSanitize',
+        'ui.bootstrap',
+        'lime.modal']);
     
     var CONFIG = {};
     
@@ -28,6 +31,8 @@
             scope: true,
             controller: function ($scope, $attrs, $timeout) {
 
+
+
                 $scope.func = {
                     toggleHeader: function() {
 
@@ -41,33 +46,64 @@
             }
         };
     });
+  app.filter('autoLink', function () {
 
+        return function (text) {
+            if (typeof text === 'string') {
+            
+            // 전화번호 패턴 변경
+            
+            text = text.replace(/([0-9]{2,4})\-([0-9]{3,4})-([0-9]{4})/g,
+            
+            
+            //'<a onclick="location.href=\'tel:$1$2$3\';return false;"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+            '<a onclick="alert(\'111\');"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+    
+            }
+            
+            
+            
+
+            return text;
+
+        };
+
+    });   
     app.directive('limeNote', function ($http) {
 
         return {
             restrict: 'AE',
             replace: false,
             templateUrl: '/templates/note',
-            controller: function ($scope, $rootScope, $attrs, $timeout) {
+            controller: function ($scope, $attrs, $timeout, limeModal) {
 
-                //console.log('each note');
-                //console.log($scope);
-                //console.log($attrs);
+                var owner = {};
 
-                $timeout(function () {
-                    $scope.shared = $attrs.shared;
-                });
+                if ($attrs.ownerType === 'user') {
+                    owner.userId = $attrs.ownerId;
+                } else {
+                    owner.shareId = $attrs.ownerId;
+                }
+
+                $scope.modal = {
+                    note: function (note) {
+
+                        limeModal.note(owner, note).result.then(function () {
+                            $scope.func.refresh();
+                        });
+                    }
+                };                    
 
 
 
-                $scope.$watch('note.title + note.note', function (newValue, oldValue) {
+                return;
+
+                /*$scope.$watch('note.title + note.note', function (newValue, oldValue) {
 
                     if (oldValue && oldValue !== newValue) {
                         $scope.note.updated = (new Date()).toISOString();
                     }
-                });
-
-
+                });*/
 
                 // TODO: 서비스로 뺄 것
                 $scope.remove = function (note) {
