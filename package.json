@@ -13,11 +13,9 @@
     "body-parser": "~1.0.0",
     "debug": "~0.7.4",
     "jade": "~1.3.0",
-    "multiparty": "*",
-    "method-override": "~1.0.2",
-    "multiparty": "~3.2.6",
     "multer": "~0.0.7",
-    "morgan": "~1.0.1",
+    "image-size": "^0.3.0",
+    "mongoose": "^3.8.12",
     "phantomjs": "~1.9.7-8"
   }
 }

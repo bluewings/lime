@@ -1,7 +1,7 @@
 {
-  "name": "keep",
+  "name": "lime",
   "version": "0.0.0",
-  "homepage": "https://github.com/bluewings/keep",
+  "homepage": "https://github.com/bluewings/lime",
   "authors": [
     "Albert Cha <mygenie3@naver.com>"
   ],
@@ -16,10 +16,10 @@
   "dependencies": {
     "angular-animate": "~1.2.16",
     "angular-route": "~1.2.16",
-    "angular-sanitize": "~1.2.16",
-    "angular": "~1.2.16",
     "angular-bootstrap": "~0.11.0",
+    "angular-sanitize": "~1.2.16",
+    "angular-resource": "~1.2.18",
     "bootstrap-sass": "~3.0.2",
-    "jquery": "~2.1.1"
+    "ng-file-upload": "~1.4.0"
   }
 }
