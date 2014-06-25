@@ -2,6 +2,8 @@
 
     'use strict';
 
+    var $ = jQuery;
+
     function unescapeHTML(str) {
 
         return str.replace(/\&lt;/g, '<')
@@ -21,18 +23,19 @@
         function ($modal, $rootScope) {
 
             return {
-                share: function () {
+                share: function (notes) {
+
                     var $modalInstance;
 
                     $modalInstance = $modal.open({
                         templateUrl: '/templates/modal-share',
                         size: 'sm',
+                        resolve: {
+                            notes: function () {
+                                return angular.copy(notes || []);
+                            }
+                        },
                         controller: 'lime.modal.share'
-                    });
-
-                    $modalInstance.result.then(function (result) {
-
-                        //$rootScope.note.add(result.data);
                     });
 
 
@@ -48,6 +51,7 @@
                         size: 'sm',
                         resolve: {
                             data: function () {
+                                
                                 return angular.copy(note || {});
 
                                 /*return $.extend({
@@ -80,29 +84,54 @@
         }
     ]);
 
-    app.controller('lime.modal.note', function ($scope, $modalInstance, $upload, data, UserNote, $q) {
+    app.controller('lime.modal.note', function ($scope, $modalInstance, $upload, data, UserNote, ShareNote, $q, $http) {
 
         $scope.data = data;
+        //$scope.data.url = 'http://sports.news.naver.com/brazil2014/news/read.nhn?oid=452&aid=0000000103';
 
         console.log($scope.data);
 
         $scope.func = {
             create: function () {
 
-                UserNote.save({
-                    userId: $scope.data.userId
-                }, $scope.data, function (data) {
-                    $modalInstance.close();
-                });
+
+
+                if ($scope.data.userId) {
+
+
+
+                    UserNote.save({
+                        userId: $scope.data.userId
+                    }, $scope.data, function (data) {
+                        $modalInstance.close();
+                    });
+                } else if ($scope.data.shareId) {
+                    
+                    ShareNote.save({
+                        shareId: $scope.data.shareId
+                    }, $scope.data, function (data) {
+                        $modalInstance.close();
+                    });
+                }
             },
             modify: function () {
 
-                UserNote.update({
-                    userId: $scope.data.userId,
-                    _id: $scope.data._id
-                }, $scope.data, function (data) {
-                    $modalInstance.close();
-                });
+                if ($scope.data.userId) {
+                    UserNote.update({
+                        userId: $scope.data.userId,
+                        _id: $scope.data._id
+                    }, $scope.data, function (data) {
+                        $modalInstance.close();
+                    });
+                } else if ($scope.data.shareId) {
+
+                    ShareNote.update({
+                        shareId: $scope.data.shareId,
+                        _id: $scope.data._id
+                    }, $scope.data, function (data) {
+                        $modalInstance.close();
+                    });
+                }
             },
             uploadFile: function ($files) {
 
@@ -120,7 +149,7 @@
                             if (!$scope.data.attachment) {
                                 $scope.data.attachment = [];
                             }
-                            $scope.data.attachment.push({
+                            $scope.data.attachment.unshift({
                                 path: result.data.path,
                                 mimetype: result.data.mimetype,
                                 size: result.data.size,
@@ -157,32 +186,88 @@
 
                 $modalInstance.dismiss('cancel');
             },
-            inspectURL: function () {
+            inspectURL: function (event) {
 
-                $http.get('/link/' + encodeURIComponent($scope.note.url)).success(function (data) {
+                if (!event || event.keyCode == 13) {
 
-                    if (data.code === 200) {
+                    $http.get('/link/' + encodeURIComponent($scope.data.url)).success(function (response) {
 
-                        $scope.note = {
-                            url: data.result.url,
-                            title: unescapeHTML(unescapeHTML(data.result.title)),
-                            note: unescapeHTML(unescapeHTML(data.result.note)),
-                            image: data.result.image
-                        };
-                    }
-                });
+                        var imgEl;
+
+                        if (response.code === 200) {
+
+
+
+                            $scope.data.url = response.result.url;
+                            $scope.data.title = unescapeHTML(unescapeHTML(response.result.title));
+                            $scope.data.note = unescapeHTML(unescapeHTML(response.result.note));
+
+                            if (response.result.image) {
+                                imgEl = document.createElement('IMG');
+                                imgEl.onload = function () {
+
+                                    if (!$scope.data.attachment) {
+                                        $scope.data.attachment = [];
+                                    }
+                                    $scope.$apply(function () {
+
+
+                                        $scope.data.attachment.unshift({
+                                            path: response.result.image,
+                                            width: imgEl.width,
+                                            height: imgEl.height
+
+                                        });
+                                    });
+                                };
+                                imgEl.src = response.result.image;
+                            }
+
+
+
+                        }
+                    });
+                }
             }
         };
     });
 
-    app.controller('lime.modal.share', function ($scope, $rootScope, $modalInstance, $http) {
+    app.controller('lime.modal.share', function ($scope, $rootScope, $modalInstance, $http, $filter, notes, Share, limeAuth) {
 
-        $scope.note = {};
+
+
+        limeAuth.getUserId().then(function (userId) {
+
+            //$scope.conf.userId = userId;
+            //$scope.func.refresh();
+
+            $scope.data = {
+                title: $filter('date')(new Date(), 'yyyy.MM.dd HH:mm:ss'),
+                notes: notes,
+                createdBy: userId
+
+            };
+        });
+
+
+
+        console.log($scope.data);
 
 
 
         $scope.func = {
             share: function () {
+
+      
+
+                   
+                    Share.save($scope.data, function (response) {
+                        $modalInstance.close();
+                    });                
+
+
+
+                return;
 
                 //var notes;
 

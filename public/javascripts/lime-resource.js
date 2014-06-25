@@ -58,4 +58,19 @@
         }
     ]);
 
+    app.factory('ShareNote', ['$resource',
+        function ($resource) {
+
+            return $resource('/share/:shareId/note/:_id', null, {
+                'update': {
+                    method: 'PUT',
+                    params: {
+                        shareId: '@id',
+                        _id: '@_id'
+                    }
+                }
+            });
+        }
+    ]);    
+
 }());

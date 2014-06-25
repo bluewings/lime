@@ -21,7 +21,7 @@
 
         return (parseInt(Math.random() * 900000000 + 100000000, 10)).toString(36).substr(0, 5);
     }
-    
+
     var $ = jQuery;
 
     var app = angular.module('limeNote', [
@@ -35,7 +35,7 @@
     ]);
 
     var CONFIG = {};
-    
+
     CONFIG = {
         ARCHIVE_MY_ID_KEY: 'lime-my-id',
         ARCHIVE_NOTES_KEY: 'lime-notes',
@@ -43,20 +43,20 @@
         STYLE: {
             COVER_HEIGHT: 220,
             NAV_BAR_HEIGHT: 47
-            
+
         }
     };
 
-//    $nav-bar-height: 47px;
-//$cover-height: 220px;
-    
+    //    $nav-bar-height: 47px;
+    //$cover-height: 220px;
+
     var style = document.createElement('style');
-    style.innerText = '.content {min-height:' + ($(window).height() -CONFIG.STYLE.NAV_BAR_HEIGHT) + 'px !important}';
-    
+    style.innerText = '.content {min-height:' + ($(window).height() - CONFIG.STYLE.NAV_BAR_HEIGHT) + 'px !important}';
+
     document.body.appendChild(style);
 
-    
-    
+
+
     //alert(document.documentElement.clientHeight);
     //alert($(window).height());
 
@@ -99,13 +99,141 @@
 
     });
 
-    app.run(function ($rootScope, $location, $http, $interval, $timeout, limeModal, globalStorage) {
+    app.constant('CONFIG', {
+        ARCHIVE_MY_ID_KEY: 'lime-my-id',
+        ARCHIVE_NOTES_KEY: 'lime-notes',
+        SYNC_INTERVAL: 3000,
+        STYLE: {
+            COVER_HEIGHT: 220,
+            NAV_BAR_HEIGHT: 47
+        }
+    });
+
+    app.value('CONSTANT', {
+        SUCCESS: 'success',
+        ERROR: 'error'
+    });
+
+    app.service('limeAuth', function ($q, $location, globalStorage, User, CONSTANT, CONFIG) {
+
+        //var urlPath = $location.path(),
+        //urlSearch = $location.search(),
+
+        console.log(CONFIG);
+
+        var instance = {};
+
+        instance.userId = null;
+
+        console.log($location.path());
+        console.log($location.search());
+
+        return {
+            getUserId: function () {
+
+                var that = this,
+                    deferred = $q.defer();
+
+                // 강제 변경 체크할것.
+
+                /*if (urlSearch && urlSearch.reset) {
+                matches = urlPath.match(/^\/home\/([0-9a-zA-Z]{6})$/);
+                if (matches && matches.length === 2) {
+                    myId = matches[1];
+                    globalStorage.set(CONFIG.ARCHIVE_MY_ID_KEY, myId);
+                }
+            }*/
+
+                if (instance.userId) { // 이미 사용자 정보가 있는 경우
+
+                    deferred.resolve(instance.userId);
+
+                } else { // 사용자 정보가 없는 경우
+
+                    globalStorage.get(CONFIG.ARCHIVE_MY_ID_KEY).then(function (userId) {
+
+                        if (userId && typeof userId === 'string') { // 로컬스토리지에 기록이 있는 경우
+                            instance.userId = userId;
+                            deferred.resolve(instance.userId);
+                        } else { // 로컬스토리지에 기록이 없는 경우 (신규생성)
+                            User.save({}, {}, function (response) {
+                                if (response.status === CONSTANT.SUCCESS) {
+                                    //console.log(response);
+                                    //return;
+                                    that.setUserId(response.data.userId).then(function (userId) {
+                                        instance.userId = userId;
+                                        deferred.resolve(userId);
+                                    });
+                                } else {
+                                    // err
+                                }
+                            });
+                        }
+                    });
+                }
+
+                return deferred.promise;
+            },
+            setUserId: function (userId) {
+
+                var deferred = $q.defer();
+
+                globalStorage.set(CONFIG.ARCHIVE_MY_ID_KEY, userId).then(function () {
+
+                    instance.userId = userId;
+                    deferred.resolve(instance.userId);
+                });
+
+                return deferred.promise;
+            }
+        };
+    });
+
+    app.run(function ($rootScope, $location, $http, $interval, $timeout, limeModal, globalStorage, limeAuth, User, CONSTANT) {
+
+        //console.log('>>>>>')
+        return;
+
+        limeAuth.getUserId().then(function (userId) {
+
+            User.get({
+                userId: userId
+            }, function (response) {
+                if (response.status === CONSTANT.SUCCESS) {
+                    console.log(response.data[0]);
+                }
+            });
+        });
+
+
+
+        return;
+
+        globalStorage.get(CONFIG.ARCHIVE_MY_ID_KEY).then(function (myId) {
+
+
+            // 갇제 설정
+            if (urlSearch && urlSearch.reset) {
+                matches = urlPath.match(/^\/home\/([0-9a-zA-Z]{5})$/);
+                if (matches && matches.length === 2) {
+                    myId = matches[1];
+                    globalStorage.set(CONFIG.ARCHIVE_MY_ID_KEY, myId);
+                }
+            }
+            // //갇제 설정            
+
+            console.log(myId);
+
+        });
+        return;
+
+
 
         var urlPath = $location.path(),
             urlSearch = $location.search(),
             matches;
 
-    
+
 
         $rootScope.status = {
             myId: null,
@@ -117,7 +245,7 @@
             filterTag: ''
         };
 
-        
+
         // sync 되는 대상
         $rootScope.data = {
             notes: []
@@ -132,7 +260,7 @@
 
 
         $rootScope.func = {
-            intentURL: function() {
+            intentURL: function () {
 
                 //http%3A%2F%2F182.162.196.40%2Fhome
 
@@ -260,7 +388,7 @@
                         ////newNotes.push(item);
                         //$rootScope.data.notes.push(item);
 
-                    // 내용이 바뀐거...
+                        // 내용이 바뀐거...
                     } else if (!equals(item, notesMap[item._id])) {
 
                         console.log('changed');
@@ -290,15 +418,15 @@
                 console.log(notes);
 
             },
-            modify: function(id, data) {
-                
-                angular.forEach($rootScope.data.notes, function(item) {
-                    
+            modify: function (id, data) {
+
+                angular.forEach($rootScope.data.notes, function (item) {
+
                     if (id === item._id) {
                         item.title = data.title;
                         item.note = data.note;
                         item.updated = (new Date()).toISOString();
-                        
+
 
                         if (data.image) {
                             item.image = data.image;
@@ -310,13 +438,13 @@
                         } else {
                             delete item.url;
                         }
-                    
-                    
+
+
                     }
                 });
-                
-                
-                
+
+
+
             },
 
             add: function (data) {
@@ -389,11 +517,13 @@
 
             var key, selectedCount = 0;
 
-            var tags = [''], _tags = [''], tagMap = {};
+            var tags = [''],
+                _tags = [''],
+                tagMap = {};
 
             if (newValue) {
 
-                angular.forEach(newValue, function(item) {
+                angular.forEach(newValue, function (item) {
 
                     if (item.tags) {
                         for (key in item.tags) {
@@ -421,7 +551,6 @@
                 }
 
 
-           
 
                 $rootScope.tags = _tags;
 
@@ -433,7 +562,7 @@
             //$rootScope.status.selectedCount = selectedCount;
         });
 
-        
+
 
         globalStorage.get(CONFIG.ARCHIVE_MY_ID_KEY).then(function (myId) {
 
@@ -479,9 +608,7 @@
 
 
 
-                        
-
-                        bootstrap(function() {
+                        bootstrap(function () {
                             $rootScope.note.merge(data.result.notes, matches[1]);
                         });
 
@@ -491,7 +618,7 @@
 
                     }
 
-                    
+
 
                 });
 
@@ -518,9 +645,9 @@
                         $rootScope.status.syncFromRemote = true;
                         $rootScope.status.hasChanges = false;
                         if (callback) {
-                            callback();    
+                            callback();
                         }
-                        
+
                     });
 
                     //}, 5000);
@@ -713,6 +840,17 @@
 
                     // initial animation
                     element.addClass('masonry');
+                    
+                    var timer;
+                    
+                    $(window).off('resize.masonry').on('resize.masonry', function() {
+                        
+                        clearTimeout(timer);
+                        timer = setTimeout(function() {
+                            element.masonry("reload");
+                        });
+                        
+                    });
 
                     // Wait inside directives to render
                     setTimeout(function () {
@@ -782,7 +920,7 @@
 
             return newItems;
 
-        };    
+        };
     });
 
     app.filter('filterByImage', function () {
@@ -800,8 +938,8 @@
 
             return newItems;
 
-        };    
-    });    
+        };
+    });
 
     app.filter('filterByType', function () {
 
@@ -832,29 +970,28 @@
         };
 
     });
-    
-  app.filter('autoLink', function () {
+
+    app.filter('autoLink', function () {
 
         return function (text) {
             if (typeof text === 'string') {
-            
-            // 전화번호 패턴 변경
-            
-            text = text.replace(/([0-9]{2,4})\-([0-9]{3,4})-([0-9]{4})/g,
-            
-            
-            //'<a onclick="location.href=\'tel:$1$2$3\';return false;"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
-            '<a onclick="alert(\'111\');"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
-    
+
+                // 전화번호 패턴 변경
+
+                text = text.replace(/([0-9]{2,4})\-([0-9]{3,4})-([0-9]{4})/g,
+
+
+                    //'<a onclick="location.href=\'tel:$1$2$3\';return false;"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+                    '<a onclick="alert(\'111\');"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+
             }
-            
-            
-            
+
+
 
             return text;
 
         };
 
-    });    
+    });
 
 })();

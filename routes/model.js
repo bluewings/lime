@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var db = mongoose.connect('mongodb://localhost/sample3');
+var db = mongoose.connect('mongodb://localhost/sample0');
 
 var attachmentSchema,
     noteSchema,
@@ -48,9 +48,8 @@ userSchema = new Schema({
     },
     notes: [noteSchema],
     shared: [{
-        id: {
-            type: Schema.ObjectId,
-            ref: 'shareSchema'
+        shareId: {
+            type: String
         }
     }],
     created: {
@@ -65,6 +64,9 @@ shareSchema = new Schema({
         required: true,
         unique: true
     },
+    title: String,
+    note: String,
+    backgroundImage: String,
     notes: [noteSchema],
     createdBy: String,
     created: {

@@ -6,6 +6,9 @@
 			| 공유하기
 
 	.modal-body
+	
+		h4
+			| {{data.notes.length}} 개의 노트
 
 
 
@@ -13,8 +16,12 @@
 		
 
 
-		input.form-control.input-sm(ng-model='note.title',
+		input.form-control.input-sm(ng-model='data.title',
 			placeholder='Title',
+			style='font-weight:bold')
+			
+		input.form-control.input-sm(ng-model='data.note',
+			placeholder='note',
 			style='font-weight:bold')
 
 

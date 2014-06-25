@@ -1,27 +1,58 @@
-.container
+.container.wrap(ng-class='status.selectMode ? "select-mode" : ""')
+
+
 	
 
 	a.btn.btn-default.btn-sm(ng-href="{{$root.func.intentURL()}}")
 		span.glyphicon.glyphicon-bookmark
 		| 홈화면에 바로가기 추가	
 
+	.list-group
+		a.list-group-item(ng-click='data.selected = data.user',
+			ng-class='data.selected === data.user ? "active" : ""')
+			| MY ({{data.user.notes.length}})
+		a.list-group-item(ng-repeat='share in data.shared',
+			ng-click='data.selected = share',
+			ng-class='data.selected === share ? "active" : ""')
+			| {{share.title}} ({{share.notes.length}})
 	br
 	
 	//a(ng-href='/home/{{status.myId}}', target='_blank')
 		| 홈화면 추가 혹은 다른 브라우저에서 동작하도록
+		
+	//- 1. 퀵메뉴
+	.quick_menu
+
+		//- 퀵메뉴(기본모드) - 추가
+		div(ng-hide='status.selectMode', style='float:left')
+			button.btn.btn-default.btn-sm(ng-click='modal.addNote()')
+				span.glyphicon.glyphicon-plus
+
+		//- 퀵메뉴(선택모드) - 공유, 삭제
+		div(ng-show='status.selectMode', style='float:left')
+
+			span(ng-hide='status.selectedCount > 0')
+				| 항목선택
+
+			span(ng-show='true || status.selectedCount > 0')
+				button.btn.btn-default.btn-sm(ng-click='modal.share()')
+					span.glyphicon.glyphicon-share-alt
+				button.btn.btn-default.btn-sm(ng-click='func.removeSelected()')
+					span.glyphicon.glyphicon-trash
+
+				| {{status.selectedCount}} 개가 선택됨
+
+		//- 퀵메뉴 모드 선택
+		.pull-right
+			button.btn.btn-default.btn-sm(ng-click='status.selectMode = status.selectMode ? false : true')
+				| {{status.selectMode ? '취소' : '선택'}}	
 
 	
-	//button.btn(ng-click='modal.addNote()') new note
+	button.btn(ng-click='modal.note()') new note
 
 	ul.note-list(masonry='true')
 
-		li.note(lime-note, ng-repeat='note in data.notes | filterByTag : status.filterTag | filter : data.query | orderBy : ["shared", "created"] : [true, true]', ng-attr-shared='{{note.shared}}')
-	//pre
-		| {{status | json}}
+		li.note(lime-note, ng-repeat='note in data.selected.notes | filterByTag : status.filterTag | filter : data.query | orderBy : ["shared", "created"] : [true, true]', ng-attr-shared='{{note.shared}}')
 
-	//pre
-		| {{selected | json}}
-
-	//pre
-		| {{data.notes | json}}
-
+	pre
+		| {{data | json}}

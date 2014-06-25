@@ -1,16 +1,17 @@
 (function () {
 
     'use strict';
-    
+
     var $ = jQuery;
 
     var app = angular.module('lime.content.notes', [
         'ngSanitize',
         'ui.bootstrap',
-        'lime.modal']);
-    
+        'lime.modal'
+    ]);
+
     var CONFIG = {};
-    
+
     CONFIG = {
         ARCHIVE_MY_ID_KEY: 'lime-my-id',
         ARCHIVE_NOTES_KEY: 'lime-notes',
@@ -18,9 +19,9 @@
         STYLE: {
             COVER_HEIGHT: 220,
             NAV_BAR_HEIGHT: 47
-            
+
         }
-    };    
+    };
 
     app.directive('limeContentNotes', function ($http) {
 
@@ -34,11 +35,11 @@
 
 
                 $scope.func = {
-                    toggleHeader: function() {
+                    toggleHeader: function () {
 
                         $scope.status.headerOpen = $scope.status.headerOpen ? false : true;
                     },
-                    toggleSelectMode: function() {
+                    toggleSelectMode: function () {
 
                         $scope.status.selectable = $scope.status.selectable ? false : true
                     }
@@ -46,29 +47,28 @@
             }
         };
     });
-  app.filter('autoLink', function () {
+    app.filter('autoLink', function () {
 
         return function (text) {
             if (typeof text === 'string') {
-            
-            // 전화번호 패턴 변경
-            
-            text = text.replace(/([0-9]{2,4})\-([0-9]{3,4})-([0-9]{4})/g,
-            
-            
-            //'<a onclick="location.href=\'tel:$1$2$3\';return false;"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
-            '<a onclick="alert(\'111\');"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
-    
+
+                // 전화번호 패턴 변경
+
+                text = text.replace(/([0-9]{2,4})\-([0-9]{3,4})-([0-9]{4})/g,
+
+
+                    //'<a onclick="location.href=\'tel:$1$2$3\';return false;"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+                    '<a onclick="alert(\'111\');"><span class="glyphicon glyphicon-earphone"></span> $1-$2-$3</a>');
+
             }
-            
-            
-            
+
+
 
             return text;
 
         };
 
-    });   
+    });
     app.directive('limeNote', function ($http) {
 
         return {
@@ -76,15 +76,23 @@
             replace: false,
             templateUrl: '/templates/note',
             controller: function ($scope, $attrs, $timeout, limeModal) {
-
-                $scope.modal = {
+                
+                console.log('>>>>');
+                console.log($scope);
+                
+$scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};                
+ 
+/*
+                $scope.modal.note = {
                     note: function (note) {
 
                         limeModal.note(note).result.then(function () {
                             $scope.func.refresh();
                         });
                     }
-                };                    
+                };
+                
+  */              
 
 
 
@@ -126,7 +134,7 @@
                     var note;
                     var newItems = [];
 
-                    angular.forEach($scope.$parent.shares, function(item) {
+                    angular.forEach($scope.$parent.shares, function (item) {
 
                         if (item !== _note) {
                             newItems.push(item);
@@ -139,20 +147,18 @@
                     //alert(note);
 
                     if (note) {
-                    note = angular.copy(note);
+                        note = angular.copy(note);
 
-                    delete note.$$hashKey;
+                        delete note.$$hashKey;
 
-                    note.created = (new Date()).toISOString();
-                    note.archived = 0;
-                    note.updated = null;
-                    delete note._already;
+                        note.created = (new Date()).toISOString();
+                        note.archived = 0;
+                        note.updated = null;
+                        delete note._already;
 
-                    $scope.$parent.data.notes.push(note);           
-                    $scope.$parent.shares = newItems;           
+                        $scope.$parent.data.notes.push(note);
+                        $scope.$parent.shares = newItems;
                     }
-
-
 
 
 
@@ -167,7 +173,7 @@
                         note.archived = 0;
                     }
 
-                    
+
 
                 };
 
@@ -180,7 +186,7 @@
 
                 };
 
-                $scope.selected = function(note) {
+                $scope.selected = function (note) {
 
                     return $rootScope.note.selected(note) ? true : false;
                 };
@@ -190,13 +196,223 @@
             }
         };
 
-    });    
+    });
 
-    app.controller('lime.content.notes', function ($scope, $rootScope, $routeParams, $http, $filter, $timeout, $modal) {
+    //app.controller('lime.content.notes', function ($scope) {
 
-    
+    app.controller('lime.content.notes', function ($scope, $rootScope, $routeParams, $http, $filter, $timeout, $modal, limeAuth, CONSTANT, User, limeModal, $q) {
 
-        console.log($scope.data.notes);
+        console.log('>>> init lime.content.notes');
+        
+        $scope.env = {};
+        
+        $scope.env.noteWidth = 0;
+        
+        $(window).on('resize orientationchange', function(event) {
+            
+            //console.log(document.documentElement.clientWidth);
+            
+            //document.documentElement.clientWidth;
+            
+            var availWidth = document.documentElement.clientWidth - 40;
+            
+            if (availWidth <= 300) {
+                var eWidth = parseInt(availWidth / 1, 10);
+            } else if (availWidth <= 400) {
+                var eWidth = parseInt(availWidth / 2, 10);    
+            } else {
+                var eWidth = parseInt(availWidth / 3, 10);
+            }
+            
+            
+            //console.log(availWidth / 3);
+            
+            
+            $timeout(function() {
+                
+            
+            
+            $scope.env.noteWidth = eWidth - 10;
+            
+            $('style.shim').remove();
+            
+            var style = $('<style class="shim">.note-list .note {width:' + eWidth + 'px;}</style>');
+            
+            $(document.body).append(style);
+            
+            });
+            
+            
+            
+            
+            
+            
+            
+            
+        }).trigger('resize');
+        
+        
+
+        $scope.conf = {
+            userId: null
+        };
+
+        $scope.data = {
+            user: null,
+            shared: null,
+            selected: null,
+            noteSelected: {}
+        };
+        //$scope.selected = {};
+
+        $scope.modal = {
+            note: function (note) {
+
+                if (!note) {
+                    note = {};
+                    if ($scope.data.selected.userId) {
+                        note.userId = $scope.data.selected.userId;
+                    } else if ($scope.data.selected.shareId) {
+                        note.shareId = $scope.data.selected.shareId;
+                    }
+                    console.log('>>>>>>>>');
+                    console.log(note);
+                }
+
+                limeModal.note(note).result.then(function () {
+                    $scope.func.refresh();
+                });
+            },
+            share: function() {
+                
+                var key, notes = [];
+                
+                for (key in $scope.data.noteSelected) {
+                    if ($scope.data.noteSelected.hasOwnProperty(key)) {
+                        notes.push($scope.data.noteSelected[key]);
+                    }
+                }
+                
+                limeModal.share(notes).result.then(function () {
+                    $scope.func.refresh();
+                    //$scope.func.refresh();
+                });
+                
+            },
+            json: function (jsonData, event) {
+
+                limeModal.json(jsonData);
+                if (event) {
+                    event.stopPropagation();
+                }
+            }
+        };
+        /*$timeout(function() {
+
+            //$scope.modal.note();
+        }, 500);*/
+
+        limeAuth.getUserId().then(function (userId) {
+
+            $scope.conf.userId = userId;
+            $scope.func.refresh();
+        });
+        
+
+        
+
+        $scope.func = {
+            selected: function(note) {
+                
+                return $scope.data.noteSelected[note._id] ? true : false;
+                
+            },
+            toggleNote: function (note) {
+                
+                if (!$scope.data.noteSelected) {
+                    $scope.data.noteSelected = {};
+                }
+                if ($scope.data.noteSelected[note._id]) {
+                    delete $scope.data.noteSelected[note._id];
+                } else {
+                    $scope.data.noteSelected[note._id] = note;
+                }
+                
+                //alert(note);
+
+                //$rootScope.note.toggle(note);
+                //console.log(note);
+            },            
+            refresh: function () {
+
+                var promises = [];
+
+                promises.push(User.get({
+
+                    userId: $scope.conf.userId
+
+                }).$promise);
+
+                //promises.push(Share.get({}).$promise);
+
+
+
+                $q.all(promises).then(function (responses) {
+
+                    var userResponse, shareResponse, selected, inx;
+
+                    userResponse = responses[0];
+                    shareResponse = responses[1];
+
+
+                    /*if (response.status === CONSTANT.SUCCESS) {
+
+                    $scope.data.user = response.data[0];
+                    $scope.data.shared = $scope.data.user.shared;
+                    $scope.data.selected = $scope.data.user;
+                    //$scope.selected = response.data[0];
+                    //$scope.selected = $scope.data;
+                    //console.log('>>>>> aaaa');
+                    //console.log(response.data[0]);
+                } */
+
+                    if (userResponse.status === CONSTANT.SUCCESS) {
+
+                        $scope.data.user = userResponse.data;
+                        $scope.data.shared = $scope.data.user.shared;
+
+                        if ($scope.data.selected) {
+                            if ($scope.data.selected.userId && $scope.data.selected.userId === $scope.data.user.userId) {
+                                selected = $scope.data.user;
+                            } else if ($scope.data.selected.shareId) {
+                                for (inx = 0; inx < $scope.data.shared.length; inx++) {
+                                    if ($scope.data.selected.shareId === $scope.data.shared[inx].shareId) {
+                                        selected = $scope.data.shared[inx];
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        $scope.data.selected = selected || $scope.data.user;
+
+                        //console.log(responses[0]);
+
+                        //console.log($scope.data.user);
+
+
+
+                    }
+
+                });
+            }
+        };
+
+        return;
+
+
+
+        //console.log($scope.data.notes);
         //console.log($scope);
         console.log($scope);
 
@@ -208,17 +424,17 @@
                     note: 'aaa'
                 });
             },
-            toggleNote: function(note) {
+            toggleNote: function (note) {
 
                 $rootScope.note.toggle(note);
                 //console.log(note);
             }
         };
-        
 
-$timeout(function() {
-        $(window).scrollTop(CONFIG.STYLE.COVER_HEIGHT -CONFIG.STYLE.NAV_BAR_HEIGHT);    
-    }, 100);         
-    });     
+
+        $timeout(function () {
+            $(window).scrollTop(CONFIG.STYLE.COVER_HEIGHT - CONFIG.STYLE.NAV_BAR_HEIGHT);
+        }, 100);
+    });
 
 })();

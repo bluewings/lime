@@ -29,17 +29,98 @@ router.get('/', function (req, res) {
     });
 });
 
+router.get('/:userId', function (req, res) {
+
+    User.find({
+        userId: req.params.userId
+    }).lean().exec(function (err, data) {
+
+        var inx, shareIds = [];
+        if (data.length > 0) {
+
+            if (data[0].notes) {
+
+                for (inx = 0; inx < data[0].notes.length; inx++) {
+                    data[0].notes[inx].userId = data[0].userId;
+                }
+            }
+            if (data[0].shared) {
+                for (inx = 0; inx < data[0].shared.length; inx++) {
+                    shareIds.push(data[0].shared[inx].shareId);
+                }
+            }
+
+
+            Share.find({
+                shareId: {
+                    $in: shareIds
+                }
+            }).lean().exec(function (err, shared) {
+
+                var inx, jnx;
+
+                for (inx = 0; inx < shared.length; inx++) {
+                    for (jnx = 0; jnx < shared[inx].notes.length; jnx++) {
+                        shared[inx].notes[jnx].shareId = shared[inx].shareId;
+                    }
+                }
+
+                data[0].shared = shared;
+
+
+
+                console.log(shared);
+
+
+
+                res.jsonp({
+                    status: SUCCESS,
+                    data: data[0]
+                });
+
+            });
+
+            console.log(shareIds);
+
+            //.console.log(data[0].shared);
+
+        } else {
+            User.create({
+                userId: req.params.userId
+            }, function (err, data) {
+                res.jsonp({
+                    status: SUCCESS,
+                    data: data
+                });
+            });
+        }
+    });
+});
+
+
 router.post('/', function (req, res) {
 
+    var userId = uid();
 
+    //console.log('>>>>> '  + userId);
 
     User.create({
-        userId: uid()
+        userId: userId
     }, function (err, data) {
-        res.jsonp({
-            status: SUCCESS,
-            data: data
-        });
+        console.log(err);
+        if (err) {
+            res.jsonp({
+                status: ERROR,
+                message: 'err ?'
+            });
+        } else {
+            res.jsonp({
+                status: SUCCESS,
+                data: data
+            });
+        }
+        //console.log(data);
+
     });
 });
 
@@ -140,7 +221,7 @@ router.post('/:userId/upload', function (req, res, next) {
 
 router.post('/:userId/note', function (req, res) {
 
-console.log(req.body);
+    console.log(req.body);
 
     User.update({
         userId: req.params.userId

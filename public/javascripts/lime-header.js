@@ -16,6 +16,8 @@
             scope: true,
             controller: function ($scope, $rootScope, $attrs, $timeout) {
 
+                return;
+
                 //#mflick
 
                 //alert(jindo);
