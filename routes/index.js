@@ -47,6 +47,33 @@ router.get('/home/:id', function (req, res) {
 	render(req, res);
 });
 
+router.get('/background', function(req, res) {
+
+var fs = require("fs"),
+    path = require("path");
+
+var p = path.join(__dirname , '..', 'public', 'images', 'background');
+fs.readdir(p, function (err, files) {
+    if (err) {
+        throw err;
+    }
+
+    res.jsonp({
+    	files: files});
+
+    //console.log(files);
+
+    /*files.map(function (file) {
+        return path.join(p, file);
+    }).filter(function (file) {
+        return fs.statSync(file).isFile();
+    }).forEach(function (file) {
+        console.log("%s (%s)", file, path.extname(file));
+    });*/
+});
+
+});
+
 router.get('/about', function (req, res) {
 	render(req, res);
 });

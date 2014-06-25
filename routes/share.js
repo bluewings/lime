@@ -31,7 +31,10 @@ router.post('/', function (req, res) {
 
 
         User.update({
-            userId: data.createdBy
+            userId: data.createdBy,
+            'shared.shareId': {
+                '$ne': data.shareId
+            }
         }, {
             '$push': {
                 shared: {

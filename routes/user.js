@@ -247,7 +247,10 @@ router.post('/:userId/shared/:shareId', function (req, res) {
 
 // 이미 있는지 확인하고 넣을것.
         User.update({
-            userId: req.params.userId
+            userId: req.params.userId,
+            'shared.shareId': {
+                '$ne': req.params.shareId
+            }
         }, {
             '$push': {
                 shared: {
@@ -265,6 +268,30 @@ console.log(req.params.userId, req.params.shareId );
                 data: data
             });            
         });    
+
+/*
+        User.update({
+            userId: req.params.userId,
+            'shared.$.shareId': {
+                '$ne': req.params.shareId
+            }
+        }, {
+            '$push': {
+                shared: {
+                    shareId: req.params.shareId
+                }
+            }
+        }, function(err, data) {
+console.log('>>>>> shared insert');
+console.log(req.params.userId, req.params.shareId );
+            console.log(err);
+            console.log(data);
+
+            res.jsonp({
+                status: SUCCESS,
+                data: data
+            });            
+        }); */   
     //});   
 });
 
