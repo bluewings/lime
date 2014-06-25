@@ -200,11 +200,35 @@ $scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};
 
     //app.controller('lime.content.notes', function ($scope) {
 
-    app.controller('lime.content.notes', function ($scope, $rootScope, $routeParams, $http, $filter, $timeout, $modal, limeAuth, CONSTANT, User, limeModal, $q) {
+    app.controller('lime.content.notes', function ($scope, $rootScope, $routeParams, $http, $filter, $timeout, $modal, limeAuth, CONSTANT, User, UserShared, limeModal, $q) {
 
         console.log('>>> init lime.content.notes');
         
         $scope.env = {};
+
+        limeAuth.getUserId().then(function(userId) {
+
+if ($routeParams && $routeParams.shareId) {
+
+
+UserShared.save({
+    userId:userId,
+    shareId: $routeParams.shareId
+}, {}, function(err, data) {
+    console.log(data);
+
+});
+
+        
+
+//console.log($routeParams);        
+
+
+
+
+
+}
+});
         
         $scope.env.noteWidth = 0;
         

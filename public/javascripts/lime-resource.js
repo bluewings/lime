@@ -51,6 +51,21 @@
         }
     ]);
 
+    app.factory('UserShared', ['$resource',
+        function ($resource) {
+
+            return $resource('/user/:userId/shared/:shareId', null, {
+                'update': {
+                    method: 'PUT',
+                    params: {
+                        userId: '@id',
+                        shareId: '@shareId'
+                    }
+                }
+            });
+        }
+    ]);    
+
     app.factory('Share', ['$resource',
         function ($resource) {
 

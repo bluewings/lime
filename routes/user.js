@@ -240,6 +240,35 @@ router.post('/:userId/note', function (req, res) {
     });
 });
 
+router.post('/:userId/shared/:shareId', function (req, res) {
+
+
+    //Share.create(req.body, function (err, data) {
+
+// 이미 있는지 확인하고 넣을것.
+        User.update({
+            userId: req.params.userId
+        }, {
+            '$push': {
+                shared: {
+                    shareId: req.params.shareId
+                }
+            }
+        }, function(err, data) {
+console.log('>>>>> shared insert');
+console.log(req.params.userId, req.params.shareId );
+            console.log(err);
+            console.log(data);
+
+            res.jsonp({
+                status: SUCCESS,
+                data: data
+            });            
+        });    
+    //});   
+});
+
+
 router.put('/:userId/note/:_id', function (req, res) {
 
     var set = {};
