@@ -58,8 +58,20 @@ fs.readdir(p, function (err, files) {
         throw err;
     }
 
-    res.jsonp({
-    	files: files});
+    var newFiles = [];
+    var inx;
+    for (inx = 0; inx < files.length; inx++) {
+    	if (files[inx].search(/\.jpg$/g) !== -1) {
+    		newFiles.push('/images/background/' + files[inx]);
+    	}
+    }
+
+        res.jsonp({
+            status: SUCCESS,
+            data: newFiles
+        });    
+
+    
 
     //console.log(files);
 

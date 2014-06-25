@@ -236,6 +236,8 @@
 
 
 
+
+
         limeAuth.getUserId().then(function (userId) {
 
             //$scope.conf.userId = userId;
@@ -247,6 +249,16 @@
                 createdBy: userId
 
             };
+
+            $http.get('/background').success(function(response) {
+
+                $scope.data.backgrounds = response.data;
+
+                //console.log(response);
+
+
+
+            });            
         });
 
 

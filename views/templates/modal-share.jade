@@ -24,6 +24,8 @@
 			placeholder='note',
 			style='font-weight:bold')
 
+		img(ng-repeat='img in data.backgrounds', ng-src='{{img}}', width='100px')
+
 
 		span
 			| http://10.64.51.102:4321/share/{{refId}}		
