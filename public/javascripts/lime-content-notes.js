@@ -76,13 +76,13 @@
             replace: false,
             templateUrl: '/templates/note',
             controller: function ($scope, $attrs, $timeout, limeModal) {
-                
+
                 console.log('>>>>');
                 console.log($scope);
-                
-$scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};                
- 
-/*
+
+                $scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};
+
+                /*
                 $scope.modal.note = {
                     note: function (note) {
 
@@ -92,7 +92,7 @@ $scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};
                     }
                 };
                 
-  */              
+  */
 
 
 
@@ -203,79 +203,77 @@ $scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};
     app.controller('lime.content.notes', function ($scope, $rootScope, $routeParams, $http, $filter, $timeout, $modal, limeAuth, CONSTANT, User, UserShared, limeModal, $q) {
 
         console.log('>>> init lime.content.notes');
-        
+
         $scope.env = {};
 
-        limeAuth.getUserId().then(function(userId) {
+        limeAuth.getUserId().then(function (userId) {
 
-if ($routeParams && $routeParams.shareId) {
-
-
-UserShared.save({
-    userId:userId,
-    shareId: $routeParams.shareId
-}, {}, function(err, data) {
-    console.log(data);
-
-});
-
-        
-
-//console.log($routeParams);        
+            if ($routeParams && $routeParams.shareId) {
 
 
+                UserShared.save({
+                    userId: userId,
+                    shareId: $routeParams.shareId
+                }, {}, function (err, data) {
+
+                    //alert('111');
+                    $scope.func.refresh($routeParams.shareId).then(function() {
+
+                    });
+                    //alert('222');
+
+                });
 
 
 
-}
-});
-        
+                //console.log($routeParams);        
+
+
+
+            }
+        });
+
         $scope.env.noteWidth = 0;
-        
-        $(window).on('resize orientationchange', function(event) {
-            
+
+        $(window).on('resize orientationchange', function (event) {
+
             //console.log(document.documentElement.clientWidth);
-            
+
             //document.documentElement.clientWidth;
-            
+
             var availWidth = document.documentElement.clientWidth - 40;
-            
+
             if (availWidth <= 300) {
                 var eWidth = parseInt(availWidth / 1, 10);
             } else if (availWidth <= 400) {
-                var eWidth = parseInt(availWidth / 2, 10);    
+                var eWidth = parseInt(availWidth / 2, 10);
             } else {
                 var eWidth = parseInt(availWidth / 3, 10);
             }
-            
-            
+
+
             //console.log(availWidth / 3);
-            
-            
-            $timeout(function() {
-                
-            
-            
-            $scope.env.noteWidth = eWidth - 10;
-            
-            $('style.shim').remove();
-            
-            var style = $('<style class="shim">.note-list .note {width:' + eWidth + 'px;}</style>');
-            
-            $(document.body).append(style);
-            
+
+
+            $timeout(function () {
+
+
+
+                $scope.env.noteWidth = eWidth - 10;
+
+                $('style.shim').remove();
+
+                var style = $('<style class="shim">.note-list .note {width:' + eWidth + 'px;}</style>');
+
+                $(document.body).append(style);
+
             });
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
         }).trigger('resize');
-        
-        
+
+
 
         $scope.conf = {
             userId: null
@@ -307,21 +305,21 @@ UserShared.save({
                     $scope.func.refresh();
                 });
             },
-            share: function() {
-                
+            share: function () {
+
                 var key, notes = [];
-                
+
                 for (key in $scope.data.noteSelected) {
                     if ($scope.data.noteSelected.hasOwnProperty(key)) {
                         notes.push($scope.data.noteSelected[key]);
                     }
                 }
-                
+
                 limeModal.share(notes).result.then(function () {
                     $scope.func.refresh();
                     //$scope.func.refresh();
                 });
-                
+
             },
             json: function (jsonData, event) {
 
@@ -341,18 +339,15 @@ UserShared.save({
             $scope.conf.userId = userId;
             $scope.func.refresh();
         });
-        
-
-        
 
         $scope.func = {
-            selected: function(note) {
-                
+            selected: function (note) {
+
                 return $scope.data.noteSelected[note._id] ? true : false;
-                
+
             },
             toggleNote: function (note) {
-                
+
                 if (!$scope.data.noteSelected) {
                     $scope.data.noteSelected = {};
                 }
@@ -361,24 +356,22 @@ UserShared.save({
                 } else {
                     $scope.data.noteSelected[note._id] = note;
                 }
-                
+
                 //alert(note);
 
                 //$rootScope.note.toggle(note);
                 //console.log(note);
-            },            
-            refresh: function () {
+            },
+            refresh: function (shareId) {
 
-                var promises = [];
+                var promises = [],
+                    deferred = $q.defer();
 
                 promises.push(User.get({
 
                     userId: $scope.conf.userId
 
                 }).$promise);
-
-                //promises.push(Share.get({}).$promise);
-
 
 
                 $q.all(promises).then(function (responses) {
@@ -405,7 +398,15 @@ UserShared.save({
                         $scope.data.user = userResponse.data;
                         $scope.data.shared = $scope.data.user.shared;
 
-                        if ($scope.data.selected) {
+                        // 공유받은 건 선택이라면?
+                        if (shareId) {
+                            for (inx = 0; inx < $scope.data.shared.length; inx++) {
+                                if (shareId === $scope.data.shared[inx].shareId) {
+                                    selected = $scope.data.shared[inx];
+                                    break;
+                                }
+                            }
+                        } else if ($scope.data.selected) {
                             if ($scope.data.selected.userId && $scope.data.selected.userId === $scope.data.user.userId) {
                                 selected = $scope.data.user;
                             } else if ($scope.data.selected.shareId) {
@@ -428,7 +429,10 @@ UserShared.save({
 
                     }
 
+                    deferred.resolve({});
+
                 });
+                return deferred.promise;
             }
         };
 

@@ -116,17 +116,9 @@
 
     app.service('limeAuth', function ($q, $location, globalStorage, User, CONSTANT, CONFIG) {
 
-        //var urlPath = $location.path(),
-        //urlSearch = $location.search(),
-
-        console.log(CONFIG);
-
-        var instance = {};
+        var promiseLocal, promiseRemote, instance = {};
 
         instance.userId = null;
-
-        console.log($location.path());
-        console.log($location.search());
 
         return {
             getUserId: function () {
@@ -134,38 +126,44 @@
                 var that = this,
                     deferred = $q.defer();
 
-                // 강제 변경 체크할것.
-
-                /*if (urlSearch && urlSearch.reset) {
-                matches = urlPath.match(/^\/home\/([0-9a-zA-Z]{6})$/);
-                if (matches && matches.length === 2) {
-                    myId = matches[1];
-                    globalStorage.set(CONFIG.ARCHIVE_MY_ID_KEY, myId);
-                }
-            }*/
-
                 if (instance.userId) { // 이미 사용자 정보가 있는 경우
 
                     deferred.resolve(instance.userId);
 
                 } else { // 사용자 정보가 없는 경우
 
-                    globalStorage.get(CONFIG.ARCHIVE_MY_ID_KEY).then(function (userId) {
+                    if (!promiseLocal) {
+                        promiseLocal = globalStorage.get(CONFIG.ARCHIVE_MY_ID_KEY);
+                    }
+                    promiseLocal.then(function (userId) {
 
                         if (userId && typeof userId === 'string') { // 로컬스토리지에 기록이 있는 경우
                             instance.userId = userId;
                             deferred.resolve(instance.userId);
                         } else { // 로컬스토리지에 기록이 없는 경우 (신규생성)
-                            User.save({}, {}, function (response) {
-                                if (response.status === CONSTANT.SUCCESS) {
-                                    //console.log(response);
-                                    //return;
-                                    that.setUserId(response.data.userId).then(function (userId) {
-                                        instance.userId = userId;
-                                        deferred.resolve(userId);
-                                    });
+
+                            if (!promiseRemote) {
+                                promiseRemote = User.save({}, {}).$promise;
+                            }
+
+                            promiseRemote.then(function (response) {
+
+                                console.log('>>> promiseLocal 2');
+
+                                console.log(response);
+                                console.log(arguments);
+
+                                if (instance.userId) { // 이미 사용자 정보가 있는 경우
+                                    deferred.resolve(instance.userId);
                                 } else {
-                                    // err
+                                    if (response.status === CONSTANT.SUCCESS) {
+
+                                        instance.userId = response.data.userId;
+                                        deferred.resolve(response.data.userId);
+                                        that.setUserId(response.data.userId);
+                                    } else {
+                                        // err
+                                    }
                                 }
                             });
                         }
@@ -840,16 +838,16 @@
 
                     // initial animation
                     element.addClass('masonry');
-                    
+
                     var timer;
-                    
-                    $(window).off('resize.masonry').on('resize.masonry', function() {
-                        
+
+                    $(window).off('resize.masonry').on('resize.masonry', function () {
+
                         clearTimeout(timer);
-                        timer = setTimeout(function() {
+                        timer = setTimeout(function () {
                             element.masonry("reload");
                         });
-                        
+
                     });
 
                     // Wait inside directives to render
