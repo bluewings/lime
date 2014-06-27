@@ -27,7 +27,7 @@
 
                 var nIndex;
 
-                //console.log(shareId);
+                ////console.log(shareId);
 
 
 
@@ -50,7 +50,7 @@
 
                     //alert(scrollTop);
 
-                    //console.log(scrollTop);
+                    ////console.log(scrollTop);
                     if (scrollTop < scrollLimit) {
                         displayTitle = false;
                     } else {
@@ -124,14 +124,14 @@
 
                 $scope.$on('www', function (status, data) {
 
-                    //console.log('>>>>>>>>>>>>>>>>');
+                    ////console.log('>>>>>>>>>>>>>>>>');
                     var inx;
                     var panes = [];
                     //$scope.data.panes = [];
                     panes.push(data.data.user);
                     for (inx = 0; inx < data.data.shared.length; inx++) {
                         if (shareId && shareId == data.data.shared[inx].shareId) {
-                            //console.log(panes.length);
+                            ////console.log(panes.length);
                             nIndex = panes.length;
                             shareId = null;
                         }                        
@@ -143,21 +143,21 @@
 
                     $scope.data.panes = panes;
 
-                    ////console.log($scope.data.panes);
+                    //////console.log($scope.data.panes);
 
                     //$scope.data.shared = data.data.shared;
-                    ////console.log($scope.data.shared);
+                    //////console.log($scope.data.shared);
                     //$scope.data.shared = data.data.shared;
 
 
 
-                    ////console.log($location);
+                    //////console.log($location);
 
 
 
-                    ////console.log('get data');
-                    ////console.log(data.data.shared);
-                    ////console.log(arguments);
+                    //////console.log('get data');
+                    //////console.log(data.data.shared);
+                    //////console.log(arguments);
 
                 });
 
@@ -199,7 +199,7 @@
 
                                 }
 
-                                //console.log(flkOptions);
+                                ////console.log(flkOptions);
 
                             
 
@@ -240,9 +240,9 @@
                                     },
                                     'touchMove': function(oCustomEvt) {
 
-                                        //console.log('>>>>>>>>');
-                                        //console.log($('#m2flick').css('-webkit-transform'));
-                                        //console.log(oCustomEvt);
+                                        ////console.log('>>>>>>>>');
+                                        ////console.log($('#m2flick').css('-webkit-transform'));
+                                        ////console.log(oCustomEvt);
                                     }
                                 });
                                 $('#mflick').addClass('active');
@@ -264,15 +264,15 @@
                 //};
                 return;
 
-                //console.log('>>>>>hdr');
+                ////console.log('>>>>>hdr');
 
-                //console.log($scope.$parent.$root);
+                ////console.log($scope.$parent.$root);
 
-                //console.log($scope.$parent.$root.func);
+                ////console.log($scope.$parent.$root.func);
 
                 $scope.func.prototype = $scope.$parent.$root.func;
 
-                //console.log($scope.$parent.$root);
+                ////console.log($scope.$parent.$root);
             }
         };
     });

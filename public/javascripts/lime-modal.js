@@ -110,7 +110,7 @@
         $scope.data = data;
         //$scope.data.url = 'http://sports.news.naver.com/brazil2014/news/read.nhn?oid=452&aid=0000000103';
 
-        console.log($scope.data);
+        //console.log($scope.data);
 
         $scope.func = {
             create: function () {
@@ -315,7 +315,7 @@
                 $scope.data.backgroundImage = $scope.data.backgrounds[0];
 
 
-                //console.log(response);
+                ////console.log(response);
 
 
 
@@ -324,7 +324,7 @@
 
 
 
-        console.log($scope.data);
+        //console.log($scope.data);
 
 
 
@@ -354,7 +354,7 @@
 
                 var notes = $rootScope.note.getSelected();
 
-                console.log(notes);
+                //console.log(notes);
 
                 $http.post('/share/notes', {
                     owner: $rootScope.status.myId,

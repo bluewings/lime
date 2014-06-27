@@ -1,7 +1,12 @@
 .container.wrap(ng-class='status.selectMode ? "select-mode" : ""')
 
 
-	
+	div(ng-show='data.selected.shareId', style='margin-bottom:5px;margin-left:5px')
+		a(ng-href='/share/{{data.selected.shareId}}', target='_blank')
+			span.glyphicon.glyphicon-globe
+			| &nbsp;http://182.162.196.40/share/{{data.selected.shareId}}
+
+
 
 	a.btn.btn-default.btn-sm(ng-href="{{$root.func.intentURL()}}")
 		span.glyphicon.glyphicon-bookmark

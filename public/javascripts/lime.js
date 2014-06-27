@@ -148,10 +148,10 @@
 
                             promiseRemote.then(function (response) {
 
-                                console.log('>>> promiseLocal 2');
+                                //console.log('>>> promiseLocal 2');
 
-                                console.log(response);
-                                console.log(arguments);
+                                //console.log(response);
+                                //console.log(arguments);
 
                                 if (instance.userId) { // 이미 사용자 정보가 있는 경우
                                     deferred.resolve(instance.userId);
@@ -219,7 +219,7 @@
         };        
 
 
-        //console.log('>>>>>')
+        ////console.log('>>>>>')
         return;
 
         limeAuth.getUserId().then(function (userId) {
@@ -228,7 +228,7 @@
                 userId: userId
             }, function (response) {
                 if (response.status === CONSTANT.SUCCESS) {
-                    console.log(response.data[0]);
+                    //console.log(response.data[0]);
                 }
             });
         });
@@ -250,7 +250,7 @@
             }
             // //갇제 설정            
 
-            console.log(myId);
+            //console.log(myId);
 
         });
         return;
@@ -383,23 +383,23 @@
                     // 완전 신규건...
                     if (!notesMap[item._id]) {
 
-                        console.log('new');
+                        //console.log('new');
 
                         notesMap[item._id] = item;
-                        //console.log('added');
+                        ////console.log('added');
                         ////newNotes.push(item);
                         //$rootScope.data.notes.push(item);
 
                         // 내용이 바뀐거...
                     } else if (!equals(item, notesMap[item._id])) {
 
-                        console.log('changed');
+                        //console.log('changed');
 
                         notesMap[item._id] = item;
 
                     } else {
 
-                        console.log('skip');
+                        //console.log('skip');
                     }
                 });
 
@@ -411,13 +411,13 @@
 
                 $rootScope.data.notes = newNotes;
 
-                //console.log(notesMap);
+                ////console.log(notesMap);
 
 
 
                 //$rootScope.data.notes = notes;
 
-                console.log(notes);
+                //console.log(notes);
 
             },
             modify: function (id, data) {
@@ -660,14 +660,14 @@
 
 
 
-                //console.log(data);
+                ////console.log(data);
             });
 
 
 
-            //console.log('get-uid-wow');
+            ////console.log('get-uid-wow');
 
-            //console.log(data);
+            ////console.log(data);
 
             //globalStorage.set(CONFIG.ARCHIVE_USER_ID_KEY, uid());
 
@@ -734,7 +734,7 @@
                         var dict = {};
                         if (data.code === 200) {
 
-                            console.log(angular.copy($scope.data.notes));
+                            //console.log(angular.copy($scope.data.notes));
 
                             angular.forEach($scope.data.notes, function (value, key) {
 
@@ -748,10 +748,10 @@
                                 }
                             });
 
-                            console.log(data.result.notes);
-                            console.log(dict);
+                            //console.log(data.result.notes);
+                            //console.log(dict);
 
-                            //console.log(data.result.notes[0]);
+                            ////console.log(data.result.notes[0]);
 
                             //return;
 
@@ -797,7 +797,7 @@
             //return;
 
             globalStorage.sync($rootScope, 'data', CONFIG.ARCHIVE_NOTES_KEY).then(function () {
-                console.log($rootScope.data);
+                //console.log($rootScope.data);
                 // 최초로 sync 하는 경우 notes 구조가 없으니 만들어줘야함.
                 if (!$rootScope.data.notes) {
 
@@ -825,7 +825,7 @@
                 var type = $brick.prop('tagName');
                 var itemSelector = type + ":not([class$='-leave-active'])";
 
-                //console.log(itemSelector);
+                ////console.log(itemSelector);
 
                 return function (scope, element, attrs) {
                     var options = angular.extend({
@@ -858,7 +858,7 @@
                     setTimeout(function () {
                         element.masonry(options);
 
-                        //console.log('masonry');
+                        ////console.log('masonry');
 
                         element.on("$destroy", function () {
                             element.masonry('destroy')
@@ -938,7 +938,7 @@
                 if (item && item.attachment) {
                     for (inx = 0; inx < item.attachment.length; inx++) {
 
-                        console.log(item.attachment[inx]);
+                        //console.log(item.attachment[inx]);
                         newItems[item.attachment[inx].path] = true;
                         //newItems.push(item.attachment[inx].image);    
                     }
