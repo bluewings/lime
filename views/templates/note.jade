@@ -6,8 +6,7 @@
 			height='{{env.noteWidth * note.attachment[0].height / note.attachment[0].width}}px')
 		
 		
-		.txt-title(ng-show='note.title')
-			| {{note.title}}
+		.txt-title(ng-show='note.title', ng-bind-html='note.title')
 		.txt-note(ng-show='note.note', ng-bind-html='note.note | autoLink')
 
 

@@ -16,6 +16,7 @@
     var app = angular.module('lime.modal', [
         'ui.bootstrap',
         'angularFileUpload',
+         'ngSanitize',
         'lime.resource'
     ]);
 
@@ -286,6 +287,10 @@
                     $scope.$root.modal.note(data);
 
                 });
+            },
+            cancel: function () {
+
+                $modalInstance.dismiss('cancel');
             }
         };
     });
@@ -338,7 +343,7 @@
                         
                         
                         $modalInstance.close();
-                        
+
                         $scope.$root.$broadcast('sharepagecreate', {
 
                             shareId: response.data.shareId
