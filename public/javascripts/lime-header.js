@@ -115,6 +115,13 @@
 
                 }
 
+
+                $scope.$on('sharepagecreate',  function (status, data) {
+
+                    shareId = data.shareId;
+
+                });                
+
                 $scope.$on('www', function (status, data) {
 
                     //console.log('>>>>>>>>>>>>>>>>');

@@ -42,6 +42,27 @@
 
                     return $modalInstance;
                 },
+                view: function (note) {
+
+                    var $modalInstance;
+
+                    $modalInstance = $modal.open({
+                        templateUrl: '/templates/modal-view',
+                        size: 'sm',
+                        resolve: {
+                            data: function () {
+                                
+                                return angular.copy(note || {});
+
+                                /*return $.extend({
+                                    userId: user.userId
+                                }, note || {});*/
+                            }
+                        },
+                        controller: 'lime.modal.view'
+                    });
+                    return $modalInstance;
+                },
                 note: function (note) {
 
                     var $modalInstance;
@@ -251,6 +272,24 @@
         };
     });
 
+    app.controller('lime.modal.view', function ($scope, $modalInstance, $timeout, data, UserNote, ShareNote, $q, $http) {
+
+        $scope.data = data;
+
+        $scope.func = {
+
+            edit: function () {
+                $modalInstance.close();
+
+                $timeout(function() {
+
+                    $scope.$root.modal.note(data);
+
+                });
+            }
+        };
+    });
+
     app.controller('lime.modal.share', function ($scope, $rootScope, $modalInstance, $http, $filter, notes, Share, limeAuth) {
 
 
@@ -296,7 +335,15 @@
 
                    
                     Share.save($scope.data, function (response) {
+                        
+                        
                         $modalInstance.close();
+                        
+                        $scope.$root.$broadcast('sharepagecreate', {
+
+                            shareId: response.data.shareId
+
+                        });
                     });                
 
 

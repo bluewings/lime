@@ -1,0 +1,45 @@
+.modal-note
+	.modal-header
+		.tm(style='float:left')
+			| {{data.created | date}}
+		
+
+		.pull-right
+			button.btn.btn-sm.btn-default(ng-if='data._id', ng-click='func.edit()')
+				| 수정
+			button.btn.btn-sm.btn-default(ng-click='func.cancel()')
+				| 취소
+		div(style='clear:both')
+
+	.modal-body
+	
+		div(style='margin-bottom:10px',ng-show='{{data.attachment.length > 0}}')
+			img.img-thumbnail(ng-repeat='attached in data.attachment',
+				style='width:100%;margin-right:5px',
+				ng-src='{{attached.path}}')
+
+					
+			
+
+		
+		a(ng-href='{{data.url}}', ng-show='{{data.url}}')		
+			span.glyphicon.glyphicon-globe
+			| {{data.url}}
+
+		h5(ng-show='data.title')
+			| {{data.title}}
+
+		p(ng-show='data.note')
+			| {{data.note}}
+
+	//.modal-footer
+		.tm(style='float:left')
+			| {{data.created | date}}
+
+
+//.modal-footer
+	button.btn.btn-sm.btn-primary(ng-click='func.bookmark()', ng-disabled='form.$invalid', disabled='disabled')
+		span.glyphicon.glyphicon-ok
+		| Bookmark
+	button.btn.btn-sm.btn-default(ng-click='func.cancel()')
+		| Cancel				

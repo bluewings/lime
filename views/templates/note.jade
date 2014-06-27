@@ -1,5 +1,5 @@
 .inner(class='shared-{{note.shared}}')
-	div(ng-click='modal.note(note)')
+	div(ng-click='modal.view(note)')
 
 		img(ng-show='note.attachment.length > 0', ng-src='{{note.attachment[0].path}}',
 			width='{{env.noteWidth}}px',

@@ -9,6 +9,14 @@
 		div(ng-hide='status.selectMode', style='float:left')
 			button.btn.btn-default.btn-sm(ng-click='modal.note()')
 				span.glyphicon.glyphicon-plus
+				| 노트 생성
+
+		div(ng-hide='status.selectMode', style='float:left')
+			button.btn.btn-default.btn-sm(ng-click='modal.share()')
+				span.glyphicon.glyphicon-file
+				| 공유페이지 생성
+
+
 
 		//- 퀵메뉴(선택모드) - 공유, 삭제
 		div(ng-show='status.selectMode', style='float:left')
@@ -22,7 +30,7 @@
 
 
 		//- 퀵메뉴 모드 선택
-		.pull-right
+		//.pull-right
 			button.btn.btn-default.btn-sm(ng-click='func.toggleSelectMode()')
 				| {{status.selectMode ? '취소' : '선택'}}
 

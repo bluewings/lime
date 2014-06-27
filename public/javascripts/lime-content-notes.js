@@ -301,6 +301,14 @@
 
 
         $scope.$root.modal = {
+            view: function(note) {
+
+
+
+                limeModal.view(note).result.then(function () {
+                    $scope.func.refresh();
+                });
+            },
             note: function (note) {
 
                 if (!note) {
