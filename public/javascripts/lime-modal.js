@@ -133,6 +133,25 @@
                     });
                 }
             },
+            remove: function() {
+
+                if ($scope.data.userId) {
+                    UserNote.remove({
+                        userId: $scope.data.userId,
+                        _id: $scope.data._id
+                    }, $scope.data, function (data) {
+                        $modalInstance.close();
+                    });
+                } else if ($scope.data.shareId) {
+
+                    ShareNote.remove({
+                        shareId: $scope.data.shareId,
+                        _id: $scope.data._id
+                    }, $scope.data, function (data) {
+                        $modalInstance.close();
+                    });
+                }
+            },
             uploadFile: function ($files) {
 
                 var inx;
