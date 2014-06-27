@@ -34,11 +34,21 @@
                 $scope.displayTitle = false;
                 $scope.title = '';
 
+
+
+                var timerScroll;
                 $(window).on('scroll', function (event) {
 
                     var scrollTop = $(window).scrollTop();
 
                     var displayTitle;
+
+                    clearTimeout(timerScroll);
+
+
+
+
+                    //alert(scrollTop);
 
                     //console.log(scrollTop);
                     if (scrollTop < scrollLimit) {
@@ -52,6 +62,16 @@
                             $scope.displayTitle = displayTitle;
                         });
                     }
+
+                    timerScroll = setTimeout(function() {
+
+                        $('#m2flick').css({
+                            height: -scrollTop + CONFIG.STYLE.COVER_HEIGHT,
+                            //backgroundColor: 'yellow'
+
+                        });
+
+                    }, 10);
 
                 });
 
@@ -186,6 +206,7 @@
 
                                         setNthContent(oCustomEvt.nContentsIndex);
                                     }
+
                                 });
 
                             }
@@ -209,6 +230,12 @@
 
 
 
+                                    },
+                                    'touchMove': function(oCustomEvt) {
+
+                                        //console.log('>>>>>>>>');
+                                        //console.log($('#m2flick').css('-webkit-transform'));
+                                        //console.log(oCustomEvt);
                                     }
                                 });
                                 $('#mflick').addClass('active');
