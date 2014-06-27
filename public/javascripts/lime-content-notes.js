@@ -79,8 +79,8 @@
             templateUrl: '/templates/note',
             controller: function ($scope, $attrs, $timeout, limeModal) {
 
-                console.log('>>>>');
-                console.log($scope);
+                //console.log('>>>>');
+                //console.log($scope);
 
                 $scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};
 
@@ -125,11 +125,11 @@
                 };
                 $scope.keep = function (_note) {
 
-                    //console.log($scope);
+                    ////console.log($scope);
 
-                    //console.log($scope.$parent);
+                    ////console.log($scope.$parent);
 
-                    //console.log($scope.$parent.shares);
+                    ////console.log($scope.$parent.shares);
 
                     //return;
 
@@ -191,14 +191,14 @@
                 $scope.selected = function (note) {
 
                     if (note) {
-                        return $rootScope.note.selected(note) ? true : false;    
+                        return $rootScope.note.selected(note) ? true : false;
                     }
                     return false;
 
-                    
+
                 };
 
-                //console.log($scope);
+                ////console.log($scope);
 
             }
         };
@@ -209,7 +209,7 @@
 
     app.controller('lime.content.notes', function ($scope, $rootScope, $routeParams, $http, $filter, $timeout, $modal, limeAuth, CONSTANT, User, UserShared, limeModal, $q) {
 
-        console.log('>>> init lime.content.notes');
+        //console.log('>>> init lime.content.notes');
 
         $scope.env = {};
 
@@ -224,7 +224,9 @@
                 }, {}, function (err, data) {
 
                     //alert('111');
-                    $scope.func.refresh($routeParams.shareId).then(function() {
+                    $scope.func.refresh($routeParams.shareId).then(function () {
+
+                        
 
                     });
                     //alert('222');
@@ -233,7 +235,7 @@
 
 
 
-                //console.log($routeParams);        
+                ////console.log($routeParams);        
 
 
 
@@ -244,11 +246,11 @@
 
         $(window).on('resize orientationchange', function (event) {
 
-            //console.log(document.documentElement.clientWidth);
+            ////console.log(document.documentElement.clientWidth);
 
             //document.documentElement.clientWidth;
 
-            var availWidth = document.documentElement.clientWidth - 40;
+            var availWidth = document.documentElement.clientWidth - 20;
 
             if (availWidth <= 300) {
                 var eWidth = parseInt(availWidth / 1, 10);
@@ -259,7 +261,7 @@
             }
 
 
-            //console.log(availWidth / 3);
+            ////console.log(availWidth / 3);
 
 
             $timeout(function () {
@@ -294,7 +296,7 @@
         };
         //$scope.selected = {};
 
-        
+
 
         $scope.$root.modal = {
             note: function (note) {
@@ -306,8 +308,8 @@
                     } else if ($scope.data.selected.shareId) {
                         note.shareId = $scope.data.selected.shareId;
                     }
-                    console.log('>>>>>>>>');
-                    console.log(note);
+                    //console.log('>>>>>>>>');
+                    //console.log(note);
                 }
 
                 limeModal.note(note).result.then(function () {
@@ -349,31 +351,41 @@
             $scope.func.refresh();
         });
 
-$scope.$on('waawaa', function(status, data) {
 
-    
-    //$scope.data.selected = data.selected;
-    console.log(data);
-    $scope.data.noteSelected = {};
+        $scope.$on('toggleheader', function (status, data) {
 
-    $scope.$apply(function() {
-        $scope.data.selected = data.selected;
 
-    });
+            //$scope.data.selected = data.selected;
 
-    
-    //console.log(data);
+            
+            $scope.data.noteSelected = {};
+        });
 
-});
+        $scope.$on('waawaa', function (status, data) {
+
+
+            //$scope.data.selected = data.selected;
+            //console.log(data);
+            $scope.data.noteSelected = {};
+
+            $scope.$apply(function () {
+                $scope.data.selected = data.selected;
+
+            });
+
+
+            ////console.log(data);
+
+        });
 
         $scope.func = {
             selected: function (note) {
 
                 if (note) {
-                return $scope.data.noteSelected[note._id] ? true : false;    
+                    return $scope.data.noteSelected[note._id] ? true : false;
                 }
-return false;
-                
+                return false;
+
 
             },
             toggleNote: function (note) {
@@ -390,7 +402,7 @@ return false;
                 //alert(note);
 
                 //$rootScope.note.toggle(note);
-                //console.log(note);
+                ////console.log(note);
             },
             refresh: function (shareId) {
 
@@ -419,8 +431,8 @@ return false;
                     $scope.data.selected = $scope.data.user;
                     //$scope.selected = response.data[0];
                     //$scope.selected = $scope.data;
-                    //console.log('>>>>> aaaa');
-                    //console.log(response.data[0]);
+                    ////console.log('>>>>> aaaa');
+                    ////console.log(response.data[0]);
                 } */
 
                     if (userResponse.status === CONSTANT.SUCCESS) {
@@ -451,23 +463,23 @@ return false;
 
                         $scope.data.selected = selected || $scope.data.user;
 
-                        //console.log(responses[0]);
+                        ////console.log(responses[0]);
 
-                        //console.log($scope.data.user);
+                        ////console.log($scope.data.user);
 
-                        $scope.$root.$broadcast('www', {data: {
-                            user: userResponse.data,
-                            shared: userResponse.data.shared
-                        }});
-
-
+                        $scope.$root.$broadcast('www', {
+                            data: {
+                                user: userResponse.data,
+                                shared: userResponse.data.shared
+                            }
+                        });
 
 
 
                         if (firstTime) {
                             $timeout(function () {
                                 $(window).scrollTop(CONFIG.STYLE.COVER_HEIGHT - CONFIG.STYLE.NAV_BAR_HEIGHT);
-                            });                            
+                            });
                             firstTime = false;
                         }
 
@@ -490,9 +502,9 @@ return false;
 
 
 
-        //console.log($scope.data.notes);
+        ////console.log($scope.data.notes);
+        ////console.log($scope);
         //console.log($scope);
-        console.log($scope);
 
         $scope.func = {
 
@@ -505,7 +517,7 @@ return false;
             toggleNote: function (note) {
 
                 $rootScope.note.toggle(note);
-                //console.log(note);
+                ////console.log(note);
             }
         };
 

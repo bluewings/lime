@@ -4,6 +4,13 @@
 		h4.modal-title
 			span.glyphicon.glyphicon-share-alt
 			| {{data.notes.length}} 개의 노트 공유하기
+		.pull-right
+			button.btn.btn-sm.btn-primary(ng-click='func.share()', ng-disabled='data.notes.length == 0')
+				span.glyphicon.glyphicon-ok
+				| 공유
+			button.btn.btn-sm.btn-default(ng-click='func.cancel()')
+				| 취소
+		div(style='clear:both')
 
 	.modal-body
 
@@ -32,15 +39,10 @@
 		//span
 			| http://10.64.51.102:4321/share/{{refId}}		
 
-	.modal-footer
+	//.modal-footer
 		.tm(style='float:left')
 			| {{note.created | date}}
-		.pull-right
-			button.btn.btn-sm.btn-primary(ng-click='func.share()', ng-disabled='data.notes.length == 0')
-				span.glyphicon.glyphicon-ok
-				| 공유
-			button.btn.btn-sm.btn-default(ng-click='func.cancel()')
-				| 취소
+
 
 //.modal-footer
 	button.btn.btn-sm.btn-primary(ng-click='func.bookmark()', ng-disabled='data.notes.length == 0', disabled='disabled')

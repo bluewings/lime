@@ -254,6 +254,9 @@
 
                 $scope.data.backgrounds = response.data;
 
+                $scope.data.backgroundImage = $scope.data.backgrounds[0];
+
+
                 //console.log(response);
 
 

@@ -1,10 +1,11 @@
 .modal-about
+	.modal-header
+		.pull-right
+			button.btn.btn-sm.btn-default(ng-click='func.close()')
+				| Close
+		div(style='clear:both')
 	.modal-body
 
 		pre
 			| {{json | json}}
 
-	.modal-footer
-		.pull-right
-			button.btn.btn-sm.btn-default(ng-click='func.close()')
-				| Close
