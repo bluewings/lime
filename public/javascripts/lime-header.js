@@ -166,6 +166,8 @@
                                 if (nIndex) {
 
                                    flkOptions.nDefaultIndex =   nIndex;
+
+                                   setNthContent(nIndex);
                                   // nIndex = null;
 
                                 }
@@ -192,6 +194,8 @@
                             if (o2SlideFlicking) {
                                 o2SlideFlicking.destroy();
                             }
+
+
 
                             if (true || !o2SlideFlicking) {
 
