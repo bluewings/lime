@@ -51,7 +51,7 @@
     //$cover-height: 220px;
 
     var style = document.createElement('style');
-    style.innerText = '.content {min-height:' + ($(window).height() - CONFIG.STYLE.NAV_BAR_HEIGHT) + 'px !important}';
+    style.innerText = '.content {min-height:' + ($(window).height() - CONFIG.STYLE.NAV_BAR_HEIGHT + 50) + 'px !important}';
 
     document.body.appendChild(style);
 

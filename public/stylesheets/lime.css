@@ -6,7 +6,7 @@ html {
   margin-top: -47px;
   margin-right: 35px;
   -webkit-transition: opacity 1s;
-  opacity: 0; }
+  opacity: 0.01; }
   .wrap #m2flick.active {
     opacity: 1;
     visibility: visible; }

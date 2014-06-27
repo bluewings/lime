@@ -11,7 +11,7 @@ $cover-image: "http://blogimgs.naver.net/mobile/mobile_title04_l.jpg";
             margin-top: $nav-bar-height * -1;
             margin-right:35px;
             -webkit-transition: opacity 1s;
-            opacity:0;
+            opacity:0.01;
             &.active {
                 opacity:1;
                 visibility: visible;
