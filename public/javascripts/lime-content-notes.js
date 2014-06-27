@@ -79,8 +79,8 @@
             templateUrl: '/templates/note',
             controller: function ($scope, $attrs, $timeout, limeModal) {
 
-                //console.log('>>>>');
-                //console.log($scope);
+                console.log('>>>>');
+                console.log($scope);
 
                 $scope.modal = $scope.$parent.modal ? Object.create($scope.$parent.modal) : {};
 
@@ -125,11 +125,11 @@
                 };
                 $scope.keep = function (_note) {
 
-                    ////console.log($scope);
+                    //console.log($scope);
 
-                    ////console.log($scope.$parent);
+                    //console.log($scope.$parent);
 
-                    ////console.log($scope.$parent.shares);
+                    //console.log($scope.$parent.shares);
 
                     //return;
 
@@ -198,7 +198,7 @@
 
                 };
 
-                ////console.log($scope);
+                //console.log($scope);
 
             }
         };
@@ -226,7 +226,7 @@
                     //alert('111');
                     $scope.func.refresh($routeParams.shareId).then(function () {
 
-                        
+
 
                     });
                     //alert('222');
@@ -235,10 +235,12 @@
 
 
 
-                ////console.log($routeParams);        
+                //console.log($routeParams);        
 
 
 
+            } else {
+                //$scope.func.refresh();
             }
         });
 
@@ -246,7 +248,7 @@
 
         $(window).on('resize orientationchange', function (event) {
 
-            ////console.log(document.documentElement.clientWidth);
+            //console.log(document.documentElement.clientWidth);
 
             //document.documentElement.clientWidth;
 
@@ -261,7 +263,7 @@
             }
 
 
-            ////console.log(availWidth / 3);
+            //console.log(availWidth / 3);
 
 
             $timeout(function () {
@@ -308,8 +310,8 @@
                     } else if ($scope.data.selected.shareId) {
                         note.shareId = $scope.data.selected.shareId;
                     }
-                    //console.log('>>>>>>>>');
-                    //console.log(note);
+                    console.log('>>>>>>>>');
+                    console.log(note);
                 }
 
                 limeModal.note(note).result.then(function () {
@@ -348,6 +350,7 @@
         limeAuth.getUserId().then(function (userId) {
 
             $scope.conf.userId = userId;
+
             $scope.func.refresh();
         });
 
@@ -374,7 +377,7 @@
             });
 
 
-            ////console.log(data);
+            //console.log(data);
 
         });
 
@@ -402,7 +405,7 @@
                 //alert(note);
 
                 //$rootScope.note.toggle(note);
-                ////console.log(note);
+                //console.log(note);
             },
             refresh: function (shareId) {
 
@@ -431,8 +434,8 @@
                     $scope.data.selected = $scope.data.user;
                     //$scope.selected = response.data[0];
                     //$scope.selected = $scope.data;
-                    ////console.log('>>>>> aaaa');
-                    ////console.log(response.data[0]);
+                    //console.log('>>>>> aaaa');
+                    //console.log(response.data[0]);
                 } */
 
                     if (userResponse.status === CONSTANT.SUCCESS) {
@@ -463,17 +466,19 @@
 
                         $scope.data.selected = selected || $scope.data.user;
 
-                        ////console.log(responses[0]);
+                        //console.log(responses[0]);
 
-                        ////console.log($scope.data.user);
+                        //console.log($scope.data.user);
 
                         $scope.$root.$broadcast('www', {
+
+
                             data: {
                                 user: userResponse.data,
                                 shared: userResponse.data.shared
                             }
                         });
-
+                            
 
 
                         if (firstTime) {
@@ -502,9 +507,9 @@
 
 
 
-        ////console.log($scope.data.notes);
-        ////console.log($scope);
+        //console.log($scope.data.notes);
         //console.log($scope);
+        console.log($scope);
 
         $scope.func = {
 
@@ -517,7 +522,7 @@
             toggleNote: function (note) {
 
                 $rootScope.note.toggle(note);
-                ////console.log(note);
+                //console.log(note);
             }
         };
 

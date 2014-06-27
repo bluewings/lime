@@ -30,7 +30,7 @@
 	.nav_bar
 		
 		//- 상단고정바 > 타이틀
-		#m2flick(ng-class='displayTitle ? "active" : ""')
+		#m2flick(ng-class='displayTitle ? "active" : ""', style='overflow:hidden')
 			.flick-container(style='height: 100%;')
 				.flick-ct(ng-repeat='tag in data.panes', sstyle='background-color:rgba(0,0,0,0.5)')
 					h2.title		

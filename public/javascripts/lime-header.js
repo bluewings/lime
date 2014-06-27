@@ -97,7 +97,7 @@
 
                 $scope.$on('www', function (status, data) {
 
-                    ////console.log('>>>>>>>>>>>>>>>>');
+                    //console.log('>>>>>>>>>>>>>>>>');
                     var inx;
                     var panes = [];
                     //$scope.data.panes = [];
