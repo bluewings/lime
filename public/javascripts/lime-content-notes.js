@@ -23,6 +23,8 @@
         }
     };
 
+
+
     app.directive('limeContentNotes', function ($http) {
 
         return {
@@ -188,7 +190,12 @@
 
                 $scope.selected = function (note) {
 
-                    return $rootScope.note.selected(note) ? true : false;
+                    if (note) {
+                        return $rootScope.note.selected(note) ? true : false;    
+                    }
+                    return false;
+
+                    
                 };
 
                 //console.log($scope);
@@ -287,7 +294,9 @@
         };
         //$scope.selected = {};
 
-        $scope.modal = {
+        
+
+        $scope.$root.modal = {
             note: function (note) {
 
                 if (!note) {
@@ -340,10 +349,31 @@
             $scope.func.refresh();
         });
 
+$scope.$on('waawaa', function(status, data) {
+
+    
+    //$scope.data.selected = data.selected;
+    console.log(data);
+    $scope.data.noteSelected = {};
+
+    $scope.$apply(function() {
+        $scope.data.selected = data.selected;
+
+    });
+
+    
+    //console.log(data);
+
+});
+
         $scope.func = {
             selected: function (note) {
 
-                return $scope.data.noteSelected[note._id] ? true : false;
+                if (note) {
+                return $scope.data.noteSelected[note._id] ? true : false;    
+                }
+return false;
+                
 
             },
             toggleNote: function (note) {
@@ -425,7 +455,21 @@
 
                         //console.log($scope.data.user);
 
+                        $scope.$root.$broadcast('www', {data: {
+                            user: userResponse.data,
+                            shared: userResponse.data.shared
+                        }});
 
+
+
+
+
+                        if (firstTime) {
+                            $timeout(function () {
+                                $(window).scrollTop(CONFIG.STYLE.COVER_HEIGHT - CONFIG.STYLE.NAV_BAR_HEIGHT);
+                            });                            
+                            firstTime = false;
+                        }
 
                     }
 
@@ -435,6 +479,12 @@
                 return deferred.promise;
             }
         };
+
+        var firstTime = true;
+
+        $timeout(function () {
+            $(window).scrollTop(CONFIG.STYLE.COVER_HEIGHT - CONFIG.STYLE.NAV_BAR_HEIGHT);
+        });
 
         return;
 

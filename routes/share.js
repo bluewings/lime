@@ -23,10 +23,6 @@ router.post('/', function (req, res) {
 
     req.body.shareId = uid();
 
-
-
-
-
     Share.create(req.body, function (err, data) {
 
 
@@ -45,7 +41,7 @@ router.post('/', function (req, res) {
             res.jsonp({
                 status: SUCCESS,
                 data: data
-            });            
+            });
         });    
     });
 });

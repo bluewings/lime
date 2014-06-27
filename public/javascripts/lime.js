@@ -189,6 +189,36 @@
 
     app.run(function ($rootScope, $location, $http, $interval, $timeout, limeModal, globalStorage, limeAuth, User, CONSTANT) {
 
+
+        $rootScope.status = {
+            myId: null,
+            headerOpen: false,
+            selectMode: false,
+            hasChanges: false,
+            syncFromRemote: false,
+            notesHashCode: '',
+            filterTag: ''
+        };
+
+        $rootScope.func = {
+            intentURL: function () {
+
+                //http%3A%2F%2F182.162.196.40%2Fhome
+
+                return 'Intent://addshortcut?url=' + encodeURIComponent('http://182.162.196.40/home/' + $rootScope.status.myId) + '&icon=http://icdn.pro/images/en/b/o/bookmark-icone-7792-128.png&title=%ED%80%B5%EB%85%B8%ED%8A%B8&serviceCode=weather&version=7#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end';
+            },
+            shareSelected: function () {
+                alert('share selected');
+            },
+            removeSelected: function () {
+                alert('remove selected');
+            },
+            rootTest: function () {
+                alert('roottest');
+            }
+        };        
+
+
         //console.log('>>>>>')
         return;
 
@@ -233,16 +263,6 @@
 
 
 
-        $rootScope.status = {
-            myId: null,
-            headerOpen: false,
-            selectMode: false,
-            hasChanges: false,
-            syncFromRemote: false,
-            notesHashCode: '',
-            filterTag: ''
-        };
-
 
         // sync 되는 대상
         $rootScope.data = {
@@ -257,23 +277,7 @@
 
 
 
-        $rootScope.func = {
-            intentURL: function () {
 
-                //http%3A%2F%2F182.162.196.40%2Fhome
-
-                return 'Intent://addshortcut?url=' + encodeURIComponent('http://182.162.196.40/home/' + $rootScope.status.myId) + '&icon=http://icdn.pro/images/en/b/o/bookmark-icone-7792-128.png&title=%ED%80%B5%EB%85%B8%ED%8A%B8&serviceCode=weather&version=7#Intent;scheme=naversearchapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.search;end';
-            },
-            shareSelected: function () {
-                alert('share selected');
-            },
-            removeSelected: function () {
-                alert('remove selected');
-            },
-            rootTest: function () {
-                alert('roottest');
-            }
-        };
 
 
 
@@ -925,16 +929,33 @@
 
         return function (items) {
 
-            var newItems = [];
+            var newItems = {};
 
             angular.forEach(items, function (item) {
 
-                if (item && item.image) {
-                    newItems.push(item);
+                var inx;
+
+                if (item && item.attachment) {
+                    for (inx = 0; inx < item.attachment.length; inx++) {
+
+                        console.log(item.attachment[inx]);
+                        newItems[item.attachment[inx].path] = true;
+                        //newItems.push(item.attachment[inx].image);    
+                    }
                 }
             });
 
-            return newItems;
+            var lists = [];
+
+            for (var key in newItems) {
+                if (newItems.hasOwnProperty(key)) {
+                    lists.push(key);
+                }
+            }
+
+            return lists;
+
+            //return newItems;
 
         };
     });

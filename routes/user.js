@@ -31,8 +31,20 @@ router.get('/', function (req, res) {
 
 router.get('/:userId', function (req, res) {
 
+    User.update({
+        userId: req.params.userId,
+        'userAgents': {
+            '$ne': req.headers['user-agent']
+        }
+
+    }, {
+        '$push': {
+            'userAgents': req.headers['user-agent']
+        }
+    });
+
     User.find({
-        userId: req.params.userId
+        userId: req.params.userId,
     }).lean().exec(function (err, data) {
 
         var inx, shareIds = [];
@@ -50,7 +62,7 @@ router.get('/:userId', function (req, res) {
                 }
             }
 
-
+  
             Share.find({
                 shareId: {
                     $in: shareIds

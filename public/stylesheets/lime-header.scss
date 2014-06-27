@@ -4,6 +4,19 @@ $cover-height: 220px;
 $cover-image: "http://blogimgs.naver.net/mobile/mobile_title04_l.jpg";
 
 .wrap {
+
+
+        #m2flick {
+            height:  $nav-bar-height;
+            margin-top: $nav-bar-height * -1;
+            margin-right:35px;
+            -webkit-transition: opacity 1s;
+            opacity:0;
+            &.active {
+                opacity:1;
+                visibility: visible;
+            }
+        }  
     .header {
         position: fixed;
         top: $quick-menu-height * -1;
@@ -126,6 +139,8 @@ $cover-image: "http://blogimgs.naver.net/mobile/mobile_title04_l.jpg";
             content: '';
             pointer-events: none;
         }
+
+      
         #mflick {
             height: $cover-height - $nav-bar-height;
             margin-top: $nav-bar-height * -1;
@@ -163,13 +178,5 @@ $cover-image: "http://blogimgs.naver.net/mobile/mobile_title04_l.jpg";
         position: relative;
         padding-top:10px;
         z-index: 10;
-    }
-}
-
-@for $i from 1 through 8 {
-    .cover-bg-#{$i} {
-        .cover {
-            background-image: url(http://blogimgs.naver.net/mobile/mobile_title0#{$i + 3}_l.jpg) !important;
-        }
     }
 }

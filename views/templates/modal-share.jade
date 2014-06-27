@@ -3,12 +3,10 @@
 	.modal-header
 		h4.modal-title
 			span.glyphicon.glyphicon-share-alt
-			| 공유하기
+			| {{data.notes.length}} 개의 노트 공유하기
 
 	.modal-body
-	
-		h4
-			| {{data.notes.length}} 개의 노트
+
 
 
 
@@ -24,24 +22,28 @@
 			placeholder='note',
 			style='font-weight:bold')
 
-		img(ng-repeat='img in data.backgrounds', ng-src='{{img}}', width='100px')
+		img.img-thumbnail(ng-repeat='img in data.backgrounds', ng-src='{{img}}', width='100px', height='100px',
+			ng-attr-style='{{img == data.backgroundImage ? "border-width:5px" : ""}}',
+			ng-click='data.backgroundImage = img')
+
+		input(type='hidden', ng-model='data.backgroundImage')
 
 
-		span
+		//span
 			| http://10.64.51.102:4321/share/{{refId}}		
 
 	.modal-footer
 		.tm(style='float:left')
 			| {{note.created | date}}
 		.pull-right
-			button.btn.btn-sm.btn-primary(ng-click='func.share()')
+			button.btn.btn-sm.btn-primary(ng-click='func.share()', ng-disabled='data.notes.length == 0')
 				span.glyphicon.glyphicon-ok
-				| 수정
+				| 공유
 			button.btn.btn-sm.btn-default(ng-click='func.cancel()')
 				| 취소
 
 //.modal-footer
-	button.btn.btn-sm.btn-primary(ng-click='func.bookmark()', ng-disabled='form.$invalid', disabled='disabled')
+	button.btn.btn-sm.btn-primary(ng-click='func.bookmark()', ng-disabled='data.notes.length == 0', disabled='disabled')
 		span.glyphicon.glyphicon-ok
 		| Bookmark
 	button.btn.btn-sm.btn-default(ng-click='func.cancel()')

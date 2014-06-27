@@ -7,22 +7,19 @@
 
 		//- 퀵메뉴(기본모드) - 추가
 		div(ng-hide='status.selectMode', style='float:left')
-			button.btn.btn-default.btn-sm(ng-click='modal.addNote()')
+			button.btn.btn-default.btn-sm(ng-click='modal.note()')
 				span.glyphicon.glyphicon-plus
 
 		//- 퀵메뉴(선택모드) - 공유, 삭제
 		div(ng-show='status.selectMode', style='float:left')
 
-			span(ng-hide='status.selectedCount > 0')
+			button.btn.btn-default.btn-sm(ng-click='modal.share()')
+				span.glyphicon.glyphicon-share-alt
+
+			//span(ng-hide='status.selectedCount > 0')
 				| 항목선택
 
-			span(ng-show='status.selectedCount > 0')
-				button.btn.btn-default.btn-sm(ng-click='modal.share()')
-					span.glyphicon.glyphicon-share-alt
-				button.btn.btn-default.btn-sm(ng-click='func.removeSelected()')
-					span.glyphicon.glyphicon-trash
 
-				| {{status.selectedCount}} 개가 선택됨
 
 		//- 퀵메뉴 모드 선택
 		.pull-right
@@ -33,9 +30,14 @@
 	.nav_bar
 		
 		//- 상단고정바 > 타이틀
-		h2.title
-			span
-				| description
+		#m2flick(ng-class='displayTitle ? "active" : ""')
+			.flick-container(style='height: 100%;')
+				.flick-ct(ng-repeat='tag in data.panes', sstyle='background-color:rgba(0,0,0,0.5)')
+					h2.title		
+						span
+							| {{tag.title}}
+
+
 
 		//- 상단고정바 > 토글 버튼
 		.btn_group
@@ -45,27 +47,27 @@
 
 	//- 3. 상단고정바 배경의 커버 이미지
 	.nav_cover
-		.cover
+		.cover(ng-attr-style='background-image:url("{{bgImage}}")')
 
 //- 4. 커버 영역 
-.cover
+.cover(ng-attr-style='background-image:url({{bgImage}})')
 
 	//- 네비게이션 flicker
 	jindo-flick(flick='')
 
 	#mflick
 		.flick-container(style='height: 100%;')
-			.flick-ct(ng-repeat='tag in info.tags', sstyle='background-color:rgba(0,0,0,0.5)')
+			.flick-ct(ng-repeat='tag in data.panes', sstyle='background-color:rgba(0,0,0,0.5)')
 				div(style='padding:10px 15px')
 					p(style='font-size:24px;')
 						span.glyphicon.glyphicon-file(style='font-size:24px')
-						|desc-{{tag.tag}}
+						| {{tag.title}}
 
 					em
 						{{tag.count}}
 					.thumb-list
-						.thumbnail(ng-repeat='note in tag.notes | filterByImage | limitTo : 4')
-							.inner(style='background-image:url({{note.image}})')
+						.thumbnail(ng-repeat='image in tag.notes | filterByImage | limitTo : 4')
+							.inner(style='background-image:url({{image}})')
 
 
 

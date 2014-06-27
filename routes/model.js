@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var db = mongoose.connect('mongodb://localhost/sample0');
-
+//http://182.162.196.40/
 var attachmentSchema,
     noteSchema,
     userSchema,
@@ -26,6 +26,7 @@ attachmentSchema = new Schema({
 noteSchema = new Schema({
     title: String,
     note: String,
+    url: String,    
     attachment: [attachmentSchema],
     created: {
         type: Date,
@@ -46,6 +47,7 @@ userSchema = new Schema({
         required: true,
         unique: true
     },
+    userAgents: [String],
     notes: [noteSchema],
     shared: [{
         shareId: {

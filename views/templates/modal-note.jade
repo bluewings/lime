@@ -1,8 +1,19 @@
 .modal-note
 	.modal-header
-		h4.modal-title
+		h4.modal-title.pull-left
 			span.glyphicon.glyphicon-file
 			| 노트 작성
+
+		.pull-right
+			button.btn.btn-sm.btn-primary(ng-if='!data._id', ng-click='func.create()')
+				span.glyphicon.glyphicon-ok
+				| 추가
+			button.btn.btn-sm.btn-primary(ng-if='data._id', ng-click='func.modify()')
+				span.glyphicon.glyphicon-ok
+				| 수정
+			button.btn.btn-sm.btn-default(ng-click='func.cancel()')
+				| 취소
+		div(style='clear:both')
 
 	.modal-body
 	
@@ -53,15 +64,7 @@
 	.modal-footer
 		.tm(style='float:left')
 			| {{data.created | date}}
-		.pull-right
-			button.btn.btn-sm.btn-primary(ng-if='!data._id', ng-click='func.create()')
-				span.glyphicon.glyphicon-ok
-				| 추가
-			button.btn.btn-sm.btn-primary(ng-if='data._id', ng-click='func.modify()')
-				span.glyphicon.glyphicon-ok
-				| 수정
-			button.btn.btn-sm.btn-default(ng-click='func.cancel()')
-				| 취소
+
 
 //.modal-footer
 	button.btn.btn-sm.btn-primary(ng-click='func.bookmark()', ng-disabled='form.$invalid', disabled='disabled')

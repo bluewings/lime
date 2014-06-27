@@ -5,10 +5,10 @@
 			width='{{env.noteWidth}}px',
 			height='{{env.noteWidth * note.attachment[0].height / note.attachment[0].width}}px')
 		
-		.txt-wrap(style='max-height:150px;overflow:hidden')
-			.txt-title(ng-show='note.title')
-				| {{note.title}}
-			.txt-note(ng-show='note.note', ng-bind-html='note.note | autoLink')
+		
+		.txt-title(ng-show='note.title')
+			| {{note.title}}
+		.txt-note(ng-show='note.note', ng-bind-html='note.note | autoLink')
 
 
 
@@ -25,7 +25,7 @@
 
 	div.mask(ng-hide='shared')
 		
-		button.btn(ng-click='share()')
+		//button.btn(ng-click='share()')
 			span.glyphicon.glyphicon-share-alt
 		
 		//button.btn(ng-click='archive(note)')
@@ -35,4 +35,4 @@
 			span.glyphicon.glyphicon-trash
 			
 		button.btn(ng-click='modal.json(note)')
-			span.glyphicon.glyphicon-trash
+			span.glyphicon.glyphicon-question-sign
