@@ -1,0 +1,33 @@
+.panel.panel-default
+
+	.panel-heading
+		h4.panel-title
+			span.glyphicon.glyphicon-share-alt
+			| 공유페이지 생성
+		.pull-right
+			button.btn.btn-sm.btn-primary(ng-click='func.submit()', fake-ng-disabled='data.notes.length == 0')
+				span.glyphicon.glyphicon-ok
+				| 공유
+			button.btn.btn-sm.btn-default(ng-click='history.back()')
+				| 취소
+		div(style='clear:both')
+	.panel-body
+
+
+		input.form-control.input-sm(ng-model='data.title',
+			placeholder='Title',
+			style='font-weight:bold')
+			
+		input.form-control.input-sm(ng-model='data.note',
+			placeholder='note',
+			style='font-weight:bold')
+
+		img.img-thumbnail(ng-repeat='img in data.backgrounds', ng-src='{{img}}', width='100px', height='100px',
+			ng-attr-style='{{img == data.backgroundImage ? "border-width:5px" : ""}}',
+			ng-click='data.backgroundImage = img')
+
+		input(type='hidden', ng-model='data.backgroundImage')
+
+		pre
+			| {{data | json}}
+

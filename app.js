@@ -34,6 +34,7 @@ app.use('/', routes);
 app.use('/templates', templates);
 app.use('/admin', require('./routes/admin'));
 app.use('/user', require('./routes/user'));
+app.use('/benzema', require('./routes/benzema'));
 
 
 app.use('/users', users);

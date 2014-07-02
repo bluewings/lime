@@ -1,0 +1,69 @@
+body {
+  background-color: silver; }
+
+ng-view {
+  display: block;
+  min-height: 200px; }
+
+.card {
+  float: left;
+  margin: 10px; }
+
+.ng-enter {
+  z-index: 9999; }
+
+.ng-leave {
+  z-index: 9999; }
+
+/*.ng-enter {
+    position: absolute;
+    top: 0;
+    -webkit-transition: 0.3s linear all;
+    transition: 0.3s linear all;
+    opacity: 0;
+    height: 0;
+    left: 100%;
+    width: 100%;
+}
+
+
+
+.ng-enter.ng-enter-active {
+    opacity: 1;
+    height: 100px;
+    left: 0;
+}*/
+@-webkit-keyframes rotateFall {
+  0% {
+    -webkit-transform: rotateZ(0deg); }
+
+  20% {
+    -webkit-transform: rotateZ(10deg);
+    -webkit-animation-timing-function: ease-out;
+    opacity: 1; }
+
+  40% {
+    -webkit-transform: rotateZ(17deg); }
+
+  60% {
+    -webkit-transform: rotateZ(16deg); }
+
+  100% {
+    -webkit-transform: translateY(100%) rotateZ(17deg);
+    opacity: 0; } }
+.ng-leave {
+  /*position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-transition: 0.3s linear all;
+  transition: 0.3s linear all;
+  opacity: 1;
+  left: 0;
+  width: 100%;*/
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-transform-origin: 0% 0%;
+  -webkit-animation: rotateFall 1s both ease-in; }
+
+/*# sourceMappingURL=limeNote.css.map */

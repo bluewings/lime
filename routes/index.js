@@ -7,6 +7,9 @@ var express = require('express'),
 var SUCCESS = 200,
 	ERROR = 500;
 
+
+	var clicked = null;
+
 function render(req, res) {
 
 	res.render('index', {
@@ -35,9 +38,31 @@ function render(req, res) {
 	});
 }
 
+function renderLimeNote(req, res) {
+
+	res.render('limeNote', {
+		title: 'Express',
+		stylesheets: [
+			//'/stylesheets/keep.css',
+			'/stylesheets/lime.css',
+			'/stylesheets/limeNote.css'
+		],
+		javascripts: [
+			'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
+			//'/javascripts/modules/jindo.desktop.min.js',
+			//'/javascripts/modules/jindo.mobile.component.min.js',
+
+			'/javascripts/modules/jindo.mobile.min.js',
+			'/javascripts/modules/jindo.mobile.component.js',
+
+			'/javascripts/limeNote.js'
+		]
+	});
+}
+
 /* GET home page. */
 router.get('/', function (req, res) {
-	render(req, res);
+	renderLimeNote(req, res);
 });
 router.get('/home', function (req, res) {
 	render(req, res);

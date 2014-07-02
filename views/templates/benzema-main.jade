@@ -1,0 +1,34 @@
+div(style='background-color:#fff', ng-swipe-left='zoomout()', ng-swipe-right='zoomin()', class='zoom-{{zoomlevel}}')
+
+    br
+    h1 테스트 (줌레벨 {{zoomlevel}}) {{data.myId}}
+
+    h2 {{message}}
+
+    button(ng-click='func.addList()')
+        | 추가    
+
+    .card(ng-repeat='board in data.boardList')
+        | {{board.title}}
+
+    //pre
+        | {{data.boardList | json}}
+
+
+
+    .card(ng-repeat='card in cards', style='background-color:{{card.bgcolor}};')
+        | {{card.title}}
+        br
+        a(ng-href='/view/{{card.id}}')
+            | 이동 링크
+        br
+        button(ng-click='moveTo("/view/" + card.id, $event)')
+            | 에니메이션 링크
+
+
+    div(style='clear:both')
+    style
+        | .card {width:160px;height:240px;margin:10px;background-color:lightYellow;border:5px solid gray;float:left;-webkit-transition: all 0.5s}
+        | .zoom-1 .card {width:320px;height:320px}
+        | .zoom-3 .card {width:100px;height:150px;}
+        | .zoom-4 .card {width:70px;height:110px;}
