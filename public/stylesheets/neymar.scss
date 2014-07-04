@@ -1,8 +1,12 @@
-.board-preview {
+.board-preview-wrap {
     float: left;
     width: 50%;
+    .board-preview {
+
+
     border: 1px solid silver;
     padding: 10px;
+    }
 }
 
 .note-preview {
@@ -26,6 +30,9 @@
     }
     .content {
         padding:15px;
+        .board-preview {
+            margin:5px;
+        }
     }
     
 }

@@ -15,24 +15,25 @@
 
     .content.container
 
-        .board-preview(ng-repeat='board in data.boards | orderBy : "created" : true ',
-            ng-click='func.board.move(board)',
-            style='background-color:{{ board.backgroundColor }}')
-            | {{ board.title }} 
-            span.badge(ng-if='board.notes.length')
-                | {{ board.notes.length }}
-            hr
-            small
-                | {{ board.created | date : 'yyyy.MM.dd HH:mm:ss' }}
-            .pull-right
-                button.btn.btn-default(
-                    ng-click='modal.json(board, $event)')
-                    | JSON
-                button.btn.btn-default(
-                    ng-if='board.createdBy == data.myId',
-                    ng-click='func.board.remove(board, $event)')
-                    | 삭제
-        .clear
+
+        .board-preview-wrap(ng-repeat='board in data.boards | orderBy : "created" : true ',
+            ng-click='func.board.move(board)')
+            .board-preview(style='background-color:{{ board.backgroundColor }}')
+                | {{ board.title }} 
+                span.badge(ng-if='board.notes.length')
+                    | {{ board.notes.length }}
+                hr
+                small
+                    | {{ board.created | date : 'yyyy.MM.dd HH:mm:ss' }}
+                .pull-right
+                    button.btn.btn-default(
+                        ng-click='modal.json(board, $event)')
+                        | JSON
+                    button.btn.btn-default(
+                        ng-if='board.createdBy == data.myId',
+                        ng-click='func.board.remove(board, $event)')
+                        | 삭제
+                .clear
 
     .footer
         button.btn.btn-default(ng-click='modal.user($event)')

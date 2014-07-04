@@ -1,8 +1,9 @@
-.board-preview {
+.board-preview-wrap {
   float: left;
-  width: 50%;
-  border: 1px solid silver;
-  padding: 10px; }
+  width: 50%; }
+  .board-preview-wrap .board-preview {
+    border: 1px solid silver;
+    padding: 10px; }
 
 .note-preview {
   border: 1px solid silver;
@@ -20,6 +21,8 @@
     padding: 10px; }
 .main .content {
   padding: 15px; }
+  .main .content .board-preview {
+    margin: 5px; }
 
 .board-edit .box {
   width: 30px;
