@@ -24,11 +24,13 @@
         small
             | {{ note.created | date }}
         .pull-right
+            button.btn.btn-default(ng-click='modal.json(note, $event)')
+                | JSON
             button.btn.btn-default(ng-click='func.note.remove(note, $event)')
                 | 삭제
         .clear    
 
-    pre
+    //pre
         | {{ data.board | json }}
 
 

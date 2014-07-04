@@ -15,23 +15,6 @@
 
         input.form-control(ng-model='data.title', ng-required)
         textarea.form-control(ng-model='data.note', rows='5')
-        pre
+        //pre
             | {{ data | json }}
 
-
-.container
-
-    h2 BOARD-EDIT
-
-    .btn-group
-
-        a.btn.btn-default.btn-sm(href='/neymar')
-            | MAIN
-        a.btn.btn-default.btn-sm(href='/neymar/board/1234/view')
-            | BOARD-VIEW
-        a.btn.btn-default.btn-sm(href='/neymar/board/1234/edit')
-            | BOARD-EDIT
-        a.btn.btn-default.btn-sm(href='/neymar/board/1234/note/1234/view')
-            | NOTE-VIEW
-        a.btn.btn-default.btn-sm(href='/neymar/board/1234/note/1234/edit')
-            | NOTE-EDIT
