@@ -1,3 +1,5 @@
+@import "neymar-animate";
+
 .board-preview-wrap {
     float: left;
     width: 50%;
@@ -39,8 +41,10 @@
 
 .board-edit {
 .box {
-    width:30px;height:30px;
+    width:36px;height:36px;
+    margin:0 8px 8px 0;
     float:left;
+    border-radius:3px;
     &.selected {
         border:5px solid silver;
     }

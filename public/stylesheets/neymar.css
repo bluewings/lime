@@ -1,3 +1,136 @@
+.ng-enter {
+  z-index: 8888; }
+
+.ng-leave {
+  z-index: 9999; }
+
+.page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%; }
+  .page.page-edit {
+    /*background: #E59400;
+    color: #a55400;*/ }
+    .page.page-edit.ng-enter {
+      -webkit-animation: slideInRight 0.3s both ease-in;
+      -moz-animation: slideInRight 0.3s both ease-in;
+      -ms-animation: slideInRight 0.3s both ease-in;
+      -o-animation: slideInRight 0.3s both ease-in;
+      animation: slideInRight 0.3s both ease-in; }
+    .page.page-edit.ng-leave {
+      /*@include animation(slideOutLeft 0.3s both ease-in);*/
+      -webkit-animation: slideOutRight 0.3s both ease-in;
+      -moz-animation: slideOutRight 0.3s both ease-in;
+      -ms-animation: slideOutRight 0.3s both ease-in;
+      -o-animation: slideOutRight 0.3s both ease-in;
+      animation: slideOutRight 0.3s both ease-in; }
+
+@-webkit-keyframes slideOutLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    transform: translateX(-100%); } }
+@-moz-keyframes slideOutLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    transform: translateX(-100%); } }
+@-ms-keyframes slideOutLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    transform: translateX(-100%); } }
+@-o-keyframes slideOutLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    transform: translateX(-100%); } }
+@keyframes slideOutLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    transform: translateX(-100%); } }
+@-webkit-keyframes slideOutRight {
+  to {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%);
+    opacity: 0; } }
+@-moz-keyframes slideOutRight {
+  to {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%);
+    opacity: 0; } }
+@-ms-keyframes slideOutRight {
+  to {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%);
+    opacity: 0; } }
+@-o-keyframes slideOutRight {
+  to {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%);
+    opacity: 0; } }
+@keyframes slideOutRight {
+  to {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%);
+    opacity: 0; } }
+@-webkit-keyframes slideInRight {
+  from {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%); }
+
+  to {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    transform: translateX(0); } }
+@-moz-keyframes slideInRight {
+  from {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%); }
+
+  to {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    transform: translateX(0); } }
+@-ms-keyframes slideInRight {
+  from {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%); }
+
+  to {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    transform: translateX(0); } }
+@-o-keyframes slideInRight {
+  from {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%); }
+
+  to {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    transform: translateX(0); } }
+@keyframes slideInRight {
+  from {
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    transform: translateX(100%); }
+
+  to {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    transform: translateX(0); } }
 .board-preview-wrap {
   float: left;
   width: 50%; }
@@ -25,9 +158,11 @@
     margin: 5px; }
 
 .board-edit .box {
-  width: 30px;
-  height: 30px;
-  float: left; }
+  width: 36px;
+  height: 36px;
+  margin: 0 8px 8px 0;
+  float: left;
+  border-radius: 3px; }
   .board-edit .box.selected {
     border: 5px solid silver; }
 

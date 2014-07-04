@@ -7,7 +7,7 @@
     var app = angular.module('neymar', [
         'ngRoute',
         'ngResource',
-         //'ngAnimate',
+         'ngAnimate',
         'ui.bootstrap',
         'angularFileUpload'
     ]);
@@ -135,6 +135,8 @@
         '$scope', '$routeParams', 'CONSTANT', 'CONFIG', 'Board',
         function ($scope, $routeParams, CONSTANT, CONFIG, Board) {
 
+            $scope.pageClass = 'page-edit';
+
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
@@ -247,6 +249,8 @@
     app.controller('neymarCtrl_noteEdit', [
         '$scope', '$routeParams', 'CONSTANT', 'Note',
         function ($scope, $routeParams, CONSTANT, Note) {
+
+            $scope.pageClass = 'page-edit';
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
