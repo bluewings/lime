@@ -1,0 +1,36 @@
+.container
+
+    h2 BOARD-VIEW : {{ data.board.title }}
+
+    .btn-group
+
+        a.btn.btn-default.btn-sm(href='/bergkamp')
+            | MAIN
+
+        a.btn.btn-default.btn-sm(href='/bergkamp/board/{{ data.board.boardId }}/edit')
+            | 보드 설정 변경
+
+        a.btn.btn-default.btn-sm(href='/bergkamp/board/{{ data.board.boardId }}/note/edit')
+            | 새 노트 작성
+
+    hr
+
+    .note-preview(ng-repeat='note in data.board.notes',
+        ng-click='func.note.move(note)')
+        | {{ note.title }} 
+        span.badge(ng-if='note.notes.length')
+            | {{ note.notes.length }}
+        hr
+        small
+            | {{ note.created | date }}
+        .pull-right
+            button.btn.btn-default(ng-click='modal.json(note, $event)')
+                | JSON
+            button.btn.btn-default(ng-click='func.note.remove(note, $event)')
+                | 삭제
+        .clear    
+
+    //pre
+        | {{ data.board | json }}
+
+

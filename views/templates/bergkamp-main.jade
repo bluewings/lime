@@ -1,0 +1,30 @@
+.container
+
+    button.btn.btn-default(ng-click='modal.user($event)')
+        span.glyphicon.glyphicon-user
+
+    .btn-group
+
+        a.btn.btn-default.btn-sm(href='/bergkamp/board/edit')
+            | BOARD-EDIT
+
+    hr
+
+    .board-preview(ng-repeat='board in data.boards | orderBy : "created" : true ',
+        ng-click='func.board.move(board)')
+        | {{ board.title }} 
+        span.badge(ng-if='board.notes.length')
+            | {{ board.notes.length }}
+        hr
+        small
+            | {{ board.created | date : 'yyyy.MM.dd HH:mm:ss' }}
+        .pull-right
+            button.btn.btn-default(
+                ng-click='modal.json(board, $event)')
+                | JSON
+            button.btn.btn-default(
+                ng-if='board.createdBy == data.myId',
+                ng-click='func.board.remove(board, $event)')
+                | 삭제
+        .clear
+
