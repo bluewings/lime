@@ -1,7 +1,8 @@
 .board-preview {
+  float: left;
+  width: 50%;
   border: 1px solid silver;
-  padding: 10px;
-  margin-bottom: 10px; }
+  padding: 10px; }
 
 .note-preview {
   border: 1px solid silver;
@@ -10,5 +11,24 @@
 
 .clear {
   clear: both; }
+
+.main .header {
+  background-color: yellow; }
+  .main .header .clock {
+    font-family: Helvetica;
+    font-size: 36px;
+    padding: 10px; }
+
+.footer {
+  background-color: #47474b;
+  text-align: center;
+  padding: 50px 0; }
+  .footer .btn {
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    padding: 0; }
+    .footer .btn .glyphicon {
+      font-size: 22px; }
 
 /*# sourceMappingURL=neymar.css.map */

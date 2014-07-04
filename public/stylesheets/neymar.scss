@@ -1,13 +1,43 @@
 .board-preview {
-    border:1px solid silver;
-    padding:10px;
-    margin-bottom:10px;
+    float: left;
+    width: 50%;
+    border: 1px solid silver;
+    padding: 10px;
 }
+
 .note-preview {
-    border:1px solid silver;
-    padding:10px;
-    margin-bottom:10px;
+    border: 1px solid silver;
+    padding: 10px;
+    margin-bottom: 10px;
 }
+
 .clear {
-    clear:both;
+    clear: both;
+}
+
+.main {
+    .header {
+        background-color:yellow;
+        .clock {
+            font-family:Helvetica;
+            font-size: 36px;
+            padding:10px;
+        }    
+    }
+    
+}
+
+.footer {
+    background-color: #47474b;
+    text-align:center;
+    padding:50px 0;
+    .btn {
+        border-radius:50%;
+        width:44px;
+        height:44px;
+        padding:0;
+        .glyphicon {
+            font-size:22px;
+        }
+    }
 }

@@ -532,14 +532,20 @@
     ]);
 
     app.run([
-        '$rootScope', '$location', '$modal', 'CONSTANT', 'CONFIG', 'ERROR', 'User', 'Board', 'Note', 'limeUser', 'limeUtil', 'limeError',
-        function ($rootScope, $location, $modal, CONSTANT, CONFIG, ERROR, User, Board, Note, limeUser, limeUtil, limeError) {
+        '$rootScope', '$location', '$interval', '$modal', 'CONSTANT', 'CONFIG', 'ERROR', 'User', 'Board', 'Note', 'limeUser', 'limeUtil', 'limeError',
+        function ($rootScope, $location, $interval, $modal, CONSTANT, CONFIG, ERROR, User, Board, Note, limeUser, limeUtil, limeError) {
 
             $rootScope.data = {
                 myId: null,
+                now: new Date(),
                 user: {},
                 boards: []
             };
+
+            $interval(function() {
+
+                $rootScope.data.now = new Date();
+            }, 60000);
 
             $rootScope.$watch('data.myId', function (newValue, oldValue) {
 
