@@ -1,30 +1,35 @@
-/*jslint browser: true, regexp: true, unparam: true, indent: 4 */
+/*jslint browser: true, devel: true, regexp: true, unparam: true, indent: 4 */
 /*global jQuery: true */
 (function () {
 
     'use strict';
 
-    var $ = jQuery;
-
     var app = angular.module('benzema', [
-        'ngRoute', 'ngSanitize', 'ngAnimate',
-        'lime.resource'
+        'ngRoute',
+        'ngResource',
+        'ngSanitize',
+        //'ngAnimate',
+        'ui.bootstrap',
+        'angularFileUpload'
     ]);
 
-    // limeNote-constant
     app.constant('CONFIG', {
         ARCHIVE_MY_ID_KEY: 'lime-my-id',
-        ARCHIVE_NOTES_KEY: 'lime-notes',
-        SYNC_INTERVAL: 3000,
-        STYLE: {
-            COVER_HEIGHT: 220,
-            NAV_BAR_HEIGHT: 47
-        },
         URI: {
-            EDIT_BOARD: '/benzema/edit/list',
-            VIEW_BOARD: '/benzema/board/:boardId/view',
+            MAIN: '/benzema',
+            BOARD_VIEW: '/benzema/board/:boardId/view',
+            BOARD_CREATE: '/benzema/board/edit',
+            BOARD_MODIFY: '/benzema/board/:boardId/edit',
+            NOTE_VIEW: '/benzema/board/:boardId/note/:_id/view',
             NOTE_CREATE: '/benzema/board/:boardId/note/edit',
             NOTE_MODIFY: '/benzema/board/:boardId/note/:_id/edit'
+        }
+    });
+
+    app.constant('ERROR', {
+        USER_NOT_FOUND: {
+            TYPE: 'user_not_found',
+            URI: '/benzema/error/userNotFound/:userId'
         }
     });
 
@@ -32,61 +37,348 @@
         SUCCESS: 'success',
         ERROR: 'error'
     });
-    // //limeNote-constant
 
     app.config([
-        '$locationProvider', '$routeProvider', '$compileProvider', 'CONFIG',
-        function ($locationProvider, $routeProvider, $compileProvider, CONFIG) {
+        '$locationProvider', '$routeProvider', '$compileProvider', 'CONFIG', 'ERROR',
+        function ($locationProvider, $routeProvider, $compileProvider, CONFIG, ERROR) {
 
             $locationProvider.html5Mode(true);
             $routeProvider
-                .when('/benzema', {
+                .when(CONFIG.URI.MAIN, {
                     templateUrl: '/templates/benzema-main',
-                    controller: 'benzema.controller.list',
-                    animation: 'slide'
+                    controller: 'benzemaCtrl_main'
                 })
-                .when('/benzema/board/:boardId/view', {
+                .when(CONFIG.URI.BOARD_VIEW, {
                     templateUrl: '/templates/benzema-board-view',
                     controller: 'benzemaCtrl_boardView'
                 })
-                
-
-
-                .when('/benzema/view/:shareId', {
-                    templateUrl: '/templates/benzema-view',
-                    controller: 'benzema.controller.view'
+                .when(CONFIG.URI.BOARD_CREATE, {
+                    templateUrl: '/templates/benzema-board-edit',
+                    controller: 'benzemaCtrl_boardEdit'
                 })
-                .when(CONFIG.URI.EDIT_BOARD, {
-                    templateUrl: '/templates/benzema-edit-list',
-                    controller: 'benzema.controller.board.edit'
+                .when(CONFIG.URI.BOARD_MODIFY, {
+                    templateUrl: '/templates/benzema-board-edit',
+                    controller: 'benzemaCtrl_boardEdit'
                 })
-                .when(CONFIG.URI.VIEW_BOARD, {
-                    templateUrl: '/templates/benzema-board-view',
-                    controller: 'benzema.controller.board.view'
+                .when(CONFIG.URI.NOTE_VIEW, {
+                    templateUrl: '/templates/benzema-note-view',
+                    controller: 'benzemaCtrl_noteView'
                 })
                 .when(CONFIG.URI.NOTE_CREATE, {
                     templateUrl: '/templates/benzema-note-edit',
-                    controller: 'benzema.controller.board.view'
+                    controller: 'benzemaCtrl_noteEdit'
                 })
                 .when(CONFIG.URI.NOTE_MODIFY, {
                     templateUrl: '/templates/benzema-note-edit',
-                    controller: 'benzema.controller.board.view'
+                    controller: 'benzemaCtrl_noteEdit'
+                })
+                .when(ERROR.USER_NOT_FOUND.URI, {
+                    templateUrl: '/templates/error-user-not-found',
+                    controller: 'errorCtrl_userNotFound'
                 });
-
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|intent):/);
         }
     ]);
 
-    app.service('benzemaUser', [
-        '$q', 'CONSTANT', 'CONFIG', 'User',
-        function ($q, CONSTANT, CONFIG, User) {
+    app.controller('benzemaCtrl_main', [
+        '$scope', '$routeParams', 'CONSTANT', '$timeout',
+        function ($scope, $routeParams, CONSTANT, $timeout) {
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+        }
+    ]);
+
+    app.controller('benzemaCtrl_boardView', [
+        '$scope', '$routeParams', 'CONSTANT', 'UserBoards',
+        function ($scope, $routeParams, CONSTANT, UserBoards) {
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            $scope.$watch('data.boards', function (newValue, oldValue) {
+
+                var i, found = false;
+
+                if (newValue && newValue.length > 0) {
+                    for (i = 0; i < newValue.length; i++) {
+                        if ($routeParams.boardId === newValue[i].boardId) {
+                            $scope.data.board = newValue[i];
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found === false) {
+
+                        UserBoards.save({
+                            userId: $scope.data.myId,
+                            boardId: $routeParams.boardId
+                        }, {}, function (response) {
+
+                            if (CONSTANT.SUCCESS !== response.status) {
+                                alert(response.message);
+                            } else {
+                                $scope.func.refresh();
+                            }
+                        });
+
+                    }
+                }
+            });
+        }
+    ]);
+
+    app.controller('benzemaCtrl_boardEdit', [
+        '$scope', '$routeParams', 'CONSTANT', 'Board',
+        function ($scope, $routeParams, CONSTANT, Board) {
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            $scope.$watch('data.myId', function (newValue, oldValue) {
+
+                if (newValue) {
+                    $scope.data.createdBy = newValue;
+                }
+            });
+
+            if ($routeParams.boardId) {
+
+                Board.get({
+                    boardId: $routeParams.boardId
+                }, function (response) {
+
+                    if (CONSTANT.SUCCESS !== response.status) {
+                        alert(response.message);
+                    } else {
+                        $scope.data.boardId = response.data.boardId;
+                        $scope.data.title = response.data.title;
+                        $scope.data.note = response.data.note;
+                    }
+                });
+            }
+
+            $scope.func.create = function () {
+
+                Board.save($scope.data, function (response) {
+
+                    if (CONSTANT.SUCCESS !== response.status) {
+                        alert(response.message);
+                    } else {
+                        $scope.func.refresh();
+                        $scope.func.close();
+                        //$scope.func.board.move(response.data);
+                    }
+                });
+            };
+
+            $scope.func.modify = function () {
+
+                if ($routeParams.boardId) {
+
+                    Board.update({
+                        boardId: $routeParams.boardId
+                    }, $scope.data, function (response) {
+
+                        if (CONSTANT.SUCCESS !== response.status) {
+                            alert(response.message);
+                        } else {
+                            $scope.func.refresh();
+                            $scope.func.close();
+                        }
+                    });
+                }
+            };
+
+            $scope.func.cancel = function () {
+
+                $scope.func.close();
+            };
+
+            $scope.func.close = function () {
+
+                history.back();
+            };
+        }
+    ]);
+
+    app.controller('benzemaCtrl_noteView', [
+        '$scope', '$routeParams', 'CONSTANT',
+        function ($scope, $routeParams, CONSTANT) {
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            $scope.$watchCollection('data.boards', function (newValue, oldValue) {
+
+                var i, j;
+
+                if (newValue) {
+                    for (i = 0; i < $scope.data.boards.length; i++) {
+                        if ($routeParams.boardId === $scope.data.boards[i].boardId) {
+                            for (j = 0; j < $scope.data.boards[i].notes.length; j++) {
+                                if ($routeParams._id === $scope.data.boards[i].notes[j]._id) {
+                                    $scope.data.note = $scope.data.boards[i].notes[j];
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    ]);
+
+    app.controller('benzemaCtrl_noteEdit', [
+        '$scope', '$routeParams', 'CONSTANT', 'Note',
+        function ($scope, $routeParams, CONSTANT, Note) {
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            $scope.$watch('data.myId', function (newValue, oldValue) {
+
+                if (newValue) {
+                    $scope.data.createdBy = newValue;
+                }
+            });
+
+            if ($routeParams._id) {
+
+                Note.get({
+                    boardId: $routeParams.boardId,
+                    _id: $routeParams._id
+                }, function (response) {
+
+                    if (CONSTANT.SUCCESS !== response.status) {
+                        alert(response.message);
+                    } else {
+                        $scope.data.boardId = response.data.boardId;
+                        $scope.data._id = response.data._id;
+                        $scope.data.title = response.data.title;
+                        $scope.data.note = response.data.note;
+                    }
+                });
+            }
+
+            $scope.func.create = function () {
+
+                Note.save({
+                    boardId: $routeParams.boardId
+                }, $scope.data, function (response) {
+
+                    if (CONSTANT.SUCCESS !== response.status) {
+                        alert(response.message);
+                    } else {
+                        $scope.func.refresh();
+                        $scope.func.close();
+                    }
+                });
+            };
+
+            $scope.func.modify = function () {
+
+                if ($routeParams._id) {
+
+                    Note.update({
+                        boardId: $routeParams.boardId,
+                        _id: $routeParams._id
+                    }, $scope.data, function (response) {
+
+                        if (CONSTANT.SUCCESS !== response.status) {
+                            alert(response.message);
+                        } else {
+                            $scope.func.refresh();
+                            $scope.func.close();
+                        }
+                    });
+                }
+            };
+
+            $scope.func.cancel = function () {
+
+                $scope.func.close();
+            };
+
+            $scope.func.close = function () {
+
+                history.back();
+            };
+        }
+    ]);
+
+    app.controller('errorCtrl_userNotFound', [
+        '$scope', '$routeParams', 'CONSTANT', 'limeUser',
+        function ($scope, $routeParams, CONSTANT, limeUser) {
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            $scope.data.userId = $routeParams.userId;
+
+            $scope.func.reset = function () {
+
+                limeUser.reset().then(function (userId) {
+
+                    history.back();
+                });
+            };
+        }
+    ]);
+
+    app.service('limeUser', [
+        '$q', '$rootScope', 'CONSTANT', 'CONFIG', 'User',
+        function ($q, $rootScope, CONSTANT, CONFIG, User) {
 
             var instance = {};
 
             instance.myId = null;
 
             return {
+                reset: function () {
+
+                    var deferred = $q.defer();
+
+                    localStorage.removeItem(CONFIG.ARCHIVE_MY_ID_KEY);
+                    instance.myId = null;
+                    this.getMyId().then(function (myId) {
+
+                        $rootScope.data.myId = myId;
+                        deferred.resolve(myId);
+                    });
+
+                    return deferred.promise;
+                },
+                setMyId: function (userId) {
+
+                    var deferred = $q.defer();
+
+                    localStorage.removeItem(CONFIG.ARCHIVE_MY_ID_KEY);
+                    instance.myId = null;
+
+                    User.get({
+                        userId: userId
+                    }, {}).$promise.then(function (response) { // get issued 'myId' from server
+
+                        if (CONSTANT.SUCCESS === response.status) {
+                            instance.myId = response.data.userId;
+                            localStorage.setItem(CONFIG.ARCHIVE_MY_ID_KEY, instance.myId);
+                            $rootScope.data.myId = instance.myId;
+                            deferred.resolve(response.data.userId);
+                        } else {
+                            deferred.reject(response.message);
+                        }
+                    });
+
+                    return deferred.promise;
+                },
                 getMyId: function () {
 
                     var deferred = $q.defer();
@@ -103,6 +395,7 @@
                     }
 
                     User.save({}, {}).$promise.then(function (response) { // get issued 'myId' from server
+
                         if (CONSTANT.SUCCESS === response.status) {
                             instance.myId = response.data.userId;
                             localStorage.setItem(CONFIG.ARCHIVE_MY_ID_KEY, instance.myId);
@@ -118,101 +411,134 @@
         }
     ]);
 
+    app.service('limeUtil', [
+        '$q',
+        function ($q) {
+
+            return {
+                uri: function (url, params) {
+
+                    var prop;
+
+                    for (prop in params) {
+                        if (params.hasOwnProperty(prop)) {
+                            url = url.replace(':' + prop, params[prop]);
+                        }
+                    }
+                    return url;
+                },
+                arrayReplaceByObjectId: function (arr1, arr2) {
+
+                    var inx, key, dict = {},
+                        newArr = [];
+
+                    for (inx = 0; inx < arr2.length; inx++) {
+                        dict[arr2[inx]._id] = arr2[inx];
+                    }
+                    for (inx = 0; inx < arr1.length; inx++) { // replace
+                        if (dict[arr1[inx]._id]) {
+                            dict[arr1[inx]._id].$$hashKey = arr1[inx].$$hashKey;
+                            newArr.push(dict[arr1[inx]._id]);
+                            delete dict[arr1[inx]._id];
+                        }
+                    }
+                    for (key in dict) { // append
+                        if (dict.hasOwnProperty(key)) {
+                            newArr.push(dict[key]);
+                        }
+                    }
+                    return newArr;
+                }
+            };
+        }
+    ]);
+
+    app.service('limeError', [
+        '$location', 'ERROR', 'limeUtil',
+        function ($location, ERROR, limeUtil) {
+
+            return {
+                print: function (type, params) {
+
+                    var path;
+
+                    switch (type) {
+                    case ERROR.USER_NOT_FOUND.TYPE:
+                        path = ERROR.USER_NOT_FOUND.URI;
+                        break;
+                    }
+
+                    if (path) {
+                        $location.path(limeUtil.uri(path, params));
+                    }
+                }
+            };
+        }
+    ]);
+
+    app.factory('User', [
+        '$resource',
+        function ($resource) {
+
+            return $resource('/user/:userId');
+        }
+    ]);
+
+    app.factory('UserBoards', [
+        '$resource',
+        function ($resource) {
+
+            return $resource('/user/:userId/boards/:boardId', null, {
+                update: {
+                    method: 'PUT',
+                    params: {
+                        userId: '@userId',
+                        boardId: '@boardId'
+                    }
+                }
+            });
+        }
+    ]);
+
+    app.factory('Board', [
+        '$resource',
+        function ($resource) {
+
+            return $resource('/board/:boardId', null, {
+                update: {
+                    method: 'PUT',
+                    params: {
+                        boardId: '@boardId'
+                    }
+                }
+            });
+        }
+    ]);
+
+    app.factory('Note', [
+        '$resource',
+        function ($resource) {
+
+            return $resource('/board/:boardId/note/:_id', null, {
+                update: {
+                    method: 'PUT',
+                    params: {
+                        boardId: '@boardId',
+                        _id: '@_id'
+                    }
+                }
+            });
+        }
+    ]);
+
     app.run([
-        '$rootScope', '$location', 'CONSTANT', 'CONFIG', 'benzemaUser', 'User', 'Share',
-        function ($rootScope, $location, CONSTANT, CONFIG, benzemaUser, User, Share) {
+        '$rootScope', '$location', '$modal', 'CONSTANT', 'CONFIG', 'ERROR', 'User', 'Board', 'Note', 'limeUser', 'limeUtil', 'limeError',
+        function ($rootScope, $location, $modal, CONSTANT, CONFIG, ERROR, User, Board, Note, limeUser, limeUtil, limeError) {
 
             $rootScope.data = {
                 myId: null,
-                boardList: []
-            };
-
-            $rootScope.func = {
-                addBoard: function () {
-
-
-                    $location.path(CONFIG.URI.EDIT_BOARD);
-                    //alert('add list 2');
-                    //$location.path();
-                },
-                removeBoard: function (board) {
-
-                    Share.remove({
-                        shareId: board.shareId
-                    }, function (data) {
-
-                        //console.log(data);
-                        $rootScope.func.refresh();
-                    });
-
-                },
-                moveToBoard: function (board) {
-
-                    //alert('해당 보드로 이동');
-                    $location.path(CONFIG.URI.VIEW_BOARD.replace(/:boardId/, board.shareId));
-
-                },
-                refresh: function () {
-
-                    function arrayReplaceByObjectId(arr1, arr2) {
-
-
-
-                        var inx, key, dict = {},
-                            newArr = [];
-
-                        for (inx = 0; inx < arr2.length; inx++) {
-                            dict[arr2[inx]._id] = arr2[inx];
-                        }
-
-                        // replace
-                        for (inx = 0; inx < arr1.length; inx++) {
-                            if (dict[arr1[inx]._id]) {
-                                dict[arr1[inx]._id].$$hashKey = arr1[inx].$$hashKey;
-                                newArr.push(dict[arr1[inx]._id]);
-                                delete dict[arr1[inx]._id];
-                            }
-                        }
-
-                        // append
-                        for (key in dict) {
-                            if (dict.hasOwnProperty(key)) {
-                                newArr.push(dict[key]);
-
-                            }
-                        }
-                        console.log(angular.copy(newArr));
-                        return newArr;
-                    }
-
-                    if ($rootScope.data.myId) {
-
-                        User.get({
-                            userId: $rootScope.data.myId
-                        }, function (response) {
-
-                            var shared = {},
-                                inx;
-
-
-
-                            for (inx = 0; inx < response.data.shared; inx++) {
-
-                            }
-
-
-
-                            if (CONSTANT.SUCCESS === response.status) {
-
-                                //console.log($rootScope.data.boardList);
-
-                                $rootScope.data.boardList = arrayReplaceByObjectId($rootScope.data.boardList, response.data.shared);
-                            } else {
-                                throw response.message;
-                            }
-                        });
-                    }
-                }
+                user: {},
+                boards: []
             };
 
             $rootScope.$watch('data.myId', function (newValue, oldValue) {
@@ -222,115 +548,183 @@
                 }
             });
 
-            benzemaUser.getMyId().then(function (myId) {
+            $rootScope.modal = {
+                user: function (event) {
+
+                    var controller = function ($scope, $modalInstance, userData) {
+
+                        $scope.userData = userData;
+
+                        $scope.func = {
+                            change: function () {
+
+                                limeUser.setMyId($scope.userData.userId).then(function (userId) {
+
+                                    $scope.func.close();
+                                }, function(err) {
+
+                                    alert('존재하지 않는 사용자입니다.');
+                                });
+                            },
+                            reset: function () {
+
+                                limeUser.reset().then(function (userId) {
+
+                                    $scope.func.close();
+                                });
+                            },
+                            close: function () {
+                                $modalInstance.dismiss();
+                            }
+                        };
+                    };
+
+                    if (event) {
+                        event.stopPropagation();
+                    }
+
+                    controller.$inject = ['$scope', '$modalInstance', 'userData'];
+
+                    return $modal.open({
+                        templateUrl: '/templates/modal-user',
+                        size: 'sm',
+                        resolve: {
+                            userData: function () {
+                                return angular.copy($rootScope.data.user || []);
+                            }
+                        },
+                        controller: controller
+                    });
+                },
+                json: function (jsonData, event) {
+
+                    var controller = function ($scope, $modalInstance, jsonData) {
+
+                        $scope.jsonData = jsonData;
+
+                        $scope.func = {
+                            close: function () {
+                                $modalInstance.dismiss();
+                            }
+                        };
+                    };
+
+                    if (event) {
+                        event.stopPropagation();
+                    }
+
+                    controller.$inject = ['$scope', '$modalInstance', 'jsonData'];
+
+                    return $modal.open({
+                        templateUrl: '/templates/modal-json',
+                        size: 'sm',
+                        resolve: {
+                            jsonData: function () {
+                                return angular.copy(jsonData || []);
+                            }
+                        },
+                        controller: controller
+                    });
+                }
+            };
+
+            $rootScope.func = {
+                refresh: function () {
+
+                    if ($rootScope.data.myId) {
+
+                        User.get({
+                            userId: $rootScope.data.myId
+                        }, function (response) {
+
+                            if (CONSTANT.SUCCESS === response.status) {
+                                $rootScope.data.user = {
+                                    userId: response.data.userId,
+                                    created: response.data.created,
+                                    userAgents: response.data.userAgents
+                                };
+                                $rootScope.data.boards = limeUtil.arrayReplaceByObjectId($rootScope.data.boards, response.data.boards);
+                            } else {
+                                limeError.print(ERROR.USER_NOT_FOUND.TYPE, {
+                                    userId: $rootScope.data.myId
+                                });
+                                throw response.message;
+                            }
+                        });
+                    }
+                },
+                board: {
+                    move: function (board, event) {
+
+                        if (event) {
+                            event.stopPropagation();
+                        }
+
+                        $location.path(limeUtil.uri(CONFIG.URI.BOARD_VIEW, {
+                            boardId: board.boardId
+                        }));
+                    },
+                    remove: function (board, event) {
+
+                        if (event) {
+                            event.stopPropagation();
+                        }
+
+                        Board.remove({
+                            boardId: board.boardId
+                        }, function (response) {
+
+                            if (CONSTANT.SUCCESS !== response.status) {
+                                alert(response.message);
+                            } else {
+                                $rootScope.func.refresh();
+                            }
+                        });
+                    }
+                },
+                note: {
+                    move: function (note, event) {
+
+                        if (event) {
+                            event.stopPropagation();
+                        }
+
+                        $location.path(limeUtil.uri(CONFIG.URI.NOTE_VIEW, {
+                            boardId: note.boardId,
+                            _id: note._id
+                        }));
+                    },
+                    remove: function (note, event) {
+
+                        if (event) {
+                            event.stopPropagation();
+                        }
+
+                        Note.remove({
+                            boardId: note.boardId,
+                            _id: note._id
+                        }, function (response) {
+
+                            if (CONSTANT.SUCCESS !== response.status) {
+                                alert(response.message);
+                            } else {
+                                $rootScope.func.refresh();
+                            }
+                        });
+                    }
+                }
+            };
+
+            limeUser.getMyId().then(function (myId) {
 
                 $rootScope.data.myId = myId;
             });
-
-            /*$rootScope.status = {
-            myId: null,
-            headerOpen: false,
-            selectMode: false,
-            hasChanges: false,
-            syncFromRemote: false,
-            notesHashCode: '',
-            filterTag: ''
-        };*/
         }
     ]);
-
-    app.controller('benzema.controller.list', [
-        '$scope',
-        function ($scope) {
-
-            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
-            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
-
-
-        }
-    ]);
-
-
-    app.controller('benzema.controller.board.view', [
-        '$scope',
-        '$routeParams',
-        '$location',
-        'CONFIG',
-        function ($scope, $routeParams, $location, CONFIG) {
-
-            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
-            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
-
-            $scope.data.board = {};
-
-            $scope.func.addCard = function() {
-
-                //alert('카드 추가');
-                $location.path(CONFIG.URI.NOTE_MODIFY
-                    .replace(/:boardId/, $routeParams.boardId)
-                    .replace(/:_id/, ''));
-
-            };
-
-            $scope.$watch('data.boardList', function (newValue, oldValue) {
-
-                var inx;
-
-                if (newValue && newValue.length) {
-                    for (inx = 0; inx < newValue.length; inx++) {
-                        if ($routeParams.boardId === newValue[inx].shareId) {
-                            $scope.data.board = newValue[inx];
-                            break;
-                        }
-                    }
-                }
-
-            });
-
-        }
-    ]);
-
-    app.controller('benzema.controller.board.edit', [
-        '$scope',
-        '$rootScope',
-        'Share',
-        function ($scope, $rootScope, Share) {
-
-            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
-            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
-
-            $scope.data.pageClass = 'page-edit';
-            $scope.data.createdBy = $rootScope.data.myId;
-
-            $scope.func.submit = function () {
-
-                Share.save($scope.data, function (response) {
-
-                    $scope.func.refresh();
-
-                    history.back();
-                    //});
-                });
-
-
-
-            };
-
-
-
-        }
-
-    ]);
-
-
 
     angular.element(document).ready(function () {
 
-        ///console.log(arguments);
-
         angular.bootstrap(document, ['benzema']);
     });
-
-
 
 }());

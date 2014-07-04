@@ -1,42 +1,30 @@
-div(style='background-color:#fff', ng-swipe-left='zoomout()', ng-swipe-right='zoomin()', class='zoom-{{zoomlevel}}')
+.container
 
-    br
-    h1 테스트 (줌레벨 {{zoomlevel}}) {{data.myId}}
+    button.btn.btn-default(ng-click='modal.user($event)')
+        span.glyphicon.glyphicon-user
 
-    h2 {{message}}
+    .btn-group
 
-    pre 
-        | {{data.event | json}}
+        a.btn.btn-default.btn-sm(href='/benzema/board/edit')
+            | BOARD-EDIT
 
-    button(ng-click='func.addBoard()')
-        | 추가    
+    hr
 
-    .card(ng-repeat='board in data.boardList')
-        | {{board.title}}
-        button(ng-click='func.removeBoard(board)')
-            | 삭제
-        br
-        button(ng-click='func.moveToBoard(board)')
-            | 이동
+    .board-preview(ng-repeat='board in data.boards | orderBy : "created" : true ',
+        ng-click='func.board.move(board)')
+        | {{ board.title }} 
+        span.badge(ng-if='board.notes.length')
+            | {{ board.notes.length }}
+        hr
+        small
+            | {{ board.created | date : 'yyyy.MM.dd HH:mm:ss' }}
+        .pull-right
+            button.btn.btn-default(
+                ng-click='modal.json(board, $event)')
+                | JSON
+            button.btn.btn-default(
+                ng-if='board.createdBy == data.myId',
+                ng-click='func.board.remove(board, $event)')
+                | 삭제
+        .clear
 
-    pre
-        | {{data | json}}
-
-
-
-    .card(ng-repeat='card in cards', style='background-color:{{card.bgcolor}};')
-        | {{card.title}}
-        br
-        a(ng-href='/view/{{card.id}}')
-            | 이동 링크
-        br
-        button(ng-click='moveTo("/view/" + card.id, $event)')
-            | 에니메이션 링크
-
-
-    div(style='clear:both')
-    style
-        | .card {width:160px;height:240px;margin:10px;background-color:lightYellow;border:5px solid gray;float:left;-webkit-transition: all 0.5s}
-        | .zoom-1 .card {width:320px;height:320px}
-        | .zoom-3 .card {width:100px;height:150px;}
-        | .zoom-4 .card {width:70px;height:110px;}

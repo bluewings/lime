@@ -1,0 +1,20 @@
+.panel.panel-default
+    .panel-heading
+        | Create Board
+
+        .pull-right
+            button.btn.btn-primary(ng-if='!data.boardId', ng-click='func.create()')
+                | 추가
+            button.btn.btn-primary(ng-if='data.boardId', ng-click='func.modify()')
+                | 수정
+            button.btn.btn-default(ng-click='func.cancel()')
+                | 취소
+        div(style='clear:both')        
+
+    .panel-body
+
+        input.form-control(ng-model='data.title', ng-required)
+        textarea.form-control(ng-model='data.note', rows='5')
+        //pre
+            | {{ data | json }}
+
