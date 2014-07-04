@@ -1,4 +1,4 @@
-.panel.panel-default
+.panel.panel-default.board-edit
     .panel-heading
         | Create Board
 
@@ -15,6 +15,15 @@
 
         input.form-control(ng-model='data.title', ng-required)
         textarea.form-control(ng-model='data.note', rows='5')
+
+        .box(ng-repeat='color in data.colors',
+            style='background-color:{{ color }};',
+            ng-class='data.backgroundColor == color ? "selected" : ""',
+            ng-click='data.backgroundColor = color'
+            )
+
+        .clear 
+
         //pre
             | {{ data | json }}
 

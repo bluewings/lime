@@ -16,7 +16,8 @@
     .content.container
 
         .board-preview(ng-repeat='board in data.boards | orderBy : "created" : true ',
-            ng-click='func.board.move(board)')
+            ng-click='func.board.move(board)',
+            style='background-color:{{ board.backgroundColor }}')
             | {{ board.title }} 
             span.badge(ng-if='board.notes.length')
                 | {{ board.notes.length }}

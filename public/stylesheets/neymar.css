@@ -18,6 +18,15 @@
     font-family: Helvetica;
     font-size: 36px;
     padding: 10px; }
+.main .content {
+  padding: 15px; }
+
+.board-edit .box {
+  width: 30px;
+  height: 30px;
+  float: left; }
+  .board-edit .box.selected {
+    border: 5px solid silver; }
 
 .footer {
   background-color: #47474b;

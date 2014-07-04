@@ -67,6 +67,7 @@ boardSchema = new Schema({
     },
     title: String,
     note: String,
+    backgroundColor: String,    
     backgroundImage: String,
     notes: [noteSchema],
     createdBy: String,

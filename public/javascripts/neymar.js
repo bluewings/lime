@@ -7,8 +7,7 @@
     var app = angular.module('neymar', [
         'ngRoute',
         'ngResource',
-        'ngSanitize',
-        //'ngAnimate',
+         //'ngAnimate',
         'ui.bootstrap',
         'angularFileUpload'
     ]);
@@ -23,7 +22,8 @@
             NOTE_VIEW: '/neymar/board/:boardId/note/:_id/view',
             NOTE_CREATE: '/neymar/board/:boardId/note/edit',
             NOTE_MODIFY: '/neymar/board/:boardId/note/:_id/edit'
-        }
+        },
+        BOARD_COLORS: ['#3c70e9', '#39b64e', '#e64a64', '#f5564e', '#805eb9', '#9297a8', '#b25eb9', '#fcb60c']
     });
 
     app.constant('ERROR', {
@@ -132,17 +132,26 @@
     ]);
 
     app.controller('neymarCtrl_boardEdit', [
-        '$scope', '$routeParams', 'CONSTANT', 'Board',
-        function ($scope, $routeParams, CONSTANT, Board) {
+        '$scope', '$routeParams', 'CONSTANT', 'CONFIG', 'Board',
+        function ($scope, $routeParams, CONSTANT, CONFIG, Board) {
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
 
+            $scope.data.colors = CONFIG.BOARD_COLORS;
+
             $scope.$watch('data.myId', function (newValue, oldValue) {
 
                 if (newValue) {
                     $scope.data.createdBy = newValue;
+                }
+            });
+
+            $scope.$watch('data.boardId', function (newValue, oldValue) {
+
+                if (!$scope.data.backgroundColor) {
+                    $scope.data.backgroundColor = $scope.data.colors[parseInt(Math.random() * $scope.data.colors.length, 10)];
                 }
             });
 
@@ -158,6 +167,7 @@
                         $scope.data.boardId = response.data.boardId;
                         $scope.data.title = response.data.title;
                         $scope.data.note = response.data.note;
+                        $scope.data.backgroundColor = response.data.backgroundColor;
                     }
                 });
             }

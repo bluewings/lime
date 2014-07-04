@@ -24,8 +24,23 @@
             padding:10px;
         }    
     }
+    .content {
+        padding:15px;
+    }
     
 }
+
+.board-edit {
+.box {
+    width:30px;height:30px;
+    float:left;
+    &.selected {
+        border:5px solid silver;
+    }
+}    
+}
+
+
 
 .footer {
     background-color: #47474b;
