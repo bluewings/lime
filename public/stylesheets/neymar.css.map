@@ -1,0 +1,6 @@
+{
+"version": 3,
+"mappings": "AAAA,cAAe;EACX,MAAM,EAAC,gBAAgB;EACvB,OAAO,EAAC,IAAI;EACZ,aAAa,EAAC,IAAI;;AAEtB,aAAc;EACV,MAAM,EAAC,gBAAgB;EACvB,OAAO,EAAC,IAAI;EACZ,aAAa,EAAC,IAAI;;AAEtB,MAAO;EACH,KAAK,EAAC,IAAI",
+"sources": ["neymar.scss"],
+"file": "neymar.css"
+}

@@ -1,34 +1,45 @@
+/*jslint browser: true, regexp: true, unparam: true, indent: 4 */
+/*global jQuery: true */
 var express = require('express'),
+    router = express.Router(),
+    model = require('./model'),
     fs = require('fs'),
     path = require('path'),
-    sizeOf = require('image-size'),
-    model = require('./model'),
-    router = express.Router();
+    sizeOf = require('image-size');
 
 var User = model.User,
     Note = model.Note,
-    Share = model.Share;
+    Board = model.Board;
 
 var SUCCESS = 'success',
     ERROR = 'error';
 
 function uid() {
-
     return (parseInt(Math.random() * 900000000 + 100000000, 10)).toString(36).substr(0, 6);
 }
 
-
-
+// get users
 router.get('/', function (req, res) {
 
     User.find({}, function (err, data) {
-        res.jsonp({
-            status: SUCCESS,
-            data: data
-        });
+
+        if (err) {
+
+            res.jsonp({
+                status: ERROR,
+                message: err
+            });
+        } else {
+
+            res.jsonp({
+                status: SUCCESS,
+                data: data
+            });
+        }
     });
 });
 
+// get user
 router.get('/:userId', function (req, res) {
 
     User.update({
@@ -36,7 +47,6 @@ router.get('/:userId', function (req, res) {
         'userAgents': {
             '$ne': req.headers['user-agent']
         }
-
     }, {
         '$push': {
             'userAgents': req.headers['user-agent']
@@ -44,86 +54,97 @@ router.get('/:userId', function (req, res) {
     });
 
     User.find({
-        userId: req.params.userId,
-    }).lean().exec(function (err, data) {
+        userId: req.params.userId
+    }).lean().exec(function (err, users) {
 
-        var inx, shareIds = [];
-        if (data.length > 0) {
+        var i, j, boardIds = [];
 
-            if (data[0].notes) {
+        if (err) {
 
-                for (inx = 0; inx < data[0].notes.length; inx++) {
-                    data[0].notes[inx].userId = data[0].userId;
-                }
-            }
-            if (data[0].shared) {
-                for (inx = 0; inx < data[0].shared.length; inx++) {
-                    shareIds.push(data[0].shared[inx].shareId);
-                }
-            }
-
-  
-            Share.find({
-                shareId: {
-                    $in: shareIds
-                }
-            }).lean().exec(function (err, shared) {
-
-                var inx, jnx;
-
-                for (inx = 0; inx < shared.length; inx++) {
-                    for (jnx = 0; jnx < shared[inx].notes.length; jnx++) {
-                        shared[inx].notes[jnx].shareId = shared[inx].shareId;
-                    }
-                }
-
-                data[0].shared = shared;
-
-
-
-                console.log(shared);
-
-
-
-                res.jsonp({
-                    status: SUCCESS,
-                    data: data[0]
-                });
-
+            res.jsonp({
+                status: ERROR,
+                message: err
             });
+        } else if (users.length === 0) {
 
-            console.log(shareIds);
-
-            //.console.log(data[0].shared);
-
+            res.jsonp({
+                status: ERROR,
+                message: 'user not found.'
+            });
         } else {
-            User.create({
-                userId: req.params.userId
-            }, function (err, data) {
-                res.jsonp({
-                    status: SUCCESS,
-                    data: data
-                });
+
+            if (users[0].boards) {
+                for (i = 0; i < users[0].boards.length; i++) {
+                    boardIds.push(users[0].boards[i].boardId);
+                }
+            }
+
+            Board.find({
+                boardId: {
+                    $in: boardIds
+                }
+            }).lean().exec(function (err, boards) {
+
+                if (err) {
+
+                    res.jsonp({
+                        status: ERROR,
+                        message: err
+                    });
+                } else {
+
+                    for (i = 0; i < boards.length; i++) {
+                        for (j = 0; j < boards[i].notes.length; j++) {
+                            boards[i].notes[j].boardId = boards[i].boardId;
+                        }
+                    }
+                    users[0].boards = boards;
+                    res.jsonp({
+                        status: SUCCESS,
+                        data: users[0]
+                    });
+                }
             });
         }
     });
 });
 
-
+// create user
 router.post('/', function (req, res) {
 
     var userId = uid();
 
-    //console.log('>>>>> '  + userId);
-
     User.create({
         userId: userId
     }, function (err, data) {
-        console.log(err);
+
+        if (err) {
+
+            res.jsonp({
+                status: ERROR,
+                message: err
+            });
+        } else {
+
+            res.jsonp({
+                status: SUCCESS,
+                data: data
+            });
+        }
+    });
+});
+
+// delete user
+router.delete('/:userId', function (req, res) {
+
+    User.remove({
+        userId: req.params.userId
+    }, function (err, data) {
+
         if (err) {
             res.jsonp({
                 status: ERROR,
-                message: 'err ?'
+                message: err
             });
         } else {
             res.jsonp({
@@ -131,35 +152,10 @@ router.post('/', function (req, res) {
                 data: data
             });
         }
-        //console.log(data);
-
     });
 });
 
-router.put('/:userId', function (req, res) {
-
-    User.remove({
-        userId: req.params.userId
-    }, function (err, data) {
-        res.jsonp({
-            status: SUCCESS,
-            data: data
-        });
-    });
-});
-
-router.delete('/:userId', function (req, res) {
-
-    User.remove({
-        userId: req.params.userId
-    }, function (err, data) {
-        res.jsonp({
-            status: SUCCESS,
-            data: data
-        });
-    });
-});
-
+// upload file
 router.post('/:userId/upload', function (req, res, next) {
 
     var source, dest, sourceFolder, destFolder, sourcePath, destPath;
@@ -227,11 +223,44 @@ router.post('/:userId/upload', function (req, res, next) {
             }
         });
     }
+});
 
+// append shared boardId
+router.post('/:userId/boards/:boardId', function (req, res) {
+
+    User.update({
+        userId: req.params.userId,
+        'boards.boardId': {
+            '$ne': req.params.boardId
+        }
+    }, {
+        '$push': {
+            boards: {
+                boardId: req.params.boardId
+            }
+        }
+    }, function (err, data) {
+
+        if (err) {
+
+            res.jsonp({
+                status: ERROR,
+                message: err
+            });
+        } else {
+
+            res.jsonp({
+                status: SUCCESS,
+                data: data
+            });
+        }
+    });
 });
 
 
-router.post('/:userId/note', function (req, res) {
+////// 아래는 필요없어진 것들... 체크하고 삭제할것...
+
+/*router.post('/:userId/note', function (req, res) {
 
     console.log(req.body);
 
@@ -242,6 +271,9 @@ router.post('/:userId/note', function (req, res) {
             notes: req.body
         }
     }, function (err, data) {
+
+
+
         res.jsonp({
             code: 200,
             message: 'ok',
@@ -250,61 +282,6 @@ router.post('/:userId/note', function (req, res) {
             }
         });
     });
-});
-
-router.post('/:userId/shared/:shareId', function (req, res) {
-
-
-    //Share.create(req.body, function (err, data) {
-
-// 이미 있는지 확인하고 넣을것.
-        User.update({
-            userId: req.params.userId,
-            'shared.shareId': {
-                '$ne': req.params.shareId
-            }
-        }, {
-            '$push': {
-                shared: {
-                    shareId: req.params.shareId
-                }
-            }
-        }, function(err, data) {
-console.log('>>>>> shared insert');
-console.log(req.params.userId, req.params.shareId );
-            console.log(err);
-            console.log(data);
-
-            res.jsonp({
-                status: SUCCESS,
-                data: data
-            });            
-        });    
-
-/*
-        User.update({
-            userId: req.params.userId,
-            'shared.$.shareId': {
-                '$ne': req.params.shareId
-            }
-        }, {
-            '$push': {
-                shared: {
-                    shareId: req.params.shareId
-                }
-            }
-        }, function(err, data) {
-console.log('>>>>> shared insert');
-console.log(req.params.userId, req.params.shareId );
-            console.log(err);
-            console.log(data);
-
-            res.jsonp({
-                status: SUCCESS,
-                data: data
-            });            
-        }); */   
-    //});   
 });
 
 
@@ -328,9 +305,9 @@ router.put('/:userId/note/:_id', function (req, res) {
         'notes._id': req.params._id
     }, {
         $set: set
-        /*{
+        {
             'notes.$.title': 'updated'
-        }*/
+        }
     }, function (err, data) {
 
         res.jsonp({
@@ -464,7 +441,7 @@ router.post('/', function (req, res) {
             }
         });
     });
-});
+});*/
 
 
 module.exports = router;

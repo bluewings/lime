@@ -1,0 +1,31 @@
+.container
+
+    h2 NOTE-VIEW : {{ data.note.title }}
+
+    .btn-group
+
+        a.btn.btn-default.btn-sm(href='/neymar')
+            | MAIN
+
+        a.btn.btn-default.btn-sm(href='/neymar/board/{{ data.note.boardId }}/note/{{ data.note._id }}/edit')
+            | 노트 수정
+
+    hr
+
+    .note-preview(ng-repeat='note in data.note.notes',
+        ng-click='func.note.move(note)')
+        | {{ note.title }} 
+        span.badge(ng-if='note.notes.length')
+            | {{ note.notes.length }}
+        hr
+        small
+            | {{ note.created | date }}
+        .pull-right
+            button.btn.btn-default(ng-click='func.note.remove(note, $event)')
+                | 삭제
+        .clear    
+
+    pre
+        | {{ data.note | json }}
+
+

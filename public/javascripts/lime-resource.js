@@ -17,14 +17,21 @@
                     interceptor: {
                         response: function (response) {
 
+                            return response.data;
+
                             var inx, jnx, data = response.data.data;
 
+                            console.log(response.data);
+                            console.log('>>>>>>>>>>');
+
+                            //console.log(response);
+
                             // 전체조회인 경우, 사용자별 조회인 경우 고려해야함
-                            for (inx = 0; inx < data.length; inx++) {
+                            /*for (inx = 0; inx < data.length; inx++) {
                                 for (jnx = 0; jnx < data[inx].notes.length; jnx++) {
                                     data[inx].notes[jnx].userId = data[inx].userId;
                                 }
-                            }
+                            }*/
                             return response.data;
                         }
                     }
@@ -40,7 +47,7 @@
         function ($resource) {
 
             return $resource('/user/:userId/note/:_id', null, {
-                'update': {
+                update: {
                     method: 'PUT',
                     params: {
                         userId: '@id',
@@ -51,36 +58,45 @@
         }
     ]);
 
-    app.factory('UserShared', ['$resource',
+    app.factory('UserBoardd', ['$resource',
         function ($resource) {
 
-            return $resource('/user/:userId/shared/:shareId', null, {
-                'update': {
+            return $resource('/user/:userId/boardd/:boardId', null, {
+                update: {
                     method: 'PUT',
                     params: {
                         userId: '@id',
-                        shareId: '@shareId'
+                        boardId: '@boardId'
                     }
                 }
             });
         }
     ]);    
 
-    app.factory('Share', ['$resource',
+    app.factory('Board', ['$resource',
         function ($resource) {
 
-            return $resource('/share/:shareId');
+            return $resource('/board/:boardId', null, {
+                update: {
+                    method: 'PUT',
+                    params: {
+                        boardId: '@boardId'
+                    }
+                }
+            });
         }
     ]);
 
-    app.factory('ShareNote', ['$resource',
+    app.factory('Note', ['$resource',
         function ($resource) {
 
-            return $resource('/share/:shareId/note/:_id', null, {
-                'update': {
+            return $resource('/board/:boardId/note/:_id', null, {
+
+
+                update: {
                     method: 'PUT',
                     params: {
-                        shareId: '@id',
+                        boardId: '@boardId',
                         _id: '@_id'
                     }
                 }

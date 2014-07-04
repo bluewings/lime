@@ -1,0 +1,24 @@
+.container
+
+    h2 MAIN for {{ data.myId }}
+
+    .btn-group
+
+        a.btn.btn-default.btn-sm(href='/neymar/board/edit')
+            | BOARD-EDIT
+
+    hr
+
+    .board-preview(ng-repeat='board in data.boards',
+        ng-click='func.board.move(board)')
+        | {{ board.title }} 
+        span.badge(ng-if='board.notes.length')
+            | {{ board.notes.length }}
+        hr
+        small
+            | {{ board.created | date }}
+        .pull-right
+            button.btn.btn-default(ng-click='func.board.remove(board, $event)')
+                | 삭제
+        .clear
+

@@ -103,6 +103,21 @@ router.put('/:shareId/note/:_id', function (req, res) {
     });
 });
 
+
+
+router.delete('/:shareId', function (req, res) {
+
+    Share.remove({
+        shareId: req.params.shareId
+    }, function (err, data) {
+        res.jsonp({
+            status: SUCCESS,
+            data: data
+        });
+    });
+});
+
+
 router.delete('/:shareId/note/:_id', function (req, res) {
 
     Share.findOneAndUpdate({

@@ -33,6 +33,21 @@ router.get('/view/:id', function (req, res) {
     render(req, res);
 });
 
+router.get('/board', function (req, res) {
+
+    render(req, res);
+});
+
+router.get('/board/:boardId/view', function (req, res) {
+
+    render(req, res);
+});
+
+router.get('/board/:boardId/edit', function (req, res) {
+
+    render(req, res);
+});
+
 router.get('/edit/:entity', function (req, res) {
 
     render(req, res);

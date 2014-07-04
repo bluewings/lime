@@ -1,0 +1,93 @@
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+
+    @-moz-keyframes #{$name} {
+        @content;
+    }
+
+    @-ms-keyframes #{$name} {
+        @content;
+    }
+
+    @-o-keyframes #{$name} {
+        @content;
+    }
+
+    @keyframes #{$name} {
+        @content;
+    }
+}
+
+@mixin transform-origin($params) {
+    -webkit-transform-origin: $params;
+    -moz-transform-origin: $params;
+    -ms-transform-origin: $params;
+    -o-transform-origin: $params;
+    transform-origin: $params;
+}
+
+@mixin animation($params) {
+    -webkit-animation: $params;
+    -moz-animation: $params;
+    -ms-animation: $params;
+    -o-animation: $params;
+    animation: $params;
+}
+
+@mixin transform($params) {
+    -webkit-transform: $params;
+    -moz-transform: $params;
+    transform: $params;
+}
+
+.ng-enter {
+    z-index: 8888;
+}
+
+.ng-leave {
+    z-index: 9999;
+}
+
+.page {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    &.page-edit {
+        background: #E59400;
+        color: #a55400;
+        &.ng-enter {
+            @include animation(slideInRight 0.3s both ease-in);
+        }
+        &.ng-leave {
+            /*@include animation(slideOutLeft 0.3s both ease-in);*/
+            @include animation(slideOutRight 0.3s both ease-in);
+        }
+    }
+}
+
+@include keyframes(slideOutLeft) {
+    to {
+        @include transform(translateX(-100%));
+    }
+}
+
+
+@include keyframes(slideOutRight) {
+    to {
+        @include transform(translateX(100%));
+        opacity: 0;
+    }
+}
+
+
+@include keyframes(slideInRight) {
+    from {
+        @include transform(translateX(100%));
+    }
+    to {
+        @include transform(translateX(0));
+    }
+}

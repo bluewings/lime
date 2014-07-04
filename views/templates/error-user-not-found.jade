@@ -1,0 +1,11 @@
+.panel.panel-default
+    .panel-heading
+        | ERROR
+
+    .panel-body
+
+        .alert.alert-danger
+            | user not found. ({{ data.userId }})
+
+        button.btn.btn-block.btn-danger(ng-click='func.reset()')
+            | RESET USER_ID

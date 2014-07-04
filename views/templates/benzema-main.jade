@@ -5,14 +5,22 @@ div(style='background-color:#fff', ng-swipe-left='zoomout()', ng-swipe-right='zo
 
     h2 {{message}}
 
-    button(ng-click='func.addList()')
+    pre 
+        | {{data.event | json}}
+
+    button(ng-click='func.addBoard()')
         | 추가    
 
     .card(ng-repeat='board in data.boardList')
         | {{board.title}}
+        button(ng-click='func.removeBoard(board)')
+            | 삭제
+        br
+        button(ng-click='func.moveToBoard(board)')
+            | 이동
 
-    //pre
-        | {{data.boardList | json}}
+    pre
+        | {{data | json}}
 
 
 

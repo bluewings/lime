@@ -1,0 +1,37 @@
+.panel.panel-default
+    .panel-heading
+        | Create Board
+
+        .pull-right
+            button.btn.btn-primary(ng-if='!data.boardId', ng-click='func.create()')
+                | 추가
+            button.btn.btn-primary(ng-if='data.boardId', ng-click='func.modify()')
+                | 수정
+            button.btn.btn-default(ng-click='func.cancel()')
+                | 취소
+        div(style='clear:both')        
+
+    .panel-body
+
+        input.form-control(ng-model='data.title', ng-required)
+        textarea.form-control(ng-model='data.note', rows='5')
+        pre
+            | {{ data | json }}
+
+
+.container
+
+    h2 BOARD-EDIT
+
+    .btn-group
+
+        a.btn.btn-default.btn-sm(href='/neymar')
+            | MAIN
+        a.btn.btn-default.btn-sm(href='/neymar/board/1234/view')
+            | BOARD-VIEW
+        a.btn.btn-default.btn-sm(href='/neymar/board/1234/edit')
+            | BOARD-EDIT
+        a.btn.btn-default.btn-sm(href='/neymar/board/1234/note/1234/view')
+            | NOTE-VIEW
+        a.btn.btn-default.btn-sm(href='/neymar/board/1234/note/1234/edit')
+            | NOTE-EDIT

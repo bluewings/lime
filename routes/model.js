@@ -1,15 +1,17 @@
+/*jslint browser: true, regexp: true, unparam: true, indent: 4 */
+/*global jQuery: true */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var db = mongoose.connect('mongodb://localhost/sample0');
-//http://182.162.196.40/
+var db = mongoose.connect('mongodb://localhost/lime');
+
 var attachmentSchema,
     noteSchema,
     userSchema,
-    shareSchema;
+    boardSchema;
 
 var Note,
     User,
-    Share;
+    Board;
 
 attachmentSchema = new Schema({
     mimetype: String,
@@ -21,25 +23,23 @@ attachmentSchema = new Schema({
         type: Date,
         default: Date.now
     }
-});    
+});
 
 noteSchema = new Schema({
     title: String,
     note: String,
-    url: String,    
+    url: String,
     attachment: [attachmentSchema],
+    createdBy: String,
     created: {
         type: Date,
         default: Date.now
     },
-    updated: Date
+    updated: {
+        type: Date,
+        default: Date.now
+    }
 });
-/*noteSchema.virtual('title2').get(function(){
-    return this.title;
-});
-noteSchema.virtual('shareId').get(function(){
-    return this.shareId;
-});*/
 
 userSchema = new Schema({
     userId: {
@@ -48,9 +48,8 @@ userSchema = new Schema({
         unique: true
     },
     userAgents: [String],
-    notes: [noteSchema],
-    shared: [{
-        shareId: {
+    boards: [{
+        boardId: {
             type: String
         }
     }],
@@ -60,8 +59,8 @@ userSchema = new Schema({
     }
 });
 
-shareSchema = new Schema({
-    shareId: {
+boardSchema = new Schema({
+    boardId: {
         type: String,
         required: true,
         unique: true
@@ -74,15 +73,19 @@ shareSchema = new Schema({
     created: {
         type: Date,
         default: Date.now
-    }
+    },
+    updated: {
+        type: Date,
+        default: Date.now
+    }    
 });
 
 Note = mongoose.model('Note', noteSchema);
 User = mongoose.model('User', userSchema);
-Share = mongoose.model('Share', shareSchema);
+Board = mongoose.model('Board', boardSchema);
 
 module.exports = {
     Note: Note,
     User: User,
-    Share: Share
+    Board: Board,
 };

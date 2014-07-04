@@ -240,6 +240,35 @@ router.post('/_share/notes', function (req, res) {
 });
 
 
+router.get('/:proto', function(req, res) {
+
+    res.render('templates/' + req.params.proto, {
+        title: 'LIME (' + req.params.proto + ')',
+        stylesheets: [
+            '/stylesheets/' + req.params.proto + '.css'
+        ],
+        javascripts: [
+            '/javascripts/' + req.params.proto + '.js',
+            '/javascripts/lime-resource.js',
+            '/javascripts/lime-resource-notes.js'
+        ]
+    });	
+});
+
+router.get('/:proto/*', function(req, res) {
+
+    res.render('templates/' + req.params.proto, {
+        title: 'LIME (' + req.params.proto + ')',
+        stylesheets: [
+            '/stylesheets/' + req.params.proto + '.css'
+        ],
+        javascripts: [
+            '/javascripts/' + req.params.proto + '.js',
+            '/javascripts/lime-resource.js',
+            '/javascripts/lime-resource-notes.js'
+        ]
+    });	
+});
 
 
 module.exports = router;
