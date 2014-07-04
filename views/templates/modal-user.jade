@@ -1,0 +1,22 @@
+.modal-wrap
+
+    .modal-header
+        | USER
+        .pull-right
+            button.btn.btn-default(ng-click='func.close()')
+                | Close
+        div(style='clear:both')
+
+    .modal-body
+
+        .input-group
+            input.form-control(ng-model='userData.userId', ng-pattern='/^[a-z0-9]{6}$/', maxlength='6')
+            .input-group-btn
+                button.btn.btn-primary(ng-disabled='!userData.userId', ng-click='func.change()')
+                    | CHANGE
+
+        button.btn.btn-block.btn-danger(ng-click='func.reset()')
+            | RESET
+
+        //pre
+            | {{ userData | json }}

@@ -58,14 +58,14 @@
         }
     ]);
 
-    app.factory('UserBoardd', ['$resource',
+    app.factory('UserBoards', ['$resource',
         function ($resource) {
 
-            return $resource('/user/:userId/boardd/:boardId', null, {
+            return $resource('/user/:userId/boards/:boardId', null, {
                 update: {
                     method: 'PUT',
                     params: {
-                        userId: '@id',
+                        userId: '@userId',
                         boardId: '@boardId'
                     }
                 }

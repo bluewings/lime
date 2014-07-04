@@ -103,8 +103,6 @@ router.put('/:shareId/note/:_id', function (req, res) {
     });
 });
 
-
-
 router.delete('/:shareId', function (req, res) {
 
     Share.remove({
