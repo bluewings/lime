@@ -70,6 +70,7 @@ boardSchema = new Schema({
     backgroundColor: String,    
     backgroundImage: String,
     notes: [noteSchema],
+    'private': Boolean,
     createdBy: String,
     created: {
         type: Date,

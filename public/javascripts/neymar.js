@@ -7,7 +7,7 @@
     var app = angular.module('neymar', [
         'ngRoute',
         'ngResource',
-         'ngAnimate',
+        'ngAnimate',
         'ui.bootstrap',
         'angularFileUpload'
     ]);
@@ -23,7 +23,8 @@
             NOTE_CREATE: '/neymar/board/:boardId/note/edit',
             NOTE_MODIFY: '/neymar/board/:boardId/note/:_id/edit'
         },
-        BOARD_COLORS: ['#3c70e9', '#39b64e', '#e64a64', '#f5564e', '#805eb9', '#9297a8', '#b25eb9', '#fcb60c']
+        //BOARD_COLORS: ['#3c70e9', '#39b64e', '#e64a64', '#f5564e', '#805eb9', '#9297a8', '#b25eb9', '#fcb60c']
+        BOARD_COLORS: ['#3c70e9', '#39b64e', '#e64a64', '#9297a8', '#b25eb9', '#fcb60c']
     });
 
     app.constant('ERROR', {
@@ -85,6 +86,8 @@
         '$scope', '$routeParams', 'CONSTANT', '$timeout',
         function ($scope, $routeParams, CONSTANT, $timeout) {
 
+            $scope.pageClass = 'page-main';
+
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
@@ -94,6 +97,8 @@
     app.controller('neymarCtrl_boardView', [
         '$scope', '$routeParams', 'CONSTANT', 'UserBoards',
         function ($scope, $routeParams, CONSTANT, UserBoards) {
+
+            $scope.pageClass = 'page-main';
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
@@ -157,6 +162,11 @@
                 }
             });
 
+            $scope.$watch('data.title', function(newValue, oldValue) {
+
+                $scope.data.titleForHeader = newValue || '게시판 만들기';
+            });
+
             if ($routeParams.boardId) {
 
                 Board.get({
@@ -170,6 +180,7 @@
                         $scope.data.title = response.data.title;
                         $scope.data.note = response.data.note;
                         $scope.data.backgroundColor = response.data.backgroundColor;
+                        $scope.data.private = response.data.private;
                     }
                 });
             }
@@ -247,8 +258,8 @@
     ]);
 
     app.controller('neymarCtrl_noteEdit', [
-        '$scope', '$routeParams', 'CONSTANT', 'Note',
-        function ($scope, $routeParams, CONSTANT, Note) {
+        '$scope', '$routeParams', 'CONSTANT', '$upload', 'Note',
+        function ($scope, $routeParams, CONSTANT, $upload, Note) {
 
             $scope.pageClass = 'page-edit';
 
@@ -277,9 +288,53 @@
                         $scope.data._id = response.data._id;
                         $scope.data.title = response.data.title;
                         $scope.data.note = response.data.note;
+                        $scope.data.attachment = response.data.attachment;
                     }
                 });
             }
+
+            $scope.func.uploadFile = function ($files) {
+
+                var i;
+
+                for (i = 0; i < $files.length; i++) {
+
+                    $upload.upload({
+                        url: '/user/' + $scope.data.myId + '/upload',
+                        method: 'POST',
+                        file: $files[i]
+                    }).success(function (result) {
+                        if (result.status === 'success') {
+
+                            if (!$scope.data.attachment) {
+                                $scope.data.attachment = [];
+                            }
+                            $scope.data.attachment.unshift({
+                                path: result.data.path,
+                                mimetype: result.data.mimetype,
+                                size: result.data.size,
+                                width: result.data.width,
+                                height: result.data.height
+                            });
+                        }
+                    });
+                }
+            };
+
+            $scope.func.removeFile = function (attached) {
+
+                var newAttachment;
+
+                if ($scope.data.attachment) {
+                    newAttachment = [];
+                    angular.forEach($scope.data.attachment, function (item) {
+                        if (attached !== item) {
+                            newAttachment.push(item);
+                        }
+                    });
+                    $scope.data.attachment = newAttachment;
+                }
+            };
 
             $scope.func.create = function () {
 
@@ -556,7 +611,7 @@
                 boards: []
             };
 
-            $interval(function() {
+            $interval(function () {
 
                 $rootScope.data.now = new Date();
             }, 60000);
@@ -581,7 +636,7 @@
                                 limeUser.setMyId($scope.userData.userId).then(function (userId) {
 
                                     $scope.func.close();
-                                }, function(err) {
+                                }, function (err) {
 
                                     alert('존재하지 않는 사용자입니다.');
                                 });
@@ -649,6 +704,19 @@
             };
 
             $rootScope.func = {
+                /*move: function (path, animation, event) {
+
+
+
+                    if (event) {
+                        event.stopPropagation();
+                    }
+
+                    $location.path(limeUtil.uri(CONFIG.URI.NOTE_VIEW, {
+                        boardId: note.boardId,
+                        _id: note._id
+                    }));
+                },*/
                 refresh: function () {
 
                     if ($rootScope.data.myId) {
@@ -739,6 +807,33 @@
 
                 $rootScope.data.myId = myId;
             });
+        }
+    ]);
+
+    app.directive('boardPreview', function() {
+
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: '/templates/neymar-board-preview',
+            scope: {
+                board: '='
+            },
+            controller: 'neymarCtrl_boardPreview'
+        };
+    });
+
+    app.controller('neymarCtrl_boardPreview', [
+        '$scope', '$routeParams', 'CONSTANT',
+        function ($scope, $routeParams, CONSTANT) {
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            console.log($scope.board);
+
+            
         }
     ]);
 

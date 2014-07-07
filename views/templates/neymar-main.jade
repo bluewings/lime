@@ -11,12 +11,12 @@
                 a.btn.btn-default.btn-sm(href='/neymar/board/edit')
                     | BOARD-EDIT
 
-            hr
-
     .content.container
 
+        board-preview(ng-repeat='board in data.boards | orderBy : "created" : true' board='board')
 
-        .board-preview-wrap(ng-repeat='board in data.boards | orderBy : "created" : true ',
+
+        //.board-preview-wrap(ng-repeat='board in data.boards | orderBy : "created" : true ',
             ng-click='func.board.move(board)')
             .board-preview(style='background-color:{{ board.backgroundColor }}')
                 | {{ board.title }} 
@@ -38,4 +38,3 @@
     .footer
         button.btn.btn-default(ng-click='modal.user($event)')
             span.glyphicon.glyphicon-user
-

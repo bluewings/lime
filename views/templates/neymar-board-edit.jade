@@ -1,26 +1,43 @@
 .panel.panel-default.board-edit
-    .panel-heading
-        | Create Board
+    .panel-heading(style='background-color:{{ data.backgroundColor }}')
+        .pull-left
+            button.btn(ng-click='func.cancel()')
+                span.glyphicon.glyphicon-chevron-left
 
         .pull-right
-            button.btn.btn-primary(ng-if='!data.boardId', ng-click='func.create()')
-                | 추가
-            button.btn.btn-primary(ng-if='data.boardId', ng-click='func.modify()')
-                | 수정
-            button.btn.btn-default(ng-click='func.cancel()')
-                | 취소
+            button.btn.btn-disabled(ng-if='!data.boardId', ng-click='func.create()', ng-class='data.title ? "btn-enabled": ""')
+                span.glyphicon.glyphicon-ok
+            button.btn.btn-disabled(ng-if='data.boardId', ng-click='func.modify()', ng-class='data.title ? "btn-enabled": ""')
+                span.glyphicon.glyphicon-ok
+
+        h4(style='text-align:center')
+            | {{ data.titleForHeader }}
+
+
+            
         div(style='clear:both')        
 
     .panel-body
-
-        input.form-control(ng-model='data.title', ng-required)
-        textarea.form-control(ng-model='data.note', rows='5')
 
         .box(ng-repeat='color in data.colors',
             style='background-color:{{ color }};',
             ng-class='data.backgroundColor == color ? "selected" : ""',
             ng-click='data.backgroundColor = color'
             )
+            .mask
+
+
+        input.form-control(ng-model='data.title',
+            ng-required,
+            placeholder='게시판 이름을 입력하세요.')
+        //textarea.form-control(ng-model='data.note', rows='5',
+            placeholder='게시판 설명을 입력하세요.')
+
+        button.btn.btn-default.btn-block(ng-class='data.private ? "btn-danger" : "btn-success"',
+            ng-click='data.private = data.private ? 0 : 1')
+            span.glyphicon.glyphicon-lock(style='top:2px;margin-right:5px;')
+            | 다른 사용자가 편집할 수 {{ data.private ? '없습니다.' : '있습니다.' }}
+
 
         .clear 
 

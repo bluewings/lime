@@ -3,15 +3,25 @@
         | Create Note
 
         .pull-right
-            button.btn.btn-primary(ng-if='!data._id', ng-click='func.create()')
+            button.btn(ng-if='!data._id', ng-click='func.create()')
                 | 추가
-            button.btn.btn-primary(ng-if='data._id', ng-click='func.modify()')
+            button.btn(ng-if='data._id', ng-click='func.modify()')
                 | 수정
-            button.btn.btn-default(ng-click='func.cancel()')
-                | 취소
+            button.btn(ng-click='func.cancel()')
+                span.glyphicon.glyphicon-chevron-left
+
         div(style='clear:both')        
 
     .panel-body
+
+        input(type='file', ng-file-select="func.uploadFile($files)", --style='font-size:30px;')
+
+        .img-thumbnail(ng-repeat='attached in data.attachment',
+            style='width:100px;height:100px;display:inline-block;margin-right:5px')
+            div(style='width:100%;height:100%;background-image:url({{attached.path}});background-size:cover;background-position:50% 50%;position:relative')
+                button.btn.btn-default.btn-xs(type='button',
+                    ng-click='func.removeFile(attached)')
+                    span.glyphicon.glyphicon-remove        
 
         input.form-control(ng-model='data.title', ng-required)
         textarea.form-control(ng-model='data.note', rows='5')
