@@ -242,7 +242,7 @@ router.post('/:userId/upload', function (req, res, next) {
 });
 
 // append shared boardId
-router.post('/:userId/boards/:boardId', function (req, res) {
+router.post('/:userId/boards/:boardId', function (req, res) {    
 
     User.update({
         userId: req.params.userId,

@@ -80,9 +80,15 @@
                 .when(ERROR.USER_NOT_FOUND.URI, {
                     templateUrl: '/templates/error-user-not-found',
                     controller: 'errorCtrl_userNotFound'
+                })
+                .otherwise({
+                    templateUrl: '/templates/error-user-not-found',
+                    controller: 'errorCtrl_userNotFound'
                 });
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|intent):/);
+
+            
         }
     ]);
 
@@ -176,22 +182,23 @@
                             break;
                         }
                     }
-                    if (found === false) {
 
-                        UserBoards.save({
-                            userId: $scope.data.myId,
-                            boardId: $routeParams.boardId
-                        }, {}, function (response) {
-
-                            if (CONSTANT.SUCCESS !== response.status) {
-                                alert(response.message);
-                            } else {
-                                $scope.func.refresh();
-                            }
-                        });
-
-                    }
                 }
+                if (found === false) {
+
+                    UserBoards.save({
+                        userId: $scope.data.myId,
+                        boardId: $routeParams.boardId
+                    }, {}, function (response) {
+
+                        if (CONSTANT.SUCCESS !== response.status) {
+                            alert(response.message);
+                        } else {
+                            $scope.func.refresh();
+                        }
+                    });
+
+                }                
             });
 
             $scope.func.removeSharedBoard = function (event) {
@@ -1234,7 +1241,6 @@
             }
         };
     });*/
-
 
 
     angular.element(document).ready(function () {
