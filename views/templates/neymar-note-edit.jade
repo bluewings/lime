@@ -1,30 +1,40 @@
-.panel.panel-default
-    .panel-heading
-        | Create Note
-
-        .pull-right
-            button.btn(ng-if='!data._id', ng-click='func.create()')
-                | 추가
-            button.btn(ng-if='data._id', ng-click='func.modify()')
-                | 수정
+.panel.panel-default.board-edit
+    .panel-heading(style='background-color:{{ board.backgroundColor }}')
+        .pull-left
             button.btn(ng-click='func.cancel()')
                 span.glyphicon.glyphicon-chevron-left
 
-        div(style='clear:both')        
+        .pull-right
+            button.btn.btn-disabled(ng-if='!data._id', ng-click='func.create()', ng-class='board.title ? "btn-enabled": ""')
+                span.glyphicon.glyphicon-ok
+            button.btn.btn-disabled(ng-if='data._id', ng-click='func.modify()', ng-class='board.title ? "btn-enabled": ""')
+                span.glyphicon.glyphicon-ok
+
+        h4(style='text-align:center')
+            | {{ data._id ? '노트 수정' : '새 글 쓰기' }}
+
+        div(style='clear:both')       
 
     .panel-body
+    
+        div(style='margin-bottom:10px')
+            button.btn.btn-default(type='button', style='position:relative')
+                span.glyphicon.glyphicon-camera
+                div(style='width:100%;height:100%;position:absolute;background-color:yellow;top:0;left:0;overflow:hidden;opacity:0;')
+                    input(type='file', ng-file-select="func.uploadFile($files)", style='font-size:30px;')
 
-        input(type='file', ng-file-select="func.uploadFile($files)", --style='font-size:30px;')
+        div(style='margin-bottom:10px', ng-show='data.attachment.length > 0')
+            .img-thumbnail(ng-repeat='attached in data.attachment',
+                style='width:100px;height:100px;display:inline-block;margin-right:5px')
+                div(style='width:100%;height:100%;background-image:url({{attached.path}});background-size:cover;background-position:50% 50%;position:relative;')
+                    button.btn.btn-default.btn-xs(type='button',
+                        ng-click='func.removeFile(attached)')
+                        span.glyphicon.glyphicon-remove        
 
-        .img-thumbnail(ng-repeat='attached in data.attachment',
-            style='width:100px;height:100px;display:inline-block;margin-right:5px')
-            div(style='width:100%;height:100%;background-image:url({{attached.path}});background-size:cover;background-position:50% 50%;position:relative')
-                button.btn.btn-default.btn-xs(type='button',
-                    ng-click='func.removeFile(attached)')
-                    span.glyphicon.glyphicon-remove        
-
-        input.form-control(ng-model='data.title', ng-required)
-        textarea.form-control(ng-model='data.note', rows='5')
+        input.form-control(ng-model='data.title',
+            placeholder='제목을 입력하세요.')
+        textarea.form-control(ng-model='data.note', rows='5',
+            placeholder='내용을 입력하세요.')
         //pre
             | {{ data | json }}
 

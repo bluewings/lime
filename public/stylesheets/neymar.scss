@@ -1,9 +1,9 @@
 @import "neymar-animate";
 
 body {
-    background-image: url(https://d78fikflryjgj.cloudfront.net/images/backgrounds/bb289a4f00f13e8ca52e67afd11c1648/wave.png);
+    /*background-image: url(https://d78fikflryjgj.cloudfront.net/images/backgrounds/bb289a4f00f13e8ca52e67afd11c1648/wave.png);
     background-image: url(https://d78fikflryjgj.cloudfront.net/images/backgrounds/7a14a57fef9435b0def0f613d0114334/purty_wood_dark.png);
-    background-image: url(https://d78fikflryjgj.cloudfront.net/images/backgrounds/2e2cb18ce229869faec815b4d8fe2770/hex.png);
+    */
 }
 
 @mixin transition($params) {
@@ -21,14 +21,44 @@ body {
         background-color: #fff;
         .label {
             position: absolute;
-            top: 0;
-            width: 40px;
-            height: 4px;
+            top: -1px;
+            width: 100px;
+            height: 10px;
             display: block;
         }
     }
 }
 
+
+
+.note-preview-wrap {
+    /*float: left;*/
+    position:relative;
+    width: 50%;
+    display:inline-block;
+    padding:5px;
+
+    .note-preview {
+        position: relative;
+        border: 1px solid silver;
+        background-color: #fff;
+        border-radius:5px;
+        overflow:hidden;
+        min-height:120px;
+        .label {
+            position: absolute;
+            top: -1px;
+            width: 100px;
+            height: 10px;
+            display: block;
+        }
+
+    }
+}
+
+        .txt {
+            padding:10px;
+        }
 .page-edit {
     background-color: #fff;
     .panel {
@@ -45,17 +75,17 @@ body {
     }
 }
 
-.note-preview {
-    border: 1px solid silver;
-    padding: 10px;
-    margin-bottom: 10px;
-}
+
 
 .clear {
     clear: both;
 }
 
+.nobr {
+    white-space:nowrap;
+}
 .main {
+
     .header {
         .clock {
             font-family: Helvetica;

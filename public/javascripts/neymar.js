@@ -1,14 +1,17 @@
 /*jslint browser: true, devel: true, regexp: true, unparam: true, indent: 4 */
-/*global jQuery: true */
+/*global jQuery: true, jindo: true */
 (function () {
 
     'use strict';
+
+    var $ = jQuery;
 
     var app = angular.module('neymar', [
         'ngRoute',
         'ngResource',
         'ngAnimate',
         'ui.bootstrap',
+        'monospaced.qrcode',
         'angularFileUpload'
     ]);
 
@@ -24,7 +27,8 @@
             NOTE_MODIFY: '/neymar/board/:boardId/note/:_id/edit'
         },
         //BOARD_COLORS: ['#3c70e9', '#39b64e', '#e64a64', '#f5564e', '#805eb9', '#9297a8', '#b25eb9', '#fcb60c']
-        BOARD_COLORS: ['#3c70e9', '#39b64e', '#e64a64', '#9297a8', '#b25eb9', '#fcb60c']
+        BOARD_COLORS: ['#3c70e9', '#39b64e', '#e64a64', '#9297a8', '#b25eb9', '#fcb60c'],
+        BOARD_BACKGROUND_IMAGES: ['/images/bg_01_sm.jpeg', '/images/bg_02_sm.jpeg', '/images/bg_03_sm.jpeg', '/images/bg_04_sm.jpeg', '/images/bg_05_sm.jpeg', '/images/bg_06_sm.jpeg', '/images/bg_07_sm.jpeg']
     });
 
     app.constant('ERROR', {
@@ -41,14 +45,14 @@
 
     app.config([
         '$locationProvider', '$routeProvider', '$compileProvider', 'CONFIG', 'ERROR',
+
         function ($locationProvider, $routeProvider, $compileProvider, CONFIG, ERROR) {
 
             $locationProvider.html5Mode(true);
-            $routeProvider
-                .when(CONFIG.URI.MAIN, {
-                    templateUrl: '/templates/neymar-main',
-                    controller: 'neymarCtrl_main'
-                })
+            $routeProvider.when(CONFIG.URI.MAIN, {
+                templateUrl: '/templates/neymar-main',
+                controller: 'neymarCtrl_main'
+            })
                 .when(CONFIG.URI.BOARD_VIEW, {
                     templateUrl: '/templates/neymar-board-view',
                     controller: 'neymarCtrl_boardView'
@@ -84,6 +88,7 @@
 
     app.controller('neymarCtrl_main', [
         '$scope', '$routeParams', 'CONSTANT', '$timeout',
+
         function ($scope, $routeParams, CONSTANT, $timeout) {
 
             $scope.pageClass = 'page-main';
@@ -95,14 +100,69 @@
     ]);
 
     app.controller('neymarCtrl_boardView', [
-        '$scope', '$routeParams', 'CONSTANT', 'UserBoards',
-        function ($scope, $routeParams, CONSTANT, UserBoards) {
+        '$scope', '$routeParams', 'CONSTANT', 'CONFIG', '$timeout', '$location', '$upload', 'UserBoards', 'Note',
+
+        function ($scope, $routeParams, CONSTANT, CONFIG, $timeout, $location, $upload, UserBoards, Note) {
+
+            var masonry, timer;
 
             $scope.pageClass = 'page-main';
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            // 사진 바로 올리기 기능을 위해서 넣음
+            $scope.note = {};
+
+            function isotope() {
+
+                if (!masonry) {
+                    masonry = $('.masonry'); //.width(document.documentElement.clientWidth + 20);
+
+                    masonry.find('img').each(function (index, item) {
+                        //console.log(item);                 
+                        item.onload = function () {
+                            //console.log('img');             
+                            clearTimeout(timer);
+                            timer = setTimeout(function () {
+                                masonry.isotope();
+                            }, 100);
+                        };
+
+                    });
+
+                    //alert();
+                    masonry.isotope({
+                        //   columnWidth: masonry.find('.masonry-brick').outerWidth() - 10,
+                        itemSelector: '.masonry-brick',
+                        gutter: 0
+                    });
+                } else {
+                    //console.log('>>>>>>> 1');
+                    try {
+                        masonry.isotope('layout');
+                    } catch (err) {
+                        masonry = null;
+                        //console.log('>>>>>>> err');
+                    }
+
+                    //console.log('>>>>>>> 2');
+                }
+            }
+
+            $scope.$watchCollection('data.board.notes', function (newValue, oldValue) {
+
+                if (newValue && newValue.length > 0) {
+
+                    $timeout(function () {
+
+                        isotope();
+
+                    }, 100);
+                }
+
+            });
 
             $scope.$watch('data.boards', function (newValue, oldValue) {
 
@@ -133,11 +193,97 @@
                     }
                 }
             });
+
+            $scope.func.removeSharedBoard = function (event) {
+
+                //   remove: function (board, event) {
+
+                if (event) {
+                    event.stopPropagation();
+                }
+
+                UserBoards.remove({
+                    userId: $scope.data.myId,
+                    boardId: $routeParams.boardId
+                }, function (response) {
+
+                    if (CONSTANT.SUCCESS !== response.status) {
+                        alert(response.message);
+                    } else {
+                        $scope.data.boards = [];
+                        $scope.func.refresh();
+                        //$timeout(function() {
+                        $location.path(CONFIG.URI.MAIN);
+                        //}, 500);
+
+                    }
+                });
+                //  }
+
+            };
+
+
+            // 사진 바로 올리는 기능을 넣음 (공통으로 뺄지 고려)
+
+            function cbUploadFile(response) {
+
+                if (response.status === 'success') {
+
+                    //if (!$scope.note.attachment) {
+                    $scope.note.attachment = [];
+                    //}
+                    $scope.note.attachment.unshift({
+                        path: response.data.path,
+                        mimetype: response.data.mimetype,
+                        size: response.data.size,
+                        width: response.data.width,
+                        height: response.data.height,
+                        thumbPath: response.data.thumbPath,
+                        thumbWidth: response.data.thumbWidth,
+                        thumbHeight: response.data.thumbHeight
+                    });
+
+                    Note.save({
+                        boardId: $routeParams.boardId
+                    }, $scope.note, function (response) {
+
+                        if (CONSTANT.SUCCESS !== response.status) {
+                            alert(response.message);
+                        } else {
+                            masonry.isotope('destroy');
+                            masonry = null;
+                            //setTimeout(function() {
+                            //masonry.isotope('destroy');
+                            $scope.func.refresh();
+
+
+
+                            //}, 100);
+
+                        }
+                    });
+                }
+            }
+
+            $scope.func.uploadFileAndCreate = function ($files) {
+
+                var i;
+
+                for (i = 0; i < $files.length; i++) {
+
+                    $upload.upload({
+                        url: '/user/' + $scope.note.myId + '/upload',
+                        method: 'POST',
+                        file: $files[i]
+                    }).success(cbUploadFile);
+                }
+            };
         }
     ]);
 
     app.controller('neymarCtrl_boardEdit', [
         '$scope', '$routeParams', 'CONSTANT', 'CONFIG', 'Board',
+
         function ($scope, $routeParams, CONSTANT, CONFIG, Board) {
 
             $scope.pageClass = 'page-edit';
@@ -147,6 +293,7 @@
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
 
             $scope.data.colors = CONFIG.BOARD_COLORS;
+            $scope.data.backgroundImages = CONFIG.BOARD_BACKGROUND_IMAGES;
 
             $scope.$watch('data.myId', function (newValue, oldValue) {
 
@@ -160,9 +307,12 @@
                 if (!$scope.data.backgroundColor) {
                     $scope.data.backgroundColor = $scope.data.colors[parseInt(Math.random() * $scope.data.colors.length, 10)];
                 }
+                if (!$scope.data.backgroundImage) {
+                    $scope.data.backgroundImage = $scope.data.backgroundImages[parseInt(Math.random() * $scope.data.backgroundImages.length, 10)];
+                }
             });
 
-            $scope.$watch('data.title', function(newValue, oldValue) {
+            $scope.$watch('data.title', function (newValue, oldValue) {
 
                 $scope.data.titleForHeader = newValue || '게시판 만들기';
             });
@@ -180,6 +330,7 @@
                         $scope.data.title = response.data.title;
                         $scope.data.note = response.data.note;
                         $scope.data.backgroundColor = response.data.backgroundColor;
+                        $scope.data.backgroundImage = response.data.backgroundImage;
                         $scope.data.private = response.data.private;
                     }
                 });
@@ -231,6 +382,7 @@
 
     app.controller('neymarCtrl_noteView', [
         '$scope', '$routeParams', 'CONSTANT',
+
         function ($scope, $routeParams, CONSTANT) {
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
@@ -244,6 +396,7 @@
                 if (newValue) {
                     for (i = 0; i < $scope.data.boards.length; i++) {
                         if ($routeParams.boardId === $scope.data.boards[i].boardId) {
+                            $scope.data.board = newValue[i];
                             for (j = 0; j < $scope.data.boards[i].notes.length; j++) {
                                 if ($routeParams._id === $scope.data.boards[i].notes[j]._id) {
                                     $scope.data.note = $scope.data.boards[i].notes[j];
@@ -258,14 +411,16 @@
     ]);
 
     app.controller('neymarCtrl_noteEdit', [
-        '$scope', '$routeParams', 'CONSTANT', '$upload', 'Note',
-        function ($scope, $routeParams, CONSTANT, $upload, Note) {
+        '$scope', '$routeParams', 'CONSTANT', '$upload', 'Board', 'Note',
+
+        function ($scope, $routeParams, CONSTANT, $upload, Board, Note) {
 
             $scope.pageClass = 'page-edit';
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+            $scope.board = {};
 
             $scope.$watch('data.myId', function (newValue, oldValue) {
 
@@ -274,23 +429,62 @@
                 }
             });
 
-            if ($routeParams._id) {
+            if ($routeParams.boardId) {
 
-                Note.get({
-                    boardId: $routeParams.boardId,
-                    _id: $routeParams._id
+                Board.get({
+                    boardId: $routeParams.boardId
                 }, function (response) {
 
                     if (CONSTANT.SUCCESS !== response.status) {
                         alert(response.message);
                     } else {
-                        $scope.data.boardId = response.data.boardId;
-                        $scope.data._id = response.data._id;
-                        $scope.data.title = response.data.title;
-                        $scope.data.note = response.data.note;
-                        $scope.data.attachment = response.data.attachment;
+                        $scope.board.boardId = response.data.boardId;
+                        $scope.board.title = response.data.title;
+                        $scope.board.note = response.data.note;
+                        $scope.board.backgroundColor = response.data.backgroundColor;
+                        $scope.board.backgroundImage = response.data.backgroundImage;
+                        $scope.board.private = response.data.private;
+
+                        if ($routeParams._id) {
+
+                            Note.get({
+                                boardId: $routeParams.boardId,
+                                _id: $routeParams._id
+                            }, function (response) {
+
+                                if (CONSTANT.SUCCESS !== response.status) {
+                                    alert(response.message);
+                                } else {
+                                    //$scope.data.boardId = response.data.boardId;
+                                    $scope.data._id = response.data._id;
+                                    $scope.data.title = response.data.title;
+                                    $scope.data.note = response.data.note;
+                                    $scope.data.attachment = response.data.attachment;
+                                }
+                            });
+                        }
                     }
                 });
+            }
+
+            function cbUploadFile(response) {
+
+                if (response.status === 'success') {
+
+                    if (!$scope.data.attachment) {
+                        $scope.data.attachment = [];
+                    }
+                    $scope.data.attachment.unshift({
+                        path: response.data.path,
+                        mimetype: response.data.mimetype,
+                        size: response.data.size,
+                        width: response.data.width,
+                        height: response.data.height,
+                        thumbPath: response.data.thumbPath,
+                        thumbWidth: response.data.thumbWidth,
+                        thumbHeight: response.data.thumbHeight
+                    });
+                }
             }
 
             $scope.func.uploadFile = function ($files) {
@@ -303,21 +497,7 @@
                         url: '/user/' + $scope.data.myId + '/upload',
                         method: 'POST',
                         file: $files[i]
-                    }).success(function (result) {
-                        if (result.status === 'success') {
-
-                            if (!$scope.data.attachment) {
-                                $scope.data.attachment = [];
-                            }
-                            $scope.data.attachment.unshift({
-                                path: result.data.path,
-                                mimetype: result.data.mimetype,
-                                size: result.data.size,
-                                width: result.data.width,
-                                height: result.data.height
-                            });
-                        }
-                    });
+                    }).success(cbUploadFile);
                 }
             };
 
@@ -384,6 +564,7 @@
 
     app.controller('errorCtrl_userNotFound', [
         '$scope', '$routeParams', 'CONSTANT', 'limeUser',
+
         function ($scope, $routeParams, CONSTANT, limeUser) {
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
@@ -404,6 +585,7 @@
 
     app.service('limeUser', [
         '$q', '$rootScope', 'CONSTANT', 'CONFIG', 'User',
+
         function ($q, $rootScope, CONSTANT, CONFIG, User) {
 
             var instance = {};
@@ -482,6 +664,7 @@
 
     app.service('limeUtil', [
         '$q',
+
         function ($q) {
 
             return {
@@ -524,6 +707,7 @@
 
     app.service('limeError', [
         '$location', 'ERROR', 'limeUtil',
+
         function ($location, ERROR, limeUtil) {
 
             return {
@@ -545,8 +729,64 @@
         }
     ]);
 
+    app.filter('reverse', function () {
+
+        return function (items) {
+
+            var newItems = [];
+            angular.forEach(items, function (item) {
+                newItems.unshift(item);
+            });
+            return newItems;
+        };
+    });
+
+    app.filter('timeElapsed', function () {
+
+        return function (time, stdTime) {
+
+            var MIN = 60 * 1000,
+                HOUR = MIN * 60,
+                DAY = HOUR * 24,
+                MONTH = DAY * 30,
+                YEAR = DAY * 365;
+
+            time = new Date(time);
+
+            if (!stdTime) {
+                stdTime = new Date();
+            }
+
+            var date = time.getFullYear() + '.' + (time.getMonth() + 1) + '.' + time.getDate();
+            var result, interval = stdTime - time;
+
+            if (interval < 50000) {
+                result = '조금 전';
+            } else if (parseInt(interval / YEAR, 10) > 0) {
+                result = date;
+                //result = '약 ' + parseInt(interval / YEAR, 10) + '년전';
+            } else if (parseInt(interval / MONTH, 10) > 0) {
+                result = date;
+                //result = '약 ' + parseInt(interval / MONTH, 10) + '달전';
+            } else if (parseInt(interval / DAY, 10) > 0) {
+                //result = date;
+                result = parseInt(interval / DAY, 10) + '일전';
+            } else if (parseInt(interval / HOUR, 10) > 0) {
+                result = parseInt(interval / HOUR, 10) + '시간 전';
+            } else if (parseInt(interval / MIN, 10) > 0) {
+                result = parseInt(interval / MIN, 10) + '분 전';
+            } else {
+                result = '조금 전';
+            }
+
+            return result;
+        };
+
+    });
+
     app.factory('User', [
         '$resource',
+
         function ($resource) {
 
             return $resource('/user/:userId');
@@ -555,6 +795,7 @@
 
     app.factory('UserBoards', [
         '$resource',
+
         function ($resource) {
 
             return $resource('/user/:userId/boards/:boardId', null, {
@@ -571,6 +812,7 @@
 
     app.factory('Board', [
         '$resource',
+
         function ($resource) {
 
             return $resource('/board/:boardId', null, {
@@ -586,6 +828,7 @@
 
     app.factory('Note', [
         '$resource',
+
         function ($resource) {
 
             return $resource('/board/:boardId/note/:_id', null, {
@@ -602,6 +845,7 @@
 
     app.run([
         '$rootScope', '$location', '$interval', '$modal', 'CONSTANT', 'CONFIG', 'ERROR', 'User', 'Board', 'Note', 'limeUser', 'limeUtil', 'limeError',
+
         function ($rootScope, $location, $interval, $modal, CONSTANT, CONFIG, ERROR, User, Board, Note, limeUser, limeUtil, limeError) {
 
             $rootScope.data = {
@@ -700,6 +944,36 @@
                         },
                         controller: controller
                     });
+                },
+                qrcode: function (data, event) {
+
+                    var controller = function ($scope, $modalInstance, url) {
+
+                        $scope.url = url;
+
+                        $scope.func = {
+                            close: function () {
+                                $modalInstance.dismiss();
+                            }
+                        };
+                    };
+
+                    if (event) {
+                        event.stopPropagation();
+                    }
+
+                    controller.$inject = ['$scope', '$modalInstance', 'url'];
+
+                    return $modal.open({
+                        templateUrl: '/templates/modal-qrcode',
+                        size: 'sm',
+                        resolve: {
+                            url: function () {
+                                return $location.absUrl();
+                            }
+                        },
+                        controller: controller
+                    });
                 }
             };
 
@@ -766,6 +1040,7 @@
                                 alert(response.message);
                             } else {
                                 $rootScope.func.refresh();
+                                $location.path(limeUtil.uri(CONFIG.URI.MAIN, {}));
                             }
                         });
                     }
@@ -797,6 +1072,9 @@
                                 alert(response.message);
                             } else {
                                 $rootScope.func.refresh();
+                                $rootScope.func.board.move({
+                                    boardId: note.boardId
+                                });
                             }
                         });
                     }
@@ -810,7 +1088,30 @@
         }
     ]);
 
-    app.directive('boardPreview', function() {
+    app.directive('boardPreview', function () {
+
+        var controller = function ($scope, $routeParams, CONSTANT, $element, $timeout) {
+
+            var oScroll;
+
+            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
+            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            $timeout(function () {
+
+                if (!oScroll) {
+                    oScroll = new jindo.m.Scroll('preview-' + $scope.board.boardId, {
+                        bUseHScroll: true,
+                        bUseVScroll: false,
+                        bUseCss3d: jindo.m._isUseCss3d(),
+                        bUseScrollbar: false,
+                        nZIndex: 800
+                    });
+                }
+            });
+        };
+        controller.$inject = ['$scope', '$routeParams', 'CONSTANT', '$element', '$timeout'];
 
         return {
             restrict: 'E',
@@ -819,23 +1120,122 @@
             scope: {
                 board: '='
             },
-            controller: 'neymarCtrl_boardPreview'
+            controller: controller
         };
     });
 
-    app.controller('neymarCtrl_boardPreview', [
-        '$scope', '$routeParams', 'CONSTANT',
-        function ($scope, $routeParams, CONSTANT) {
+    app.directive('notePreview', function () {
+
+        var controller = function ($scope, $routeParams, CONSTANT, $element, $timeout) {
+
+
 
             $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
             $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
 
-            console.log($scope.board);
 
-            
-        }
-    ]);
+
+        };
+        controller.$inject = ['$scope', '$routeParams', 'CONSTANT', '$element', '$timeout'];
+
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: '/templates/neymar-note-preview',
+            scope: {
+                note: '='
+            },
+            controller: controller
+        };
+    });
+
+    /*app.directive('masonry', function () {
+        var NGREPEAT_SOURCE_RE = '<!-- ngRepeat: ((.*) in ((.*?)( track by (.*))?)) -->';
+        return {
+            compile: function (element, attrs) {
+                // auto add animation to brick element
+                var animation = attrs.ngAnimate || "'masonry'";
+                var $brick = element.children();
+                $brick.attr('ng-animate', animation);
+
+                // generate item selector (exclude leaving items)
+                var type = $brick.prop('tagName');
+                var itemSelector = type + ":not([class$='-leave-active'])";
+
+                ////console.log(itemSelector);
+
+                return function (scope, element, attrs) {
+                    var options = angular.extend({
+                        itemSelector: itemSelector
+                    }, scope.$eval(attrs.masonry));
+
+                    // try to infer model from ngRepeat
+                    if (!options.model) {
+                        var ngRepeatMatch = element.html().match(NGREPEAT_SOURCE_RE);
+                        if (ngRepeatMatch) {
+                            options.model = ngRepeatMatch[4];
+                        }
+                    }
+
+                    // initial animation
+                    element.addClass('masonry');
+
+                    console.log(element.size());
+                    console.log(element.find('> *').size());
+
+                    var timer;
+
+                    $(window).off('resize.masonry').on('resize.masonry', function () {
+
+                        clearTimeout(timer);
+                        timer = setTimeout(function () {
+                            element.masonry("reload");
+                        });
+
+                    });
+
+                    //setTimeout(function () {
+                        //element.masonry("reload");
+                    //}, 500);
+
+                    
+
+                    // Wait inside directives to render
+                    setTimeout(function () {
+                        element.masonry(options);
+
+                        ////console.log('masonry');
+
+                        element.on("$destroy", function () {
+                            element.masonry('destroy');
+                        });
+
+                        if (options.model) {
+                            scope.$apply(function () {
+                                scope.$watchCollection(options.model, function (_new, _old) {
+                                    if (_new == _old) return;
+
+                                    // Wait inside directives to render
+                                    setTimeout(function () {
+                                        element.masonry("reload");
+                                    });
+                                    setTimeout(function () {
+                                        element.masonry("reload");
+                                    }, 100);
+                                    setTimeout(function () {
+                                        element.masonry("reload");
+                                    }, 200);
+                                });
+                            });
+                        }
+                    });
+                };
+            }
+        };
+    });*/
+
+
 
     angular.element(document).ready(function () {
 

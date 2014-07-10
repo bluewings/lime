@@ -1,22 +1,55 @@
 .board-preview-wrap(ng-click='func.board.move(board)')
-    .board-preview
-        span.label(style='background-color:{{ board.backgroundColor }}')
-        | {{ board.title }} 
-        span.badge(ng-if='board.notes.length')
-            | {{ board.notes.length }}
-        span.glyphicon.glyphicon-lock(ng-if='board.private')
-        hr
-        small
-            | {{ board.created | date : 'yyyy.MM.dd HH:mm:ss' }}
-        .pull-right
-            //button.btn.btn-default(
-                ng-click='modal.json(board, $event)')
-                | JSON
-            //button.btn.btn-default(
-                ng-if='board.createdBy == data.myId',
-                ng-click='func.board.remove(board, $event)')
-                | 삭제
 
-        pre
+    .board-preview
+        //div(style='padding:10px 20px;background-color:{{ board.backgroundColor }};margin:-10px;color:#fff;font-size:18px;')
+            | {{ board.title }}        
+
+
+        span.label(style='background-color:{{ board.backgroundColor }}')
+        div(style='font-size:18px;margin-top:5px;margin-left:2px;margin-bottom:5px;')
+            span.glyphicon.glyphicon-share-alt(ng-if='board.createdBy != data.myId', style='margin-right:5px;top:3px')
+            | {{ board.title }} 
+
+            .pull-right(style='margin-top:-5px;color:#777;')
+                span.glyphicon.glyphicon-lock(ng-if='board.private', style='margin-right:7px')
+                //span.glyphicon.glyphicon-cog
+        //small
+            | {{ board.created | date : 'yyyy.MM.dd HH:mm:ss' }}            
+        //div
+            span.badge(ng-if='board.notes.length')
+                | {{ board.notes.length }}
+            span.glyphicon.glyphicon-lock
+            hr
+            
+            .pull-right
+                //button.btn.btn-default(
+                    ng-click='modal.json(board, $event)')
+                    | JSON
+                //button.btn.btn-default(
+                    ng-if='board.createdBy == data.myId',
+                    ng-click='func.board.remove(board, $event)')
+                    | 삭제
+
+        div(id='preview-{{ board.boardId }}' style='height:150px;overflow:hidden;margin:0 -21px;')
+            .nobr(style='padding:0 11px 0 21px;')
+                div(ng-repeat='note in board.notes | orderBy : "created" : true', style='display:inline-block;height:150px;vertical-align:top')
+                    div(style='display:inline-block;min-width:100px;min-height:150px;border:1px solid #ccc;margin-right:10px;background-color:#fff;position:relative')
+                        img(ng-if='note.attachment.length > 0',
+                            ng-src='{{ note.attachment[0].thumbPath }}', width='{{ note.attachment[0].thumbWidth }}', height='{{ note.attachment[0].thumbHeight }}',)
+                        div(ng-if='note.attachment.length == 0', style='width:150px;height:150px;padding:10px;overflow:hidden;font-size:24px;white-space:normal;')
+                            span
+                                | {{ note.title }}
+                            span(ng-show='!note.title')
+                                | {{ note.note }}
+
+                        div.mask(style='position:absolute;bottom:0;left:0;right:0;background-color:rgba(0,0,0,0.5);color:#fff;padding:5px 10px;overflow:hidden;text-align:right')
+                            | {{ note.created | timeElapsed }}
+
+        //button.btn.btn-default(
+            g-if='board.createdBy == data.myId',
+            ng-click='func.board.remove(board, $event)')
+            | 삭제
+
+        //pre
             | {{ board.notes | json }}
         .clear

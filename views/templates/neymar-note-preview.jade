@@ -1,0 +1,13 @@
+.note-preview-wrap.masonry-brick
+
+    .note-preview(ng-click='func.note.move(note)')
+        
+        div(ng-repeat='attached in note.attachment')
+            img(ng-src='{{ attached.thumbPath }}', width='100%')
+        .txt(ng-show='note.title || note.note')
+
+            strong(ng-show='note.title')
+                | {{ note.title }} 
+            div(ng-show='note.note', style='white-space:pre-line')
+                | {{ note.note }} 
+

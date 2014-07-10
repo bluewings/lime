@@ -18,6 +18,9 @@ attachmentSchema = new Schema({
     path: String,
     width: Number,
     height: Number,
+    thumbPath: String,
+    thumbWidth: Number,
+    thumbHeight: Number,    
     size: Number,
     created: {
         type: Date,

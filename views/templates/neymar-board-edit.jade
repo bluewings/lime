@@ -19,12 +19,23 @@
 
     .panel-body
 
-        .box(ng-repeat='color in data.colors',
-            style='background-color:{{ color }};',
-            ng-class='data.backgroundColor == color ? "selected" : ""',
-            ng-click='data.backgroundColor = color'
-            )
-            .mask
+        div
+            .box(ng-repeat='color in data.colors',
+                style='background-color:{{ color }};',
+                ng-class='data.backgroundColor == color ? "selected" : ""',
+                ng-click='data.backgroundColor = color'
+                )
+                .mask
+            .clear
+
+        div
+            .box(ng-repeat='image in data.backgroundImages',
+                style='background-image:url({{ image }});background-size:cover;border:1px solid #ccc;',
+                ng-class='data.backgroundImage == image ? "selected" : ""',
+                ng-click='data.backgroundImage = image'
+                )
+                .mask
+            .clear
 
 
         input.form-control(ng-model='data.title',
@@ -37,6 +48,12 @@
             ng-click='data.private = data.private ? 0 : 1')
             span.glyphicon.glyphicon-lock(style='top:2px;margin-right:5px;')
             | 다른 사용자가 편집할 수 {{ data.private ? '없습니다.' : '있습니다.' }}
+
+        div(ng-if='data.boardId')
+            hr
+
+            button.btn.btn-danger.btn-block(ng-click='func.board.remove(data)')
+                | 게시판 삭제       
 
 
         .clear 

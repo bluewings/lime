@@ -248,9 +248,13 @@ router.get('/:proto', function(req, res) {
             '/stylesheets/' + req.params.proto + '.css'
         ],
         javascripts: [
-            '/javascripts/' + req.params.proto + '.js',
-            '/javascripts/lime-resource.js',
-            '/javascripts/lime-resource-notes.js'
+        		//'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
+        		'/components/isotope/dist/isotope.pkgd.min.js',
+        		'/components/angular-qrcode/qrcode.js',
+        		'/javascripts/modules/qrcode.js',
+						'/javascripts/modules/jindo.mobile.min.js',
+						'/javascripts/modules/jindo.mobile.component.js',        
+            '/javascripts/' + req.params.proto + '.js'
         ]
     });	
 });
@@ -263,9 +267,13 @@ router.get('/:proto/*', function(req, res) {
             '/stylesheets/' + req.params.proto + '.css'
         ],
         javascripts: [
-            '/javascripts/' + req.params.proto + '.js',
-            '/javascripts/lime-resource.js',
-            '/javascripts/lime-resource-notes.js'
+        		//'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
+        		'/components/isotope/dist/isotope.pkgd.min.js',
+        		'/components/angular-qrcode/qrcode.js',
+        		'/javascripts/modules/qrcode.js',
+						'/javascripts/modules/jindo.mobile.min.js',
+						'/javascripts/modules/jindo.mobile.component.js',
+            '/javascripts/' + req.params.proto + '.js'
         ]
     });	
 });

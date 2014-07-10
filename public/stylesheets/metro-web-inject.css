@@ -1,0 +1,89 @@
+.metro-web {
+  width: 940px;
+  margin: auto;
+  margin-bottom: 50px; }
+  .metro-web .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd; }
+  .metro-web .metro-header {
+    text-align: left;
+    margin: 15px; }
+  .metro-web .brick {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    width: 220px;
+    height: 165px;
+    margin-bottom: 20px;
+    border: 1px solid silver;
+    overflow: hidden; }
+    .metro-web .brick.brick-1 {
+      width: 220px;
+      height: 165px; }
+      .metro-web .brick.brick-1 .iframe-wrap {
+        box-sizing: border-box;
+        -webkit-transform: scale(0.21484);
+        -webkit-transform-origin: 0% 0%; }
+    .metro-web .brick.brick-2 {
+      width: 460px;
+      height: 350px; }
+      .metro-web .brick.brick-2 .iframe-wrap {
+        box-sizing: border-box;
+        -webkit-transform: scale(0.44922);
+        -webkit-transform-origin: 0% 0%; }
+    .metro-web .brick.brick-3 {
+      width: 700px;
+      height: 535px; }
+      .metro-web .brick.brick-3 .iframe-wrap {
+        box-sizing: border-box;
+        -webkit-transform: scale(0.68359);
+        -webkit-transform-origin: 0% 0%; }
+    .metro-web .brick.brick-4 {
+      width: 940px;
+      height: 720px; }
+      .metro-web .brick.brick-4 .iframe-wrap {
+        box-sizing: border-box;
+        -webkit-transform: scale(0.91797);
+        -webkit-transform-origin: 0% 0%; }
+    .metro-web .brick .mask {
+      z-index: 100;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0; }
+      .metro-web .brick .mask a {
+        padding: 5px;
+        background-color: #fff;
+        border: 1px solid silver; }
+      .metro-web .brick .mask .btns {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        display: none; }
+      .metro-web .brick .mask:hover .btns {
+        display: block; }
+
+/*# sourceMappingURL=metro-web-inject.css.map */

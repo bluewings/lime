@@ -1,0 +1,59 @@
+.metro-web(ng-controller='metroWeb-main', ng-class='data.focused ? "focus" : ""')
+
+    .metro-header
+        .submit-form
+
+            input(type='text',
+                ng-model='data.url',
+                ng-keydown='func.addURL($event)',
+                class='int', placeholder='URL을 입력하세요.', size='40', maxlength='200', spellcheck='false')
+            button.btn(ng-click='func.addURL()', ng-disabled='!data.url')
+                | 추가하기
+
+        .etc
+            button.btn-toggle(ng-click='status.listOpen = status.listOpen ? false : true')
+                i(style='margin-top:2px',
+                    ng-class='status.listOpen ? "icon-g-up-arrow" : "icon-g-down-arrow"')
+
+            .layer-toggle(ng-show='status.listOpen')
+                .sortable
+                    .item(ng-repeat='brick in data.bricks',
+                        ng-mouseover='func.hover(brick)',
+                        ng-mouseout='func.hoverout(brick)')
+                        img.favicon.hidden(ng-src='{{ func.favicon(brick) }}', width='24', height='24', onload='this.className = "favicon"')
+                        a.txt-title(ng-href='{{ brick.url }}', target='_blank')
+                            | {{ brick.url }}
+                        button.btn(ng-click='func.removeURL(brick)')
+                            | 삭제
+                        i.icon-g-justify
+
+        .clear
+
+    .metro-content
+
+        .isotope
+            .brick(class='brick-w-{{ brick.sizeW }} brick-h-{{ brick.sizeH }}',
+                ng-repeat='brick in data.bricks',
+                ng-class='(data.focused === brick ? " focused" : "") + (data.hover === brick ? " hover" : "")'
+                ng-mouseleave='func.blur(brick)')
+                .glass(ng-mouseenter='func.blur(brick)')
+                    img.favicon.hidden(ng-src='{{ func.favicon(brick) }}', width='24', height='24', onload='this.className = "favicon"', style='margin-right:5px')
+                    .btns(style='padding-top:2px')
+                        a.btn(ng-click='func.setSize(brick, "h_down")', style='border-right-width:1px;margin-right:3px;height:18px', ng-href='{{ brick.url }}' target='_blank')
+                            i.icon-g-globe
+                        button.btn(ng-click='func.setSize(brick, "h_up")')
+                            | 높이 +
+                        button.btn(ng-click='func.setSize(brick, "h_down")', style='border-right-width:1px;margin-right:3px')
+                            | -
+                        button.btn(ng-click='func.setSize(brick, "w_up")')
+                            | 너비 +
+                        button.btn(ng-click='func.setSize(brick, "w_down")', style='border-right-width:1px')
+                            | -
+                        .clear
+
+                .iframe-wrap
+                    iframe(ng-src='{{ brick.safeUrl }}', width='1024', height='{{ 1024 * brick.sizeH }}', frameborder='0')
+                    | {{ brick.url }}
+
+                .mask(ng-show='data.focused !== brick',
+                    ng-mouseenter='func.focus(brick)')

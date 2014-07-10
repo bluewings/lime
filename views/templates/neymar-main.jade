@@ -1,15 +1,17 @@
 .main
 
+    .top_area(style='position:fixed;top:0;left:0;width:100%;bottom:0;z-index:-1;background-image:url("https://d78fikflryjgj.cloudfront.net/images/backgrounds/2e2cb18ce229869faec815b4d8fe2770/hex.png");background-size:cover;')
+
     .header
         .container
             .clock
                 | {{ data.now | date : 'MMMM d' }}
 
 
-            .btn-group
-
-                a.btn.btn-default.btn-sm(href='/neymar/board/edit')
-                    | BOARD-EDIT
+            
+            .pull-right(style='margin-right:-5px')
+                a.btn.btn-default(href='/neymar/board/edit')
+                    | 게시판 만들기
 
     .content.container
 
@@ -29,10 +31,7 @@
                     button.btn.btn-default(
                         ng-click='modal.json(board, $event)')
                         | JSON
-                    button.btn.btn-default(
-                        ng-if='board.createdBy == data.myId',
-                        ng-click='func.board.remove(board, $event)')
-                        | 삭제
+
                 .clear
 
     .footer

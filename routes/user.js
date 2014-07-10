@@ -14,6 +14,8 @@ var User = model.User,
 var SUCCESS = 'success',
     ERROR = 'error';
 
+var THUMB_HEIGHT = 150;
+
 function uid() {
     return (parseInt(Math.random() * 900000000 + 100000000, 10)).toString(36).substr(0, 6);
 }
@@ -196,6 +198,17 @@ router.post('/:userId/upload', function (req, res, next) {
                     source.pipe(dest);
                     source.on('end', function () {
 
+                        var thumbPath = '/uploads/' + req.params.userId + '/' + req.files.file.name,
+                            thumbWidth, thumbHeight = THUMB_HEIGHT;
+
+                        thumbWidth = parseInt(thumbHeight * dimensions.width / dimensions.height, 10);
+
+                        if (thumbWidth / thumbHeight < 4 / 6) {
+                            thumbWidth = parseInt(4 / 6 * thumbHeight, 10);
+                        } else if (thumbWidth / thumbHeight > 6 / 4) {
+                            thumbWidth = parseInt(6 / 4 * thumbHeight, 10);
+                        }
+
                         res.jsonp({
                             status: SUCCESS,
                             data: {
@@ -204,7 +217,10 @@ router.post('/:userId/upload', function (req, res, next) {
                                 mimetype: req.files.file.mimetype,
                                 size: req.files.file.size,
                                 width: dimensions.width,
-                                height: dimensions.height
+                                height: dimensions.height,
+                                thumbPath: thumbPath,
+                                thumbWidth: thumbWidth,
+                                thumbHeight: thumbHeight
                             }
                         });
                         fs.unlink(sourcePath, function () {
@@ -256,6 +272,36 @@ router.post('/:userId/boards/:boardId', function (req, res) {
         }
     });
 });
+
+// append shared boardId
+router.delete('/:userId/boards/:boardId', function (req, res) {
+
+    User.findOneAndUpdate({
+        userId: req.params.userId
+    }, {
+        '$pull': {
+            boards: {
+                boardId: req.params.boardId
+            }
+        }
+    }, function (err, data) {
+
+        if (err) {
+
+            res.jsonp({
+                status: ERROR,
+                message: err
+            });
+        } else {
+
+            res.jsonp({
+                status: SUCCESS,
+                data: data
+            });
+        }
+    });
+});
+
 
 
 ////// 아래는 필요없어진 것들... 체크하고 삭제할것...

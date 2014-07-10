@@ -1,0 +1,92 @@
+$container-width: 940px;
+$num-of-bricks: 4;
+$brick-margin: 20px;
+$ratio: 4 / 3;
+
+$brick-width: floor(($container-width - ($num-of-bricks - 1) * $brick-margin) / $num-of-bricks);
+$brick-height: floor($brick-width / $ratio);
+
+@function strip-units($number) {
+    @return $number / ($number * 0 + 1);
+}
+
+.metro-web {
+    width: $container-width;
+    .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+        color: #fff;
+        background-color: #428bca;
+        border-color: #357ebd;
+    }
+    margin: auto;
+    margin-bottom: 50px;
+    .metro-header {
+        text-align: left;
+        margin: 15px;
+    }
+    .brick {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        width: $brick-width;
+        height: $brick-height;
+        margin-bottom: $brick-margin;
+        border: 1px solid silver;
+        overflow: hidden;
+        @for $i from 1 through 4 {
+            &.brick-#{$i} {
+                width: $brick-width * $i + $brick-margin * ($i - 1);
+                height: $brick-height * $i + $brick-margin * ($i - 1);
+                .iframe-wrap {
+                    box-sizing: border-box;
+                    -webkit-transform: scale(strip-units(($brick-width * $i + $brick-margin * ($i - 1)) / 1024));
+                    -webkit-transform-origin: 0% 0%;
+                }
+            }
+        }
+        .mask {
+            z-index: 100;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            a {
+                padding:5px;
+                background-color:#fff;
+                border:1px solid silver;
+            }
+            .btns {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                display: none;
+            }
+            &:hover {
+                .btns {
+                    display: block;
+                }
+            }
+        }
+    }
+}
