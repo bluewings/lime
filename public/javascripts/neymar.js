@@ -4,9 +4,9 @@
 
     'use strict';
 
-    window.onerror = function (err) {
+    /*window.onerror = function (err) {
         alert(err);
-    }
+    }*/
 
     function unescapeHTML(str) {
 
