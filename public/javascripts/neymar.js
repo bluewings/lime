@@ -251,6 +251,8 @@
 
                 if (response.status === 'success') {
 
+                    $scope.note.createdBy = $scope.data.myId;                  
+
                     //if (!$scope.note.attachment) {
                     $scope.note.attachment = [];
                     //}
