@@ -251,7 +251,7 @@
 
                 if (response.status === 'success') {
 
-                    $scope.note.createdBy = $scope.data.myId;                  
+                    $scope.note.createdBy = $scope.data.myId;
 
                     //if (!$scope.note.attachment) {
                     $scope.note.attachment = [];
@@ -545,14 +545,26 @@
                                     }
                                     $scope.$apply(function () {
 
+                                        var THUMB_HEIGHT = 150;
+
+                                        var thumbWidth, thumbHeight = THUMB_HEIGHT;
+
+                                        thumbWidth = parseInt(thumbHeight * imgEl.width / imgEl.height, 10);
+
+                                        if (thumbWidth / thumbHeight < 4 / 6) {
+                                            thumbWidth = parseInt(4 / 6 * thumbHeight, 10);
+                                        } else if (thumbWidth / thumbHeight > 6 / 4) {
+                                            thumbWidth = parseInt(6 / 4 * thumbHeight, 10);
+                                        }
+
 
                                         $scope.data.attachment.unshift({
                                             path: response.result.image,
                                             width: imgEl.width,
                                             height: imgEl.height,
                                             thumbPath: response.result.image,
-                                            thumbWidth: imgEl.width,
-                                            thumbHeight: imgEl.height
+                                            thumbWidth: thumbWidth,
+                                            thumbHeight: thumbHeight
                                         });
                                     });
                                 };
