@@ -4,6 +4,10 @@
 
     'use strict';
 
+    window.onerror = function(err) {
+        alert(err);
+    }
+
     var $ = jQuery;
 
     var app = angular.module('neymar', [
@@ -956,7 +960,7 @@
 
                     var controller = function ($scope, $modalInstance, url) {
 
-                        $scope.url = url;
+                        $scope.url = url + '?' + (parseInt(Math.random() * 900000000 + 100000000, 10)).toString(36).substr(0, 6);
 
                         $scope.func = {
                             close: function () {
