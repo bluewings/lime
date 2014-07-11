@@ -36,7 +36,7 @@
                     div(style='display:inline-block;min-width:100px;min-height:150px;border:1px solid #ccc;margin-right:10px;background-color:#fff;position:relative')
                         img(ng-if='note.attachment.length > 0',
                             ng-src='{{ note.attachment[0].thumbPath }}', width='{{ note.attachment[0].thumbWidth }}', height='{{ note.attachment[0].thumbHeight }}',)
-                        div(ng-if='note.attachment.length == 0', style='width:150px;height:150px;padding:10px;overflow:hidden;font-size:24px;white-space:normal;')
+                        div(ng-if='note.attachment.length == 0', style='width:150px;height:150px;padding:10px;overflow:hidden;font-size:24px;white-space:normal;')                    
                             span
                                 | {{ note.title }}
                             span(ng-show='!note.title')

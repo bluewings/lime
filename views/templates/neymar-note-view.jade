@@ -24,10 +24,16 @@
 
                 .txt(ng-show='data.note.title || data.note.note', style='padding-left:0;padding-right:0;{{ data.note.attachment.length == 0 ? "padding-top:0" : "" }}')
 
+                    div(ng-show='data.note.url', style='white-space:pre-line')
+                        span.glyphicon.glyphicon-globe(style='margin-right:5px')
+                        a(ng-href='{{ data.note.url }}', target='_blank')
+                            | {{ data.note.url }} 
+
                     strong(ng-show='data.note.title')
                         | {{ data.note.title }} 
-                    div(ng-show='data.note.note', style='white-space:pre')
+                    div(ng-show='data.note.note', style='white-space:pre-line')
                         | {{ data.note.note }} 
+
 
                 
 

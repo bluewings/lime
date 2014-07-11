@@ -4,8 +4,17 @@
 
     'use strict';
 
-    window.onerror = function(err) {
+    window.onerror = function (err) {
         alert(err);
+    }
+
+    function unescapeHTML(str) {
+
+        return str.replace(/\&lt;/g, '<')
+            .replace(/\&gt;/g, '>')
+            .replace(/\&quot;/g, '"')
+            .replace(/\&#039;/g, "'")
+            .replace(/\&amp;/g, '&');
     }
 
     var $ = jQuery;
@@ -92,7 +101,7 @@
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|intent):/);
 
-            
+
         }
     ]);
 
@@ -202,7 +211,7 @@
                         }
                     });
 
-                }                
+                }
             });
 
             $scope.func.removeSharedBoard = function (event) {
@@ -237,6 +246,8 @@
             // 사진 바로 올리는 기능을 넣음 (공통으로 뺄지 고려)
 
             function cbUploadFile(response) {
+
+                //alert('cbUploadFile upload');
 
                 if (response.status === 'success') {
 
@@ -280,14 +291,22 @@
 
                 var i;
 
-                for (i = 0; i < $files.length; i++) {
+                //alert('before upload');
+                $timeout(function () {
 
-                    $upload.upload({
-                        url: '/user/' + $scope.note.myId + '/upload',
-                        method: 'POST',
-                        file: $files[i]
-                    }).success(cbUploadFile);
-                }
+
+
+                    for (i = 0; i < $files.length; i++) {
+
+
+
+                        $upload.upload({
+                            url: '/user/' + $scope.note.myId + '/upload',
+                            method: 'POST',
+                            file: $files[i]
+                        }).success(cbUploadFile);
+                    }
+                }, 500);
             };
         }
     ]);
@@ -422,9 +441,9 @@
     ]);
 
     app.controller('neymarCtrl_noteEdit', [
-        '$scope', '$routeParams', 'CONSTANT', '$upload', 'Board', 'Note',
+        '$scope', '$routeParams', 'CONSTANT', '$http', '$upload', 'Board', 'Note',
 
-        function ($scope, $routeParams, CONSTANT, $upload, Board, Note) {
+        function ($scope, $routeParams, CONSTANT, $http, $upload, Board, Note) {
 
             $scope.pageClass = 'page-edit';
 
@@ -470,6 +489,7 @@
                                     $scope.data._id = response.data._id;
                                     $scope.data.title = response.data.title;
                                     $scope.data.note = response.data.note;
+                                    $scope.data.url = response.data.url;
                                     $scope.data.attachment = response.data.attachment;
                                 }
                             });
@@ -498,18 +518,67 @@
                 }
             }
 
+            $scope.func.inspectURL = function (event) {
+
+                if (!event || event.keyCode == 13) {
+
+                    $http.get('/link/' + encodeURIComponent($scope.data.url)).success(function (response) {
+
+                        var imgEl;
+
+                        if (response.code === 200) {
+
+
+
+                            $scope.data.url = response.result.url;
+                            $scope.data.title = unescapeHTML(unescapeHTML(response.result.title));
+                            $scope.data.note = unescapeHTML(unescapeHTML(response.result.note));
+
+                            if (response.result.image) {
+                                imgEl = document.createElement('IMG');
+                                imgEl.onload = function () {
+
+                                    if (!$scope.data.attachment) {
+                                        $scope.data.attachment = [];
+                                    }
+                                    $scope.$apply(function () {
+
+
+                                        $scope.data.attachment.unshift({
+                                            path: response.result.image,
+                                            width: imgEl.width,
+                                            height: imgEl.height,
+                                            thumbPath: response.result.image,
+                                            thumbWidth: imgEl.width,
+                                            thumbHeight: imgEl.height
+                                        });
+                                    });
+                                };
+                                imgEl.src = response.result.image;
+                            }
+
+
+
+                        }
+                    });
+                }
+            };
+
             $scope.func.uploadFile = function ($files) {
 
                 var i;
 
-                for (i = 0; i < $files.length; i++) {
+                $timeout(function () {
 
-                    $upload.upload({
-                        url: '/user/' + $scope.data.myId + '/upload',
-                        method: 'POST',
-                        file: $files[i]
-                    }).success(cbUploadFile);
-                }
+                    for (i = 0; i < $files.length; i++) {
+
+                        $upload.upload({
+                            url: '/user/' + $scope.data.myId + '/upload',
+                            method: 'POST',
+                            file: $files[i]
+                        }).success(cbUploadFile);
+                    }
+                }, 500);
             };
 
             $scope.func.removeFile = function (attached) {

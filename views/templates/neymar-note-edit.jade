@@ -31,10 +31,14 @@
                         ng-click='func.removeFile(attached)')
                         span.glyphicon.glyphicon-remove        
 
+
         input.form-control(ng-model='data.title',
             placeholder='제목을 입력하세요.')
         textarea.form-control(ng-model='data.note', rows='5',
             placeholder='내용을 입력하세요.')
+        input.form-control(ng-model='data.url',
+            ng-keydown='func.inspectURL($event)',
+            placeholder='http://')
         //pre
             | {{ data | json }}
 

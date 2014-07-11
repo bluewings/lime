@@ -6,6 +6,10 @@
             img(ng-src='{{ attached.thumbPath }}', width='100%')
         .txt(ng-show='note.title || note.note')
 
+            div(ng-show='note.url', style='white-space:pre')
+                span.glyphicon.glyphicon-globe(style='margin-right:5px')
+                a(ng-href='{{ note.url }}', target='_blank')
+                    | {{ note.url }}     
             strong(ng-show='note.title')
                 | {{ note.title }} 
             div(ng-show='note.note', style='white-space:pre-line')
