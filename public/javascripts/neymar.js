@@ -443,9 +443,9 @@
     ]);
 
     app.controller('neymarCtrl_noteEdit', [
-        '$scope', '$routeParams', 'CONSTANT', '$http', '$upload', 'Board', 'Note',
+        '$scope', '$routeParams', 'CONSTANT', '$http', '$timeout', '$upload', 'Board', 'Note',
 
-        function ($scope, $routeParams, CONSTANT, $http, $upload, Board, Note) {
+        function ($scope, $routeParams, CONSTANT, $http, $timeout, $upload, Board, Note) {
 
             $scope.pageClass = 'page-edit';
 
