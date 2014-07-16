@@ -16,6 +16,10 @@
     "phantomjs": "^1.9.7-10",
     "multer": "^0.0.7",
     "body-parser": "^1.0.2",
-    "static-favicon": "^1.0.2"
+    "static-favicon": "^1.0.2",
+    "easyimage": "^1.0.0"
+  },
+  "devDependencies": {
+    "easyimage": "^1.0.0"
   }
 }

@@ -5,7 +5,8 @@ var express = require('express'),
     model = require('./model'),
     fs = require('fs'),
     path = require('path'),
-    sizeOf = require('image-size');
+    sizeOf = require('image-size'),
+    easyimg = require('easyimage');
 
 var User = model.User,
     Note = model.Note,
@@ -157,6 +158,8 @@ router.delete('/:userId', function (req, res) {
     });
 });
 
+console.log(easyimg);
+
 // upload file
 router.post('/:userId/upload', function (req, res, next) {
 
@@ -190,6 +193,8 @@ router.post('/:userId/upload', function (req, res, next) {
                 destFolder = path.join(__dirname, '..', 'public', 'uploads', req.params.userId);
                 sourcePath = path.join(sourceFolder, req.files.file.name);
                 destPath = path.join(destFolder, req.files.file.name);
+                destThumbPath = path.join(destFolder, 'thumb_' + req.files.file.name);
+
 
                 fs.mkdir(destFolder, function (err) {
 
@@ -198,7 +203,7 @@ router.post('/:userId/upload', function (req, res, next) {
                     source.pipe(dest);
                     source.on('end', function () {
 
-                        var thumbPath = '/uploads/' + req.params.userId + '/' + req.files.file.name,
+                        var thumbPath = '/uploads/' + req.params.userId + '/thumb_' + req.files.file.name,
                             thumbWidth, thumbHeight = THUMB_HEIGHT;
 
                         thumbWidth = parseInt(thumbHeight * dimensions.width / dimensions.height, 10);
@@ -208,6 +213,17 @@ router.post('/:userId/upload', function (req, res, next) {
                         } else if (thumbWidth / thumbHeight > 6 / 4) {
                             thumbWidth = parseInt(6 / 4 * thumbHeight, 10);
                         }
+
+                        easyimg.thumbnail({
+                            src: destPath,
+                            dst: destThumbPath,
+                            //width: dimensions.width,
+                            //height: dimensions.height,
+                            width: thumbWidth,
+                            height: thumbHeight,
+                            x: 0, y: 0
+                        }).then(function(image) {
+
 
                         res.jsonp({
                             status: SUCCESS,
@@ -227,6 +243,15 @@ router.post('/:userId/upload', function (req, res, next) {
 
                             // do nothing for async
                         });
+
+                        }, function(err) {
+
+                res.jsonp({
+                    status: ERROR,
+                    message: err.code
+                });
+                        })
+
                     });
                     source.on('error', function (err) {
 
