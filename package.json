@@ -20,6 +20,7 @@
     "easyimage": "^1.0.0"
   },
   "devDependencies": {
-    "easyimage": "^1.0.0"
+    "easyimage": "^1.0.0",
+    "grunt": "^0.4.5"
   }
 }
