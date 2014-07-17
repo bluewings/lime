@@ -48,7 +48,7 @@ div(style='padding:0 5px 5px 5px')
 
     div.masonry(style='position:relative;')
 
-        note-preview(ng-repeat='note in data.board.notes | orderBy : "created" : true' note='note')        
+        note-preview(ng-repeat='note in data.board.notes | orderBy : "created" : false' note='note')        
 
 
 .clear

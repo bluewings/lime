@@ -15,7 +15,7 @@
 
     .content.container
 
-        board-preview(ng-repeat='board in data.boards | orderBy : "created" : true' board='board')
+        board-preview(ng-repeat='board in data.boards | orderBy : "created" : false' board='board')
 
 
         //.board-preview-wrap(ng-repeat='board in data.boards | orderBy : "created" : true ',

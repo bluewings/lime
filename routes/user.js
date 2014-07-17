@@ -22,9 +22,9 @@ function uid() {
 }
 
 // get users
-router.get('/', function (req, res) {
+router.get('/', function(req, res) {
 
-    User.find({}, function (err, data) {
+    User.find({}, function(err, data) {
 
         if (err) {
 
@@ -43,7 +43,7 @@ router.get('/', function (req, res) {
 });
 
 // get user
-router.get('/:userId', function (req, res) {
+router.get('/:userId', function(req, res) {
 
     User.update({
         userId: req.params.userId,
@@ -58,7 +58,7 @@ router.get('/:userId', function (req, res) {
 
     User.find({
         userId: req.params.userId
-    }).lean().exec(function (err, users) {
+    }).lean().exec(function(err, users) {
 
         var i, j, boardIds = [];
 
@@ -86,7 +86,7 @@ router.get('/:userId', function (req, res) {
                 boardId: {
                     $in: boardIds
                 }
-            }).lean().exec(function (err, boards) {
+            }).lean().exec(function(err, boards) {
 
                 if (err) {
 
@@ -113,13 +113,13 @@ router.get('/:userId', function (req, res) {
 });
 
 // create user
-router.post('/', function (req, res) {
+router.post('/', function(req, res) {
 
     var userId = uid();
 
     User.create({
         userId: userId
-    }, function (err, data) {
+    }, function(err, data) {
 
         if (err) {
 
@@ -138,11 +138,11 @@ router.post('/', function (req, res) {
 });
 
 // delete user
-router.delete('/:userId', function (req, res) {
+router.delete('/:userId', function(req, res) {
 
     User.remove({
         userId: req.params.userId
-    }, function (err, data) {
+    }, function(err, data) {
 
         if (err) {
             res.jsonp({
@@ -163,9 +163,9 @@ function generateImage(imgPath, callback) {
     var gmInst = gm(imgPath).autoOrient();
 
     var THUMB_HEIGHT = 150,
-        RESCALED_WIDTH = 360;
+        RESCALED_WIDTH = 720;
 
-    gmInst.size(function (err, source) {
+    gmInst.size(function(err, source) {
 
         var rescaled, cropped, thumb;
 
@@ -206,22 +206,30 @@ function generateImage(imgPath, callback) {
             cropped.y = parseInt((source.height - cropped.height) / 2, 10);
         }
 
-        gm(imgPath).autoOrient().thumb(rescaled.width, rescaled.height, rescaled.path, 70, function () {});
         gmInst.crop(cropped.width, cropped.height, cropped.x, cropped.y)
-            .thumb(thumb.width, thumb.height, thumb.path, 70, function () {});
+            .thumb(thumb.width, thumb.height, thumb.path, 70, function() {
 
 
-        if (callback) {
-            callback({
-                rescaled: rescaled,
-                thumb: thumb
+                gm(imgPath).autoOrient().thumb(rescaled.width, rescaled.height, rescaled.path, 70, function() {
+
+                    if (callback) {
+                        callback({
+                            rescaled: rescaled,
+                            thumb: thumb
+                        });
+                    }
+                });
+
+
             });
-        }
+
+
+
     });
 }
 
 // upload file
-router.post('/:userId/upload', function (req, res, next) {
+router.post('/:userId/upload', function(req, res, next) {
 
     var source, dest, sourceFolder, destFolder, sourcePath, destPath;
 
@@ -239,7 +247,7 @@ router.post('/:userId/upload', function (req, res, next) {
         });
     } else {
 
-        sizeOf(req.files.file.path, function (err, dimensions) {
+        sizeOf(req.files.file.path, function(err, dimensions) {
 
             if (err) {
 
@@ -256,12 +264,12 @@ router.post('/:userId/upload', function (req, res, next) {
                 destThumbPath = path.join(destFolder, 'thumb_' + req.files.file.name);
 
 
-                fs.mkdir(destFolder, function (err) {
+                fs.mkdir(destFolder, function(err) {
 
                     source = fs.createReadStream(sourcePath);
                     dest = fs.createWriteStream(destPath);
                     source.pipe(dest);
-                    source.on('end', function () {
+                    source.on('end', function() {
 
                         generateImage(destPath, function(ret) {
 
@@ -275,12 +283,12 @@ router.post('/:userId/upload', function (req, res, next) {
                                     size: req.files.file.size,
                                     width: dimensions.width,
                                     height: dimensions.height,
-                                    thumbPath: ret.thumb.path,
+                                    thumbPath: ret.thumb.path.replace(/^.*(\/uploads\/)/, '$1'),
                                     thumbWidth: ret.thumb.width,
                                     thumbHeight: ret.thumb.height
                                 }
                             });
-                            fs.unlink(sourcePath, function () {
+                            fs.unlink(sourcePath, function() {
 
                                 // do nothing for async
                             });
@@ -288,7 +296,7 @@ router.post('/:userId/upload', function (req, res, next) {
 
                         });
 
-/*
+                        /*
 
                         var thumbPath = '/uploads/' + req.params.userId + '/thumb_' + req.files.file.name,
                             thumbWidth, thumbHeight = THUMB_HEIGHT;
@@ -342,7 +350,7 @@ router.post('/:userId/upload', function (req, res, next) {
 */
 
                     });
-                    source.on('error', function (err) {
+                    source.on('error', function(err) {
 
                         res.jsonp({
                             status: ERROR,
@@ -356,7 +364,7 @@ router.post('/:userId/upload', function (req, res, next) {
 });
 
 // append shared boardId
-router.post('/:userId/boards/:boardId', function (req, res) {
+router.post('/:userId/boards/:boardId', function(req, res) {
 
     User.update({
         userId: req.params.userId,
@@ -369,7 +377,7 @@ router.post('/:userId/boards/:boardId', function (req, res) {
                 boardId: req.params.boardId
             }
         }
-    }, function (err, data) {
+    }, function(err, data) {
 
         if (err) {
 
@@ -388,7 +396,7 @@ router.post('/:userId/boards/:boardId', function (req, res) {
 });
 
 // append shared boardId
-router.delete('/:userId/boards/:boardId', function (req, res) {
+router.delete('/:userId/boards/:boardId', function(req, res) {
 
     User.findOneAndUpdate({
         userId: req.params.userId
@@ -398,7 +406,7 @@ router.delete('/:userId/boards/:boardId', function (req, res) {
                 boardId: req.params.boardId
             }
         }
-    }, function (err, data) {
+    }, function(err, data) {
 
         if (err) {
 
