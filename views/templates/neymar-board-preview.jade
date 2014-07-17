@@ -32,7 +32,7 @@
 
         div(id='preview-{{ board.boardId }}' style='height:150px;overflow:hidden;margin:0 -21px;')
             .nobr(style='padding:0 11px 0 21px;')
-                div(ng-repeat='note in board.notes | orderBy : "created" : true', style='display:inline-block;height:150px;vertical-align:top')
+                div(ng-repeat='note in board.notes | orderBy : "created" : false | limitTo : 10', style='display:inline-block;height:150px;vertical-align:top')
                     div(style='display:inline-block;min-width:100px;min-height:150px;border:1px solid #ccc;margin-right:10px;background-color:#fff;position:relative')
                         img(ng-if='note.attachment.length > 0',
                             ng-src='{{ note.attachment[0].thumbPath }}', width='{{ note.attachment[0].thumbWidth }}', height='{{ note.attachment[0].thumbHeight }}',)
