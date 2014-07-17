@@ -177,6 +177,11 @@ function generateImage(imgPath, callback) {
             height: parseInt(RESCALED_WIDTH / source.ratio, 10)
         };
 
+        if (source.width < rescaled.width) {
+            rescaled.width = source.width;
+            rescaled.height = source.height;
+        }
+
         cropped = {
             width: source.width,
             height: source.height,
@@ -273,8 +278,8 @@ router.post('/:userId/upload', function (req, res, next) {
                                     path: ret.rescaled.path.replace(/^.*(\/uploads\/)/, '$1'),
                                     mimetype: req.files.file.mimetype,
                                     size: req.files.file.size,
-                                    width: dimensions.width,
-                                    height: dimensions.height,
+                                    width: ret.rescaled.width,
+                                    height: ret.rescaled.height,
                                     thumbPath: ret.thumb.path,
                                     thumbWidth: ret.thumb.width,
                                     thumbHeight: ret.thumb.height
