@@ -3,7 +3,7 @@ var fs = require('fs'),
 
 generateImage('./test/sample.jpg');
 
-function generateImage(imgPath) {
+function generateImage(imgPath, callback) {
 
     var gmInst = gm(imgPath).autoOrient();
 
@@ -17,6 +17,7 @@ function generateImage(imgPath) {
         source.ratio = source.width / source.height;
 
         rescaled = {
+            path: imgPath.replace(/(.*)\.(.*)$/, '$1_rescaled.$2'),
             width: RESCALED_WIDTH,
             height: parseInt(RESCALED_WIDTH / source.ratio, 10)
         };
@@ -29,6 +30,7 @@ function generateImage(imgPath) {
         };
 
         thumb = {
+            path: imgPath.replace(/(.*)\.(.*)$/, '$1_thumb.$2'),
             ratio: null,
             width: parseInt(THUMB_HEIGHT * source.ratio, 10),
             height: THUMB_HEIGHT
@@ -49,8 +51,16 @@ function generateImage(imgPath) {
             cropped.y = parseInt((source.height - cropped.height) / 2, 10);
         }
 
-        gm(imgPath).autoOrient().thumb(rescaled.width, rescaled.height, './test/sample_test1.jpg', 70, function() {});
+        gm(imgPath).autoOrient().thumb(rescaled.width, rescaled.height, rescaled.path, 70, function() {});
         gmInst.crop(cropped.width, cropped.height, cropped.x, cropped.y)
-            .thumb(thumb.width, thumb.height, './test/sample_test.jpg', 70, function() {});
+            .thumb(thumb.width, thumb.height, thumb.path, 70, function() {});
+
+
+        if (callback) {
+            callback({
+                rescaled: rescaled,
+                thumb: thumb
+            });
+        }
     });
 }

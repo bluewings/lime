@@ -2,13 +2,15 @@ var express = require('express'),
 	router = express.Router(),
 	childProcess = require('child_process'),
 	phantomjs = require('phantomjs'),
-	path = require('path');
+	fs = require('fs'),
+	path = require('path'),
+	jade = require('jade');
 
 var SUCCESS = 200,
 	ERROR = 500;
 
 
-	var clicked = null;
+var clicked = null;
 
 function render(req, res) {
 
@@ -72,42 +74,42 @@ router.get('/home/:id', function (req, res) {
 	render(req, res);
 });
 
-router.get('/background', function(req, res) {
+router.get('/background', function (req, res) {
 
-var fs = require("fs"),
-    path = require("path");
+	var fs = require("fs"),
+		path = require("path");
 
-var p = path.join(__dirname , '..', 'public', 'images', 'background');
-fs.readdir(p, function (err, files) {
-    if (err) {
-        throw err;
-    }
+	var p = path.join(__dirname, '..', 'public', 'images', 'background');
+	fs.readdir(p, function (err, files) {
+		if (err) {
+			throw err;
+		}
 
-    var newFiles = [];
-    var inx;
-    for (inx = 0; inx < files.length; inx++) {
-    	if (files[inx].search(/\.jpg$/g) !== -1) {
-    		newFiles.push('/images/background/' + files[inx]);
-    	}
-    }
+		var newFiles = [];
+		var inx;
+		for (inx = 0; inx < files.length; inx++) {
+			if (files[inx].search(/\.jpg$/g) !== -1) {
+				newFiles.push('/images/background/' + files[inx]);
+			}
+		}
 
-        res.jsonp({
-            status: SUCCESS,
-            data: newFiles
-        });    
+		res.jsonp({
+			status: SUCCESS,
+			data: newFiles
+		});
 
-    
 
-    //console.log(files);
 
-    /*files.map(function (file) {
+		//console.log(files);
+
+		/*files.map(function (file) {
         return path.join(p, file);
     }).filter(function (file) {
         return fs.statSync(file).isFile();
     }).forEach(function (file) {
         console.log("%s (%s)", file, path.extname(file));
     });*/
-});
+	});
 
 });
 
@@ -240,42 +242,94 @@ router.post('/_share/notes', function (req, res) {
 });
 
 
-router.get('/:proto', function(req, res) {
+router.get('/:proto', function (req, res) {
 
-    res.render('templates/' + req.params.proto, {
-        title: 'LIME (' + req.params.proto + ')',
-        stylesheets: [
-            '/stylesheets/' + req.params.proto + '.css'
-        ],
-        javascripts: [
-        		//'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
-        		'/components/isotope/dist/isotope.pkgd.min.js',
-        		'/components/angular-qrcode/qrcode.js',
-        		'/javascripts/modules/qrcode.js',
-						'/javascripts/modules/jindo.mobile.min.js',
-						'/javascripts/modules/jindo.mobile.component.js',        
-            '/javascripts/' + req.params.proto + '.js'
-        ]
-    });	
+	res.render('templates/' + req.params.proto, {
+		title: 'LIME (' + req.params.proto + ')',
+		stylesheets: [
+			'/stylesheets/' + req.params.proto + '.css'
+		],
+		javascripts: [
+			//'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
+			'/components/isotope/dist/isotope.pkgd.min.js',
+			'/components/angular-qrcode/qrcode.js',
+			'/javascripts/modules/qrcode.js',
+			'/javascripts/modules/jindo.mobile.min.js',
+			'/javascripts/modules/jindo.mobile.component.js',
+			'/javascripts/' + req.params.proto + '.js'
+		]
+	});
 });
 
-router.get('/:proto/*', function(req, res) {
+var cached = {};
 
-    res.render('templates/' + req.params.proto, {
-        title: 'LIME (' + req.params.proto + ')',
-        stylesheets: [
-            '/stylesheets/' + req.params.proto + '.css'
-        ],
-        javascripts: [
-        		//'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
-        		'/components/isotope/dist/isotope.pkgd.min.js',
-        		'/components/angular-qrcode/qrcode.js',
-        		'/javascripts/modules/qrcode.js',
-						'/javascripts/modules/jindo.mobile.min.js',
-						'/javascripts/modules/jindo.mobile.component.js',
-            '/javascripts/' + req.params.proto + '.js'
-        ]
-    });	
+router.get('/:proto/*', function (req, res) {
+
+	var files, i, dir, filePath;
+
+	/*console.log(req.params.proto);
+
+	if (!cached[req.params.proto]) {
+
+		dir = path.join(__dirname, '..', 'views', 'templates');
+
+		//function getFiles(dir,files_){
+		//  files_ = files_ || [];
+		//    if (typeof files_ === 'undefined') files_=[];
+		files = fs.readdirSync(dir);
+		console.log(files);
+		for (i in files) {
+
+			if (files.hasOwnProperty(i)) {
+				filePath = path.join(dir, files[i]);
+				if (files[i].search(req.params.proto + '-') === 0 && !fs.statSync(filePath).isDirectory()) {
+					//getFiles(name, files_);
+					console.log(files[i]);
+
+					fs.readFile(path.join(__dirname, '..', 'views', 'templates', files[i]), 'utf8', function (err, data) {
+
+						if (data) {
+							res.jsonp({
+								status: 'success',
+								data: {
+									template: jade.compile(data, {
+										pretty: false
+									})({})
+								}
+							});
+						} else {
+							res.jsonp({
+								status: 'error',
+								message: 'template not found'
+							});
+						}
+					});					
+
+				}
+			}
+
+		}
+	}
+
+	*/
+
+
+
+	res.render('templates/' + req.params.proto, {
+		title: 'LIME (' + req.params.proto + ')',
+		stylesheets: [
+			'/stylesheets/' + req.params.proto + '.css'
+		],
+		javascripts: [
+			//'http://cdnjs.cloudflare.com/ajax/libs/masonry/2.1.08/jquery.masonry.min.js',
+			'/components/isotope/dist/isotope.pkgd.min.js',
+			'/components/angular-qrcode/qrcode.js',
+			'/javascripts/modules/qrcode.js',
+			'/javascripts/modules/jindo.mobile.min.js',
+			'/javascripts/modules/jindo.mobile.component.js',
+			'/javascripts/' + req.params.proto + '.js'
+		]
+	});
 });
 
 
