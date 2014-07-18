@@ -9,7 +9,7 @@ html
 		meta(name='viewport', content='initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width')  
 		title= title
 		link(rel='stylesheet', href='/components/bootstrap-sass/dist/css/bootstrap.min.css')
-		link(rel='stylesheet', href='/stylesheets/neymar.css')
+		link(rel='stylesheet', href='/stylesheets/neymar.min.css')
 		//- if stylesheets
 			each stylesheet, i in stylesheets
 				link(rel='stylesheet', href='#{stylesheet}')
@@ -17,11 +17,9 @@ html
 	body
 		block content
 
-		//script(src='/javascripts/neymar.all.js')
+		script(src='/javascripts/neymar.all.js')
 
 		//- div
-		
-		div
 			script(src='/components/jquery/dist/jquery.min.js')
 			script(src='/components/angular/angular.min.js')
 			script(src='/components/angular-route/angular-route.min.js')
