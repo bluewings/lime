@@ -160,7 +160,11 @@
                 } else {
                     //console.log('>>>>>>> 1');
                     try {
-                        masonry.isotope('layout');
+                        masonry.isotope('reloadItems').isotope({
+                        //   columnWidth: masonry.find('.masonry-brick').outerWidth() - 10,
+                            itemSelector: '.masonry-brick',
+                            gutter: 0
+                        });
                     } catch (err) {
                         masonry = null;
                         //console.log('>>>>>>> err');
@@ -174,9 +178,17 @@
 
                 if (newValue && newValue.length > 0) {
 
+                    
+
                     $timeout(function () {
 
                         isotope();
+
+                        $timeout(function () {
+
+                            isotope();
+                        }, 1000);
+
 
                     }, 100);
                 }
