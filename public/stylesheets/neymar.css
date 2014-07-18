@@ -3684,6 +3684,15 @@ body {
       height: 10px;
       display: block; }
 
+@media (min-width: 768px) and (max-width: 991px) {
+  .note-preview-wrap {
+    width: 33%; } }
+@media (min-width: 992px) and (max-width: 1199px) {
+  .note-preview-wrap {
+    width: 25%; } }
+@media (min-width: 1200px) {
+  .note-preview-wrap {
+    width: 20%; } }
 .txt {
   padding: 10px; }
 

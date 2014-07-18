@@ -26,7 +26,7 @@
             @include animation(scaleDown 0.7s ease both);
         }
         &.ng-enter {
-@include animation(scaleUp 0.7s ease both);
+            @include animation(scaleUp 0.7s ease both);
         }
     }
     &.page-edit {
@@ -46,5 +46,3 @@
     filpInLeft
     */
 }
-
-

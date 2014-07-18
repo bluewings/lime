@@ -29,22 +29,19 @@ body {
     }
 }
 
-
-
 .note-preview-wrap {
     /*float: left;*/
-    position:relative;
+    position: relative;
     width: 50%;
-    display:inline-block;
-    padding:5px;
-
+    display: inline-block;
+    padding: 5px;
     .note-preview {
         position: relative;
         border: 1px solid silver;
         background-color: #fff;
-        border-radius:5px;
-        overflow:hidden;
-        min-height:120px;
+        border-radius: 5px;
+        overflow: hidden;
+        min-height: 120px;
         .label {
             position: absolute;
             top: -1px;
@@ -52,13 +49,33 @@ body {
             height: 10px;
             display: block;
         }
-
     }
 }
 
-        .txt {
-            padding:10px;
-        }
+@media (max-width: 767px) {}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .note-preview-wrap {
+        width: 33%;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .note-preview-wrap {
+        width: 25%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .note-preview-wrap {
+        width: 20%;
+    }
+}
+
+.txt {
+    padding: 10px;
+}
+
 .page-edit {
     background-color: #fff;
     .panel {
@@ -75,17 +92,15 @@ body {
     }
 }
 
-
-
 .clear {
     clear: both;
 }
 
 .nobr {
-    white-space:nowrap;
+    white-space: nowrap;
 }
-.main {
 
+.main {
     .header {
         .clock {
             font-family: Helvetica;
@@ -114,11 +129,11 @@ body {
                 font-size: 22px;
             }
             &.btn-disabled {
-                opacity:0;
+                opacity: 0;
                 @include transform(scale(0.1));
                 @include transition(all 0.5s);
                 &.btn-enabled {
-                    opacity:1;
+                    opacity: 1;
                     @include transform(scale(1));
                 }
             }
