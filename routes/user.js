@@ -88,6 +88,10 @@ router.get('/:userId', function(req, res) {
                 }
             }).lean().exec(function(err, boards) {
 
+                var hasDisplayOrder = false,
+                    maxDisplayOrder = 0,
+                    orders = [];
+
                 if (err) {
 
                     res.jsonp({
@@ -97,9 +101,31 @@ router.get('/:userId', function(req, res) {
                 } else {
 
                     for (i = 0; i < boards.length; i++) {
-                        for (j = 0; j < boards[i].notes.length; j++) {
+                        // 우선 날짜 순으로 정렬하시고....
+                        boards[i].notes.sort(function(a, b) {
+                            if (a.created === b.created) {
+                                return 0;
+                            }
+                            return a.created > b.created ? 1 : -1;
+                        });
+                        for (j = 0, orders = [0]; j < boards[i].notes.length; j++) {
                             boards[i].notes[j].boardId = boards[i].boardId;
+                            if (typeof boards[i].notes[j].displayOrder === 'number') {
+                                orders.push(boards[i].notes[j].displayOrder);
+                            }
                         }
+                        maxDisplayOrder = Math.max.apply({}, orders) + 1;
+                        for (j = 0; j < boards[i].notes.length; j++) {
+                            if (typeof boards[i].notes[j].displayOrder !== 'number') {
+                                boards[i].notes[j].displayOrder = maxDisplayOrder++;
+                            }
+                        }
+                        boards[i].notes.sort(function(a, b) {
+                            if (a.displayOrder === b.displayOrder) {
+                                return 0;
+                            }
+                            return a.displayOrder > b.displayOrder ? 1 : -1;
+                        });
                     }
                     users[0].boards = boards;
                     res.jsonp({

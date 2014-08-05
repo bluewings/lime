@@ -119,9 +119,9 @@
     ]);
 
     app.controller('neymarCtrl_boardView', [
-        '$scope', '$routeParams', 'CONSTANT', 'CONFIG', '$timeout', '$location', '$upload', 'UserBoards', 'Note',
+        '$scope', '$routeParams', 'CONSTANT', 'CONFIG', '$timeout', '$location', '$upload', '$q', 'UserBoards', 'Note',
 
-        function ($scope, $routeParams, CONSTANT, CONFIG, $timeout, $location, $upload, UserBoards, Note) {
+        function ($scope, $routeParams, CONSTANT, CONFIG, $timeout, $location, $upload, $q, UserBoards, Note) {
 
             var masonry, timer;
 
@@ -155,7 +155,10 @@
                     masonry.isotope({
                         //   columnWidth: masonry.find('.masonry-brick').outerWidth() - 10,
                         itemSelector: '.masonry-brick',
-                        gutter: 0
+                        gutter: 0,
+                        onLayout: function() {
+                            masonry.css('overflow', 'visible');
+                        }
                     });
                 } else {
                     //console.log('>>>>>>> 1');
@@ -163,7 +166,10 @@
                         masonry.isotope('reloadItems').isotope({
                         //   columnWidth: masonry.find('.masonry-brick').outerWidth() - 10,
                             itemSelector: '.masonry-brick',
-                            gutter: 0
+                            gutter: 0,
+                            onLayout: function() {
+                                masonry.css('overflow', 'visible');
+                            }
                         });
                     } catch (err) {
                         masonry = null;
@@ -171,6 +177,91 @@
                     }
 
                     //console.log('>>>>>>> 2');
+                }
+
+                return;
+
+                if (!masonry._sortable) {
+                    try {
+                        masonry.sortable('destroy');
+                    } catch(ignore) {
+
+                    }
+                    masonry._sortable = true;
+                    masonry.sortable({
+                        cursor: 'move',
+                        start: function(event, ui) {
+                            ui.item.addClass('grabbing moving').removeClass('masonry-brick');
+                            ui.placeholder.addClass('starting')
+                                .removeClass('moving')
+                                .css({
+                                    top: ui.originalPosition.top,
+                                    left: ui.originalPosition.left
+                                });
+
+                            masonry.isotope('reloadItems');  
+
+                        },                        
+                        change: function(event, ui) {
+                            masonry
+                                .isotope('reloadItems')
+                                .isotope({ sortBy: 'original-order'});
+                        },
+                        stop: function(event, ui) {
+
+                            ui.item.removeClass('grabbing').addClass('masonry-brick');
+
+                        }
+                    });
+                    /*
+                        cursor: 'move',
+                        start: function(event, ui) {
+                            ui.item.addClass('grabbing moving').removeClass('masonry-brick');
+                            ui.placeholder.addClass('starting')
+                                .removeClass('moving')
+                                .css({
+                                    top: ui.originalPosition.top,
+                                    left: ui.originalPosition.left,
+                                    backgroundColor: 'yellow'
+                                });
+
+                            masonry.isotope('reloadItems');  
+
+                        },
+                        change: function(event, ui) {
+                            ui.placeholder.removeClass('starting');
+                            masonry
+                                .isotope('reloadItems')
+                                .isotope({ sortBy: 'original-order'});
+    
+
+                        },
+                        beforeStop: function(event, ui) {
+                            //in this event, you still have access to the placeholder. this means
+                            //you know exactly where in the DOM you're going to place your element.
+                            //place it right next to the placeholder. jQuery UI Sortable removes the
+                            //placeholder for you after this event, and actually if you try to remove
+                            //it in this step it will throw an error.
+                            //ui.placeholder.after(ui.item);                    
+                        },
+                        stop: function(event, ui) {
+
+                            console.log(ui);
+    
+                            ui.item.removeClass('grabbing').addClass('masonry-brick');
+    
+        
+                            masonry.isotope('reloadItems')
+                                .isotope({ sortBy: 'original-order' }, function(){
+        
+                                    if (!ui.item.is('.grabbing')) {
+                                        ui.item.removeClass('moving');                        
+                                    }
+                                });
+                        }
+                    });
+*/
+                    console.log('sortable');
                 }
             }
 
@@ -225,6 +316,109 @@
 
                 }
             });
+
+
+
+            $scope.func.changeOrder = function(note, type, event) {
+
+                //alert('www');
+
+                if (event) {
+                    event.stopPropagation();
+                }
+
+                var i, noteIndex;
+
+                //console.log(note);
+
+                for (i = 0; i < $scope.data.board.notes.length; i++) {
+                    
+                    if ($scope.data.board.notes[i] === note) {
+                        //console.log(note);
+                        noteIndex = i;
+                        break;
+                    }
+                }
+
+                var note1, note2;
+
+                if (noteIndex !== undefined) {
+                    if (type === 'right' && noteIndex < $scope.data.board.notes.length - 1) {
+
+                        var dOrder1 = $scope.data.board.notes[noteIndex].displayOrder,
+                            dOrder2 = $scope.data.board.notes[noteIndex + 1].displayOrder;
+
+                        $scope.data.board.notes[noteIndex].displayOrder = dOrder2;
+                        $scope.data.board.notes[noteIndex + 1].displayOrder = dOrder1;
+
+                        note1 = $scope.data.board.notes[noteIndex];
+                        note2 = $scope.data.board.notes[noteIndex + 1];
+
+                        $scope.data.board.notes.sort(function(a, b) {
+                            if (a.displayOrder === b.displayOrder) {
+                                return 0;
+                            }
+                            return a.displayOrder > b.displayOrder ? 1 : -1;
+                        });
+                    } else if (type === 'left' && noteIndex > 0) {
+                        var dOrder1 = $scope.data.board.notes[noteIndex].displayOrder,
+                            dOrder2 = $scope.data.board.notes[noteIndex - 1].displayOrder;
+
+                        $scope.data.board.notes[noteIndex].displayOrder = dOrder2;
+                        $scope.data.board.notes[noteIndex - 1].displayOrder = dOrder1;
+
+                        note1 = $scope.data.board.notes[noteIndex];
+                        note2 = $scope.data.board.notes[noteIndex - 1];
+
+                        $scope.data.board.notes.sort(function(a, b) {
+                            if (a.displayOrder === b.displayOrder) {
+                                return 0;
+                            }
+                            return a.displayOrder > b.displayOrder ? 1 : -1;
+                        });
+                    }
+                }
+
+                //console.log(note1, note2);
+                if (note1 && note2) {
+                    var promises = [];
+                    promises.push(Note.update({
+                        boardId: note1.boardId,
+                        _id: note1._id
+                    }, {
+                        displayOrder: note1.displayOrder
+                    }));
+                    promises.push(Note.update({
+                        boardId: note2.boardId,
+                        _id: note2._id
+                    }, {
+                        displayOrder: note2.displayOrder
+                    }));
+
+                    $q.all(promises).then(function(test) {
+
+                        //console.log(test);
+
+                    });
+                    //console.log(pms1, pms2);
+
+/*
+                    , function (response) {
+
+                        if (CONSTANT.SUCCESS !== response.status) {
+                            alert(response.message);
+                        } else {
+                            $scope.func.refresh();
+                            $scope.func.close();
+                        }
+                    });*/
+
+                }
+               
+
+                //console.log($scope.data.board.notes);
+                //console.log($rootScope);
+            };
 
             $scope.func.removeSharedBoard = function (event) {
 
@@ -1234,11 +1428,13 @@
 
         var controller = function ($scope, $routeParams, CONSTANT, $element, $timeout) {
 
-
-
-            $scope.data = $scope.$root.data ? Object.create($scope.$root.data) : {};
-            $scope.func = $scope.$root.func ? Object.create($scope.$root.func) : {};
+            $scope.data = $scope.$parent.data ? Object.create($scope.$parent.data) : {};
+            $scope.func = $scope.$parent.func ? Object.create($scope.$parent.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
+
+            console.log($scope.data);
+
+
 
 
 

@@ -23,6 +23,7 @@
     "angular-qrcode": "monospaced/angular-qrcode#~3.1.0",
     "html2canvas": "~0.4.1",
     "isotope": "~2.0.0",
-    "ng-file-upload": "~1.4.0"
+    "ng-file-upload": "~1.4.0",
+    "jquery-ui": "~1.11.0"
   }
 }

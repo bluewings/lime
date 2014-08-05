@@ -5,6 +5,12 @@
         div(ng-repeat='attached in note.attachment')
             img(ng-src='{{ attached.thumbPath }}', width='100%')
         .txt(ng-show='note.title || note.note')
+            .pull-right(ng-show='data.board.createdBy == data.myId')
+                .btn-group
+                    button.btn.btn-xs.btn-default(ng-click='func.changeOrder(note, "left", $event)')
+                        span.glyphicon.glyphicon-chevron-left
+                    button.btn.btn-xs.btn-default(ng-click='func.changeOrder(note, "right", $event)')
+                        span.glyphicon.glyphicon-chevron-right
 
             div(ng-show='note.url', style='white-space:pre')
                 span.glyphicon.glyphicon-globe(style='margin-right:5px')

@@ -33,6 +33,7 @@ noteSchema = new Schema({
     note: String,
     url: String,
     attachment: [attachmentSchema],
+    displayOrder: Number,
     createdBy: String,
     created: {
         type: Date,
