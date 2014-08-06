@@ -430,7 +430,10 @@ router.post('/:userId/boards/:boardId', function(req, res) {
 // append shared boardId
 router.delete('/:userId/boards/:boardId', function(req, res) {
 
-    User.findOneAndUpdate({
+    console.log(req.params);
+
+    User.update({
+    //User.findOneAndUpdate({
         userId: req.params.userId
     }, {
         '$pull': {

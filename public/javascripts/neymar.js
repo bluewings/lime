@@ -286,6 +286,8 @@
 
             });
 
+            var onlyOnce = true;
+
             $scope.$watch('data.boards', function (newValue, oldValue) {
 
                 var i, found = false;
@@ -300,7 +302,9 @@
                     }
 
                 }
-                if (found === false) {
+                if (onlyOnce && found === false) {
+
+                    onlyOnce = false;
 
                     UserBoards.save({
                         userId: $scope.data.myId,
@@ -436,10 +440,16 @@
                     if (CONSTANT.SUCCESS !== response.status) {
                         alert(response.message);
                     } else {
-                        $scope.data.boards = [];
-                        $scope.func.refresh();
+                        //$scope.data.boards = [];
+                        //$scope.func.refresh();
                         //$timeout(function() {
+
+                        $timeout(function() {
+                            $scope.func.refresh();
+
+                        }, 100);
                         $location.path(CONFIG.URI.MAIN);
+                        
                         //}, 500);
 
                     }
@@ -1332,6 +1342,9 @@
                             event.stopPropagation();
                         }
 
+                        alert('remove');
+                        return;
+
                         Board.remove({
                             boardId: board.boardId
                         }, function (response) {
@@ -1432,7 +1445,7 @@
             $scope.func = $scope.$parent.func ? Object.create($scope.$parent.func) : {};
             $scope.modal = $scope.$root.modal ? Object.create($scope.$root.modal) : {};
 
-            console.log($scope.data);
+            //console.log($scope.data);
 
 
 
