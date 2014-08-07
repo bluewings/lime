@@ -562,7 +562,7 @@
 
             $scope.$watch('data.title', function (newValue, oldValue) {
 
-                $scope.data.titleForHeader = newValue || '게시판 만들기';
+                $scope.data.titleForHeader = newValue || '메모판 만들기';
             });
 
             if ($routeParams.boardId) {
