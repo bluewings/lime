@@ -41,7 +41,7 @@
 
             a.btn.btn-default(ng-show='data.board.createdBy == data.myId || !data.board.private', href='/neymar/board/{{ data.board.boardId }}/note/edit',
             style='margin-bottom:5px;margin-right:-5px')
-                | 새 글 쓰기
+                | 메모 쓰기
         .clear
 
 div.container(style='padding:0 5px 5px 5px')
@@ -62,7 +62,7 @@ div.container(style='padding:0 5px 5px 5px')
         button.btn.btn-default(ng-if='data.board.createdBy != data.myId', 
             ng-click='func.removeSharedBoard($event)',
             style='margin-bottom:15px;')
-            | 게시판 보지않기
+            | 메모판 보지않기
 
 .footer
     button.btn.btn-default(ng-click='modal.user($event)')

@@ -40,9 +40,9 @@
 
         input.form-control(ng-model='data.title',
             ng-required,
-            placeholder='게시판 이름을 입력하세요.')
+            placeholder='메모판 이름을 입력하세요.')
         //textarea.form-control(ng-model='data.note', rows='5',
-            placeholder='게시판 설명을 입력하세요.')
+            placeholder='메모판 설명을 입력하세요.')
 
         button.btn.btn-default.btn-block(ng-class='data.private ? "btn-danger" : "btn-success"',
             ng-click='data.private = data.private ? 0 : 1')
@@ -53,7 +53,7 @@
             hr
 
             button.btn.btn-danger.btn-block(ng-click='func.board.remove(data)')
-                | 게시판 삭제       
+                | 메모판 삭제       
 
 
         .clear 
