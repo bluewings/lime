@@ -1342,9 +1342,6 @@
                             event.stopPropagation();
                         }
 
-                        alert('remove');
-                        return;
-
                         Board.remove({
                             boardId: board.boardId
                         }, function (response) {
